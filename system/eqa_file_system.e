@@ -172,7 +172,7 @@ feature -- Query
 			end
 		end
 
-	ensure_dir_exists (a_dir_name: STRING): BOOLEAN
+	is_dir_exists (a_dir_name: STRING): BOOLEAN
 			-- Try to ensure that directory `dir_name' exists
 			-- (it is not guaranteed to exist at exit).
 		require
