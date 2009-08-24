@@ -35,6 +35,56 @@ feature -- Access
 	last_created_file: detachable PLAIN_TEXT_FILE
 			-- File last created through `create_file_from_path'
 
+feature -- Command
+
+	delete_directory_tree (a_dir_name: STRING)
+			-- Try to delete the directory tree rooted at
+			-- `a_dir_name'.  Ignore any errors
+		require
+			directory_not_void: a_dir_name /= Void;
+		local
+			l_dir: DIRECTORY
+			l_retried: BOOLEAN
+		do
+			if not l_retried then
+				create l_dir.make (a_dir_name)
+				l_dir.recursive_delete
+			end
+		rescue
+			l_retried := True
+			retry
+		end
+
+	delete_one_kind_of_files (a_dir_name: STRING; a_file_extension: STRING)
+			-- Delete all files which extentions are `a_file_extension'
+			-- found in directory `a_dir_name'
+		require
+			not_void: a_file_extension /= Void and then not a_file_extension.is_empty
+		local
+			l_dir: DIRECTORY
+			l_dir_entries: ARRAYED_LIST [STRING]
+			l_name: STRING
+			l_len: INTEGER
+			f: RAW_FILE
+		do
+			l_len := a_file_extension.count
+			create l_dir.make (a_dir_name)
+			l_dir_entries := l_dir.linear_representation;
+			from
+				l_dir_entries.start
+			until
+				l_dir_entries.after
+			loop
+				l_name := l_dir_entries.item.twin
+				l_name.keep_tail (l_len)
+				if l_name.is_equal (a_file_extension) then
+					create f.make (full_file_name (a_dir_name, l_dir_entries.item))
+					f.delete
+				end
+				l_dir_entries.forth
+			end
+		end
+
 feature -- Query
 
 	build_source_path (a_path: EQA_SYSTEM_PATH): STRING
@@ -355,6 +405,26 @@ feature {NONE} -- Implementation
 			a_tag_attached: a_tag /= Void
 		do
 			environment.test_set.assert (a_tag, a_condition)
+		end
+
+	full_file_name (a_dir_name, a_f_name: STRING): STRING
+			-- Full name of file in directory `a_dir_name'
+			-- with name `a_f_name'.
+		require
+			not_void: a_dir_name /= Void and then not a_dir_name.is_empty
+			not_void: a_f_name /= Void and then not a_f_name.is_empty
+		local
+			l_os: OPERATING_ENVIRONMENT
+		do
+			create Result.make (a_dir_name.count + a_f_name.count + 1)
+			if not a_dir_name.is_empty then
+				Result.append (a_dir_name)
+				create l_os
+				if a_dir_name.item (a_dir_name.count) /= l_os.Directory_separator then
+					Result.extend (l_os.Directory_separator)
+				end
+			end
+			Result.append (a_f_name)
 		end
 
 note
