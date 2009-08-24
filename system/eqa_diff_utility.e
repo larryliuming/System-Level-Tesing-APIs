@@ -1,6 +1,6 @@
 note
 	description: "[
-					Diff facilitiies used for comparing strings
+					Diff facilities used for comparing strings
 					Facade for Diff library
 																					]"
 	date: "$Date$"
