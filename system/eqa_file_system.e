@@ -85,6 +85,44 @@ feature -- Command
 			end
 		end
 
+	copy_file (a_src: FILE; a_env: EQA_SYSTEM_ENVIRONMENT; a_dest: FILE; a_substitute: BOOLEAN)
+			-- Append lines of file `a_src', with environment
+			-- variables substituted according to `a_env' (but
+			-- only if `substitute' is true) to
+			-- file `a_dest'.
+		require
+			source_not_void: a_src /= Void
+			destination_not_void: a_dest /= Void
+			environment_not_void: a_env /= Void
+			source_is_closed: a_src.is_closed
+			destination_is_closed: a_dest.is_closed
+		local
+			l_line: STRING
+		do
+			from
+				a_src.open_read
+				a_dest.open_write
+			until
+				a_src.end_of_file
+			loop
+				a_src.read_line
+				if a_substitute then
+					l_line := a_env.substitute (a_src.last_string)
+				else
+					l_line := a_src.last_string
+				end
+				if not a_src.end_of_file then
+					a_dest.put_string (l_line)
+					a_dest.new_line
+				elseif not l_line.is_empty then
+					a_dest.put_string (l_line)
+				end
+			end;
+			a_src.close
+			a_dest.flush
+			a_dest.close
+		end
+
 feature -- Query
 
 	build_source_path (a_path: EQA_SYSTEM_PATH): STRING
