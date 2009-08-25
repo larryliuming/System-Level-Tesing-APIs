@@ -272,6 +272,26 @@ feature -- Query
 			Result := l_dir.exists
 		end
 
+	is_cycle_included (a_path_1, a_path_2: PATH_NAME): BOOLEAN
+			-- Does `a_path_1' including `a_path_2'
+		require
+			not_void: a_path_1 /= Void and then not a_path_1.is_empty
+			not_void: a_path_2 /= Void and then not a_path_2.is_empty
+		local
+			l_parent: detachable PATH_NAME
+		do
+			from
+				l_parent := a_path_2
+			until
+				l_parent = Void or Result
+			loop
+				if l_parent /= Void then
+					Result := a_path_1.is_equal (l_parent)
+				end
+
+				l_parent := parent_path (a_path_2)
+			end
+		end
 
 feature {NONE} -- Query
 
@@ -465,6 +485,33 @@ feature {NONE} -- Implementation
 			Result.append (a_f_name)
 		end
 
+	parent_path (a_path: PATH_NAME): detachable PATH_NAME
+			-- Get parent path of `a_path' if exists
+			-- Result void if parent directory not found
+		require
+			not_void: a_path /= Void and then not a_path.is_empty
+		local
+			l_os: OPERATING_ENVIRONMENT
+			l_path: STRING
+			l_pathes: LIST [STRING]
+		do
+			create l_os
+			l_path := a_path
+			l_pathes := l_path.split (l_os.directory_separator)
+			if l_pathes.count > 1 then
+				from
+					create {DIRECTORY_NAME} Result.make
+					l_pathes.start
+				until
+					l_pathes.index >= l_pathes.count -- Ignore the last one since quering parent directory
+				loop
+					Result.extend (l_pathes.item)
+
+					l_pathes.forth
+				end
+			end
+		end
+		
 note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
