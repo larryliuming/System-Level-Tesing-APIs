@@ -23,18 +23,6 @@ feature -- Access
 			result_attached: Result /= Void
 		end
 
-	working_directory: READABLE_STRING_32
-			-- Name of testing directory currently being used
-		do
-			if attached working_directory_cell.item as l_dir then
-				Result := l_dir
-			else
-				Result := default_working_directory
-			end
-		ensure
-			result_attached: Result /= Void
-		end
-
 	test_directory: IMMUTABLE_STRING_8
 			-- Name of directory in which tests are executed
 		do
@@ -68,20 +56,6 @@ feature {NONE} -- Access
 	default_test_name: STRING = ""
 			-- Default value for `test_name'
 
-	working_directory_cell: CELL [detachable READABLE_STRING_32]
-			-- Cell containg dir path of testing currently being used
-		once
-			create Result.put (Void)
-		ensure
-			reasult_attached: Result /= Void
-		end
-
-	default_working_directory: STRING_32
-			-- Default value for `working_directory'
-		do
-			Result := create {STRING_32}.make_from_string (".")
-		end
-
 feature {EQA_TEST_EVALUATOR} -- Element change
 
 	set_test_name (a_name: READABLE_STRING_8)
@@ -97,18 +71,6 @@ feature {EQA_TEST_EVALUATOR} -- Element change
 			test_name_cell.put (l_name)
 		ensure
 			test_name_set: test_name.same_string (a_name)
-		end
-
-	set_working_directory (a_dir: like working_directory)
-			-- Set `working_directory' to `a_dir'
-			--
-			-- `a_dir': Path for testing where next testing to be executed
-		require
-			a_dir_attached: a_dir /= Void
-		do
-			working_directory_cell.put (a_dir)
-		ensure
-			working_directory_set: working_directory = a_dir
 		end
 
 	set_test_directory (a_name: READABLE_STRING_8)
