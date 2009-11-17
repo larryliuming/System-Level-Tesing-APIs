@@ -11,6 +11,21 @@ note
 class
 	EQA_EW_SYSTEM_TEST_INSTRUCTIONS
 
+create
+	make
+
+feature {NONE} -- Initialization
+
+	make (a_system_test: EQA_EW_SYSTEM_TEST_SET)
+			-- Creation method
+		require
+			not_void: attached a_system_test
+		do
+			test_set := a_system_test
+		ensure
+			set: test_set = a_system_test
+		end
+
 feature -- Command
 
 	copy_raw (a_source_file, a_dest_directory, a_dest_file: STRING)
@@ -18,13 +33,23 @@ feature -- Command
 			--	$SOURCE to the <dest-directory> under the name <dest-file>.
 			--	The destination directory is created if it does not exist.  No
 			--	substitution is done on the lines of <source-file>.
+		require
+			not_void: attached a_source_file
+			not_void: attached a_dest_directory
+			not_void: attached a_dest_file
 		local
-			l_inst: EQA_EW_COPY_INST
+			l_inst: EQA_EW_COPY_RAW_INST
 		do
-			create l_inst
+			create l_inst.make (a_source_file, a_dest_directory, a_dest_file)
+			l_inst.execute (test_set)
 		end
 
-note
+feature {NONE} -- Implementation
+
+	test_set: EQA_EW_SYSTEM_TEST_SET
+			-- Test set that current managed
+
+;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	licensing_options: "http://www.eiffel.com/licensing"
