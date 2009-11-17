@@ -5,41 +5,26 @@ note
 	revision: "$Revision$"
 
 class
-	EQA_EW_SYSTEM_TEST
+	EQA_EW_SYSTEM_TEST_SET
+
+inherit
+	EQA_SYSTEM_TEST_SET
+		export
+			{EQA_EW_COPY_INST} environment
+		end
 
 feature -- Access
 
-feature -- Measurement
-
-feature -- Status report
-
-feature -- Status setting
-
-feature -- Cursor movement
-
-feature -- Element change
-
-feature -- Removal
-
-feature -- Resizing
-
-feature -- Transformation
-
-feature -- Conversion
-
-feature -- Duplication
-
-feature -- Miscellaneous
-
-feature -- Basic operations
-
-feature -- Obsolete
-
-feature -- Inapplicable
-
 feature {NONE} -- Implementation
 
-invariant
-	invariant_clause: True -- Your invariant here
-
+note
+	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
+	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
+	source: "[
+			Eiffel Software
+			5949 Hollister Ave., Goleta, CA 93117 USA
+			Telephone 805-685-1006, Fax 805-685-6869
+			Website http://www.eiffel.com
+			Customer support http://support.eiffel.com
+		]"
 end

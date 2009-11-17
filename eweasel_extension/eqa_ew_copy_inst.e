@@ -12,7 +12,7 @@ class
 
 feature -- Access
 
-	execute (test: EQA_EW_SYSTEM_TEST)
+	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
 			-- Execute `Current' as one of the
 			-- instructions of `test'.
 			-- Set `execute_ok' to indicate whether successful.
@@ -25,8 +25,8 @@ feature -- Access
 --			l_factory: EW_EQA_TEST_FACTORY
 		do
 --			create l_factory
---			dest_directory := l_factory.replace_environments (test.environment, dest_directory)
---			source_file := l_factory.replace_environments (test.environment, source_file)
+			dest_directory := a_test.environment.substitute_recursive (dest_directory)
+			source_file := a_test.environment.substitute_recursive (source_file)
 
 --			execute_ok := False;
 --			if use_source_environment_variable then
@@ -98,7 +98,13 @@ feature -- Access
 
 feature {NONE} -- Implementation
 
-note
+	dest_directory: STRING
+			-- Name of destination directory
+
+	source_file: STRING
+			-- Name of source file (always in source directory)
+
+;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	licensing_options: "http://www.eiffel.com/licensing"

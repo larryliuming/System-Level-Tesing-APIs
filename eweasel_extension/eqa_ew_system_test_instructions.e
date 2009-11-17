@@ -1,6 +1,8 @@
 note
 	description: "[
 					New eweasel test instructions base on Testing library
+					Should be used as client (do not inherit this class)
+					
 					For old version instructions, please check {EW_EQA_TEST_CONTROL_INSTRUCTIONS}
 																								]"
 	date: "$Date$"
@@ -16,13 +18,15 @@ feature -- Command
 			--	$SOURCE to the <dest-directory> under the name <dest-file>.
 			--	The destination directory is created if it does not exist.  No
 			--	substitution is done on the lines of <source-file>.
+		local
+			l_inst: EQA_EW_COPY_INST
 		do
-
+			create l_inst
 		end
 
 note
-	copyright: "Copyright (c) 1984-2009, Eiffel Software"
-	license: "GPL version 2 (see http://www.eiffel.com/licensing/gpl.txt)"
+	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
+	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	licensing_options: "http://www.eiffel.com/licensing"
 	copying: "[
 			This file is part of Eiffel Software's Eiffel Development Environment.
