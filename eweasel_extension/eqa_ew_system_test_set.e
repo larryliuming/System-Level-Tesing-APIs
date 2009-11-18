@@ -13,7 +13,8 @@ class
 inherit
 	EQA_SYSTEM_TEST_SET
 		export
-			{EQA_EW_COPY_INST, EQA_EW_START_COMPILE_INST} environment
+			{EQA_EW_COPY_INST, EQA_EW_START_COMPILE_INST, EQA_EW_EIFFEL_COMPILATION} environment
+			{EQA_EW_EIFFEL_COMPILATION} run_system
 		end
 
 	EQA_EW_OS_ACCESS
@@ -102,6 +103,21 @@ feature -- Command
 			e_compilation_result := a_e
 		ensure
 			set: e_compilation_result = a_e
+		end
+
+feature {EQA_EW_EIFFEL_COMPILATION} -- Internal command
+
+	set_output_processor (a_processor: EQA_EW_OUTPUT_PROCESSOR)
+			-- Set `a_process' as system execution output processor
+		require
+			not_void: attached a_processor
+		local
+			l_path: EQA_SYSTEM_PATH
+		do
+			create l_path.make (<<e_compile_output_name>>)
+			prepare_system (l_path)
+			current_execution.set_output_processor (a_processor)
+			current_execution.set_error_processor (a_processor)
 		end
 
 feature {NONE} -- Implementation
