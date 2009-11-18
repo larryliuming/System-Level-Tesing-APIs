@@ -10,18 +10,29 @@ note
 deferred class
 	EQA_EW_COPY_INST
 
+inherit
+	EQA_EW_OS_ACCESS
+		export
+			{NONE} all
+		end
+
 feature {NONE} -- Initialization
 
-	make (a_source_file, a_dest_directory, a_dest_file: STRING)
+	make (a_source_file, a_dest_directory, a_dest_file: STRING; a_test: EQA_EW_SYSTEM_TEST_SET)
 			-- Initialize with arguments
 		require
 			not_void: a_source_file /= Void
 			not_void: a_dest_directory /= Void
 			not_void: a_dest_file /= Void
+			not_void: attached a_test
 		do
 			source_file := a_source_file
 			dest_directory := a_dest_directory
 			dest_file := a_dest_file
+
+			test_set := a_test
+		ensure
+			set: test_set = a_test
 		end
 
 feature -- Query
@@ -32,35 +43,39 @@ feature -- Query
 		deferred
 		end
 
+	test_set: EQA_EW_SYSTEM_TEST_SET
+			-- The test set current managed
+
 feature -- Commannd
 
-	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
+	execute
 			-- Execute `Current' as one of the
 			-- instructions of `test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
 			l_src_name, l_dest_name: EQA_SYSTEM_PATH
 			l_src, l_dir, l_dest: like new_file
---			before_date, after_date: INTEGER
---			orig_date, final_date: INTEGER
+			l_before_date, l_after_date: INTEGER
+			l_orig_date, l_final_date: INTEGER
 
 --			l_factory: EW_EQA_TEST_FACTORY
 			l_file_system: EQA_FILE_SYSTEM
+			l_error: STRING
 		do
 --			create l_factory
-			dest_directory := a_test.environment.substitute_recursive (dest_directory)
-			source_file := a_test.environment.substitute_recursive (source_file)
+			dest_directory := test_set.environment.substitute_recursive (dest_directory)
+			source_file := test_set.environment.substitute_recursive (source_file)
 
 --			execute_ok := False;
 --			if use_source_environment_variable then
-			create l_src_name.make (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name),source_file>>)
+			create l_src_name.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name),source_file>>)
 --				l_src_name := os.full_file_name (, );	
 --			else
 --				src_name := source_file
 --			end
 			create l_dest_name.make (<<dest_directory, dest_file>>)
 
-			create l_file_system.make (a_test.environment)
+			create l_file_system.make (test_set.environment)
 
 			l_src := new_file (l_src_name.as_string)
 			ensure_dir_exists (dest_directory)
@@ -68,64 +83,85 @@ feature -- Commannd
 
 			if (l_src.exists and then l_src.is_plain) and
 			   (l_dir.exists and then l_dir.is_directory) then
+
 				l_dest := new_file (l_dest_name.as_string)
---				if dest.exists then
---					orig_date := dest.date
---				else
---					orig_date := 0
---				end
---				if is_fast then
+				if l_dest.exists then
+					l_orig_date := l_dest.date
+				else
+					l_orig_date := 0
+				end
+				if is_fast then
 --					copy_file (src, test.environment, dest);
-					l_file_system.copy_file (l_src, a_test.environment, l_dest, substitute)
---					if orig_date /= 0 then
---						dest.set_date (orig_date + 1)
---					end
---				else
+					l_file_system.copy_file (l_src, test_set.environment, l_dest, substitute)
+					if l_orig_date /= 0 then
+						l_dest.set_date (l_orig_date + 1)
+					end
+				else
 
---					before_date := os.current_time_in_seconds
---					from
---					until
---						not test.copy_wait_required
---					loop
---						os.sleep_milliseconds (100)
---					end;
---					after_date := os.current_time_in_seconds
+					l_before_date := os.current_time_in_seconds
+					from
+					until
+						not test_set.copy_wait_required
+					loop
+						os.sleep_milliseconds (100)
+					end
+
+					l_after_date := os.current_time_in_seconds
 
 --					copy_file (src, test.environment, dest);
+					l_file_system.copy_file (l_src, test_set.environment, l_dest, substitute)
 
---					final_date := dest.date
+					l_final_date := l_dest.date
 
---					if final_date <= orig_date then
---						-- Work around possible Linux bug
---						if after_date <= orig_date then
---							output.append_error ("ERROR: After date " + after_date.out + " not greater than original date " + orig_date.out, True)
---						else
---							dest.set_date (after_date)
---							final_date := dest.date
---							if final_date /= after_date then
---								output.append_error ("ERROR: failed to set dest modification date to " + after_date.out, True)
---							end
---						end
---					end
+					if l_final_date <= l_orig_date then
+						-- Work around possible Linux bug
+						if l_after_date <= l_orig_date then
+							l_error := "ERROR: After date " + l_after_date.out + " not greater than original date " + l_orig_date.out
+--							output.append_error (, True)
+							assert.assert (l_error, False)
+						else
+							l_dest.set_date (l_after_date)
+							l_final_date := l_dest.date
+							if l_final_date /= l_after_date then
+								l_error := "ERROR: failed to set dest modification date to " + l_after_date.out
+								assert.assert (l_error, False)
+--								output.append_error (, True)
+							end
+						end
+					end
 
---					check_dates (test.e_compile_start_time, orig_date, final_date, before_date, after_date, dest_name)
+					check_dates (test_set.e_compile_start_time, l_orig_date, l_final_date, l_before_date, l_after_date, l_dest_name.as_string)
 
---					test.unset_copy_wait;
---				end
+					test_set.unset_copy_wait;
+				end
 --				execute_ok := True;
---			elseif not src.exists then
+			elseif not l_src.exists then
+				l_error := "source file not found"
 --				failure_explanation := "source file not found";
---			elseif not src.is_plain then
+				assert.assert (l_error, False)
+			elseif not l_src.is_plain then
+				l_error := "source file not a plain file"
 --				failure_explanation := "source file not a plain file";
---			elseif not dir.exists then
+				assert.assert (l_error, False)
+			elseif not l_dir.exists then
+				l_error := "destination directory not found"
 --				failure_explanation := "destination directory not found";
---			elseif not dir.is_directory then
+				assert.assert (l_error, False)
+			elseif not l_dir.is_directory then
+				l_error := "destination directory not a directory"
 --				failure_explanation := "destination directory not a directory";
+				assert.assert (l_error, False)
 			end
 
 		end
 
 feature {NONE} -- Implementation
+
+	assert: EQA_COMMONLY_USED_ASSERTIONS
+			-- Assert utilities
+		once
+			create Result
+		end
 
 	new_file (a_file_name: STRING): FILE
 			-- Create an instance of FILE.
@@ -154,6 +190,29 @@ feature {NONE} -- Implementation
 		rescue
 			l_tried := True
 			retry
+		end
+
+	is_fast: BOOLEAN
+			-- Should "speed" mode be used?
+		local
+			l_env: EQA_SYSTEM_ENVIRONMENT
+		do
+			Result := test_set.environment.get ({EQA_EW_PREDEFINED_VARIABLES}.Eweasel_fast_name) /= Void
+		end
+
+	check_dates (a_start_date, a_orig_date, a_final_date, a_before_date, a_after_date: INTEGER a_fname: STRING)
+			-- Check if date correct
+		local
+			l_error: STRING
+		do
+			if a_final_date <= a_orig_date then
+--				output.append_new_line
+				l_error := "ERROR: final date " + a_final_date.out + " not greater than original date " + a_orig_date.out + " for file " + a_fname
+				l_error.append ("Compile start = " + a_start_date.out + " Before = " + a_before_date.out + " After = " + a_after_date.out)
+--				output.append_error (, True)
+--				output.append (, True)
+				assert.assert (l_error, False)
+			end
 		end
 
 	dest_directory: STRING

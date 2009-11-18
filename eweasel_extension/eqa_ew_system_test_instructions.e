@@ -40,8 +40,8 @@ feature -- Command
 		local
 			l_inst: EQA_EW_COPY_RAW_INST
 		do
-			create l_inst.make (a_source_file, a_dest_directory, a_dest_file)
-			l_inst.execute (test_set)
+			create l_inst.make (a_source_file, a_dest_directory, a_dest_file, test_set)
+			l_inst.execute
 		end
 
 feature {NONE} -- Implementation
