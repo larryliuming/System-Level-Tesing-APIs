@@ -1,27 +1,14 @@
 note
 	description: "[
-					Summary description for {EQA_EW_COMPILE_MELTED_INST}.
+					Summary description for {EQA_EW_EIFFEL_COMPILATION_RESULT}.
 					
-					For old version, pleaase check {EW_COMPILE_MELTED_INST}
-																					]"
+					For old version, please check {EW_EIFFEL_COMPILATION_RESULT}
+																							]"
 	date: "$Date$"
 	revision: "$Revision$"
 
 class
-	EQA_EW_COMPILE_MELTED_INST
-
-inherit
-	EQA_EW_START_COMPILE_INST
-
-feature -- Query
-
-	compilation_options: LIST [STRING]
-			-- <Precursor>
-		once
-			create {ARRAYED_LIST [STRING]} Result.make (1)
-			Result.extend ("-verbose")
-			Result.extend ("-melt")
-		end
+	EQA_EW_EIFFEL_COMPILATION_RESULT
 
 note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"

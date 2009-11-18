@@ -13,7 +13,7 @@ class
 inherit
 	EQA_SYSTEM_TEST_SET
 		export
-			{EQA_EW_COPY_INST} environment
+			{EQA_EW_COPY_INST, EQA_EW_START_COMPILE_INST} environment
 		end
 
 	EQA_EW_OS_ACCESS
@@ -24,6 +24,9 @@ inherit
 		end
 
 feature -- Query
+
+	ecf_name: STRING
+			-- Name of Ecf (ace) file for Eiffel compilations.
 
 	copy_wait_required: BOOLEAN
 			-- Must we wait for one second before copying a
@@ -38,7 +41,26 @@ feature -- Query
 			-- Time in seconds since beginning of era
 			-- when last Eiffel compilation was started or
 			-- resumed
-			
+
+	e_compilation: EQA_EW_EIFFEL_COMPILATION
+			-- Eiffel compilation, if any
+			-- (possibly suspended and awaiting resumption)
+
+	e_compile_count: INTEGER
+			-- Number of Eiffel compilations started
+
+	e_compile_output_name: STRING
+			-- Name of file for output from current Eiffel
+			-- compilation
+		do
+			create Result.make (0)
+			Result.append (Eiffel_compile_output_prefix)
+			Result.append_integer (e_compile_count)
+		end
+
+	e_compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT
+			-- Result of the last Eiffel compilation.
+
 feature -- Command
 
 	unset_copy_wait
@@ -50,6 +72,38 @@ feature -- Command
 			wait_not_required: not copy_wait_required
 		end
 
+	increment_e_compile_count
+			-- Increment `e_compile_count' by 1
+		do
+			e_compile_count := e_compile_count + 1
+		end
+
+	set_e_compile_start_time (a_t: INTEGER)
+			-- Set start time of last Eiffel compilation to `a_t'
+		do
+			e_compile_start_time := a_t
+			unwaited_compilation := True
+		ensure
+			time_set: e_compile_start_time = a_t
+			wait_required: unwaited_compilation
+		end
+
+	set_e_compilation (a_e: EQA_EW_EIFFEL_COMPILATION)
+			-- Set `e_compilation' with `a_e'
+		do
+			e_compilation := a_e
+		ensure
+			set: e_compilation = a_e
+		end
+
+	set_e_compilation_result (a_e: EQA_EW_EIFFEL_COMPILATION_RESULT)
+			-- Set `e_compilation_result' with `a_e'
+		do
+			e_compilation_result := a_e
+		ensure
+			set: e_compilation_result = a_e
+		end
+
 feature {NONE} -- Implementation
 
 	unwaited_compilation: BOOLEAN
@@ -58,6 +112,8 @@ feature {NONE} -- Implementation
 			-- may necessitate a wait?  (Due to the fact that
 			-- the Eiffel compiler uses dates which
 			-- only have a resolution of one second)
+
+	Eiffel_compile_output_prefix: STRING = "e_compile"
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
