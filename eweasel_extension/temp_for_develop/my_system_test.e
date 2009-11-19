@@ -20,6 +20,8 @@ feature -- Command
 			l_info: EQA_EVALUATION_INFO
 		do
 			create l_info
+
+--			environment.*set
 		end
 
 feature -- Test

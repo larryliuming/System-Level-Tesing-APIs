@@ -24,6 +24,66 @@ inherit
 			default_create
 		end
 
+feature {NONE} -- Initialization
+
+	initial_environment (a_env: EQA_SYSTEM_ENVIRONMENT; a_test_dir_name: STRING)
+			-- Initial environment environment in which to
+			-- execute `test'.  The result may be safely
+			-- modified by the caller.
+			-- Modified base on {EW_EQA_WINDOWS_SETUP}.initial_environment
+		require
+			test_not_void: a_env /= Void
+		local
+			l_test_dir, l_gen_dir, l_exec_dir: STRING
+			l_path: DIRECTORY_NAME
+			l_info: EQA_EVALUATION_INFO
+		do
+			create l_info
+			create l_path.make_from_string (l_info.test_directory)
+
+			l_test_dir := full_directory_name (l_path, a_test_dir_name) -- See {EWEASEL_TEST_CATALOG_SAMPLE}
+			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name, l_test_dir)
+			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.Cluster_dir_name, full_directory_name (l_test_dir, "clusters"))
+			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name, full_directory_name (l_test_dir, "output"))
+
+			-- fixme ("set correct directory depending on used target")
+			l_gen_dir := full_directory_name (l_test_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Eiffel_gen_directory)
+			l_gen_dir := full_directory_name (l_gen_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Default_system_name)
+			l_exec_dir := full_directory_name (l_gen_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Work_c_code_directory)
+			a_env.put ({EQA_EW_PREDEFINED_VARIABLES}.Work_execution_dir_name, l_exec_dir)
+			l_exec_dir := full_directory_name (l_gen_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Final_c_code_directory)
+			a_env.put ({EQA_EW_PREDEFINED_VARIABLES}.Final_execution_dir_name, l_exec_dir)
+		end
+
+	associate (a_env: EQA_SYSTEM_ENVIRONMENT; a_var, a_dir: STRING)
+			-- Define an environment variable `a_var' in the
+			-- environment `a_env' to have
+			-- value `a_dir', which must be a directory name.
+			-- Create the directory `a_dir' if it does not exist.
+		require
+			environment_not_void: a_env /= Void
+			var_name_not_void: a_var /= Void
+			directory_not_void: a_dir /= Void
+		local
+			l_d: DIRECTORY
+		do
+			a_env.put (a_var, a_dir)
+			create l_d.make (a_dir)
+			if not l_d.exists then
+				l_d.create_dir
+			end
+		end
+
+	full_directory_name (a_path_1, a_path_2:STRING): STRING
+			-- Full name of subdirectory `subdir' of directory
+			-- `dir_name'
+		local
+			l_path: EQA_SYSTEM_PATH
+		do
+			create l_path.make (<<a_path_1, a_path_2>>)
+			Result := l_path.as_string
+		end
+
 feature -- Query
 
 	ecf_name: STRING
