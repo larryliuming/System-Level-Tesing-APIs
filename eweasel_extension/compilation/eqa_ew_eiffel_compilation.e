@@ -33,7 +33,7 @@ feature {NONE} -- Creation method
 			a_test_set.environment.put (a_cmd, "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
 
 			from
-				create l_args.make (0, a_args.count)
+				create l_args.make (0, a_args.count - 1)
 				a_args.start
 			until
 				a_args.after
@@ -48,10 +48,13 @@ feature {NONE} -- Creation method
 --			end
 			savefile_name := a_save
 
-			create l_processor.make (a_test_set.e_compilation_result)
+			create l_processor.make (a_test_set.e_compilation_result, a_test_set)
 			a_test_set.set_output_processor (l_processor)
+			a_test_set.set_output_path (a_save)
 
 			a_test_set.run_system (l_args)
+
+			l_processor.write_output_to_file
 		ensure
 --			input_file_available: input /= Void
 --			output_file_available: output /= Void

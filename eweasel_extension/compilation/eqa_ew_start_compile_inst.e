@@ -51,7 +51,8 @@ feature -- Command
 					else
 						l_name := test_set.e_compile_output_name
 					end
-					create l_file_name.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), l_name>>)
+--					create l_file_name.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), l_name>>)
+					create l_file_name.make (<<l_name>>)
 --					l_name := os.full_file_name (,)
 					l_name := l_file_name.as_string
 					create l_compilation.make (l_compile_cmd, compiler_arguments (test_set, test_set.environment), l_name, test_set)

@@ -13,7 +13,7 @@ class
 inherit
 	EQA_SYSTEM_TEST_SET
 		export
-			{EQA_EW_COPY_INST, EQA_EW_START_COMPILE_INST, EQA_EW_EIFFEL_COMPILATION} environment
+			{EQA_EW_COPY_INST, EQA_EW_START_COMPILE_INST, EQA_EW_EIFFEL_COMPILATION, EQA_SYSTEM_OUTPUT_PROCESSOR} environment
 			{EQA_EW_EIFFEL_COMPILATION} run_system
 		end
 
@@ -37,12 +37,37 @@ feature {NONE} -- Initialization
 			l_test_dir, l_gen_dir, l_exec_dir: STRING
 			l_path: DIRECTORY_NAME
 			l_info: EQA_EVALUATION_INFO
+			l_source_dir_name, l_target_dir: EQA_SYSTEM_PATH
 		do
+			ecf_name := "Ace"
 			create l_info
-			create l_path.make_from_string (l_info.test_directory)
+--			create l_path.make_from_string (l_info.test_directory) -- This is target directory
 
-			l_test_dir := full_directory_name (l_path, a_test_dir_name) -- See {EWEASEL_TEST_CATALOG_SAMPLE}
+--			l_test_dir := full_directory_name (l_path, a_test_dir_name) -- See {EWEASEL_TEST_CATALOG_SAMPLE}
+
+			-- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
+			-- Following environment vairable would be set by {EQA_EW_EIFFEL_COMPILATION}.make
+--			a_env.put ("/usr/local/Eiffel65/studio/spec/linux-x86/bin/ec", "EQA_EXECUTABLE")
+
+			a_env.put ("", "EWEASEL_DOTNET_SETTING")
+
+			a_env.put ("/usr/local/Eiffel65/studio/spec/linux-x86/bin/ec", {EQA_EW_PREDEFINED_VARIABLES}.compile_command_name) -- FIXME: This environment value is used by old eweasel, should be removed?
+
+			a_env.set_source_directory ("/home/larryliuming/eweasel/tests")
+
+			create l_source_dir_name.make (<<a_env.source_directory, a_test_dir_name>>)
+--			l_test_dir := file_system.build_source_path (l_source_dir_name) -- Cannot use {EQA_FILE_SYSTEM}.build_source_path since it adding additional string to path
+			l_test_dir := l_source_dir_name.as_string
+			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.source_dir_name, l_test_dir)
+
+			-- FIXME: Cannot use `a_env.target_directory', since by default, {EQA_SYSTEM_ENVIRONMENT}.target_directory is "/temp" ?
+
+--			create l_target_dir.make (<<a_env.current_working_directory, a_test_dir_name>>)
+			create l_target_dir.make (<<a_env.current_working_directory>>)
+			l_test_dir := l_target_dir.as_string
 			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name, l_test_dir)
+			a_env.set_target_directory (l_test_dir)
+
 			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.Cluster_dir_name, full_directory_name (l_test_dir, "clusters"))
 			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name, full_directory_name (l_test_dir, "output"))
 
@@ -67,7 +92,7 @@ feature {NONE} -- Initialization
 		local
 			l_d: DIRECTORY
 		do
-			a_env.put (a_var, a_dir)
+			a_env.put (a_dir, a_var)
 			create l_d.make (a_dir)
 			if not l_d.exists then
 				l_d.create_dir
@@ -167,6 +192,19 @@ feature -- Command
 
 feature {EQA_EW_EIFFEL_COMPILATION} -- Internal command
 
+	set_output_path (a_path: STRING)
+			-- Set `a_path' as system execution output file name
+		require
+			not_void: attached a_path
+		local
+			l_path: EQA_SYSTEM_PATH
+		do
+			prepare_system_if_needed
+
+			create l_path.make (<<a_path>>)
+			current_execution.set_output_path (l_path)
+		end
+
 	set_output_processor (a_processor: EQA_EW_OUTPUT_PROCESSOR)
 			-- Set `a_process' as system execution output processor
 		require
@@ -174,10 +212,23 @@ feature {EQA_EW_EIFFEL_COMPILATION} -- Internal command
 		local
 			l_path: EQA_SYSTEM_PATH
 		do
-			create l_path.make (<<e_compile_output_name>>)
-			prepare_system (l_path)
+			prepare_system_if_needed
+
 			current_execution.set_output_processor (a_processor)
 			current_execution.set_error_processor (a_processor)
+		end
+
+	prepare_system_if_needed
+			-- Prepare system if needed
+		local
+			l_path: EQA_SYSTEM_PATH
+		do
+			if not attached current_execution then
+				create l_path.make (<<e_compile_output_name>>)
+				prepare_system (l_path)
+			end
+		ensure
+			created: attached current_execution
 		end
 
 feature {NONE} -- Implementation

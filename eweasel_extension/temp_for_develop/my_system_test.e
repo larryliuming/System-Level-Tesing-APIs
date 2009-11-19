@@ -22,6 +22,7 @@ feature -- Command
 			create l_info
 
 --			environment.*set
+			initial_environment (environment, "attach004")
 		end
 
 feature -- Test
@@ -40,10 +41,10 @@ feature -- Test
 
 	--		environment.system ("ec") -- This feature is used for running ad-hoc executables
 
-			l_output_path.extend ("attach004_test_output")
+			l_output_path.extend ("attach004")
 			prepare_system (l_output_path)
 
-			create l_processor.make (e_compilation_result)
+			create l_processor.make (e_compilation_result, Current)
 			current_execution.set_output_processor (l_processor)
 			current_execution.set_error_processor (l_processor)
 

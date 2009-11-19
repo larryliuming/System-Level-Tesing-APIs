@@ -18,15 +18,37 @@ create
 
 feature {NONE} -- Initializatin
 
-	make (a_compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT)
+	make (a_compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT; a_test_set: EQA_EW_SYSTEM_TEST_SET)
 			-- Creation method
 		require
 			not_void: attached a_compilation_result
+			not_void: attached a_test_set
 		do
 			initialize_buffer
 			compilation_result := a_compilation_result
+			test_set := a_test_set
+			create cached_whole_file.make_empty
 		ensure
 			set: compilation_result = a_compilation_result
+			set: test_set = a_test_set
+		end
+
+feature -- Command
+
+	write_output_to_file
+			-- Write `cached_whole_file' to output file
+		local
+			l_file: PLAIN_TEXT_FILE
+			l_path: EQA_SYSTEM_PATH
+		do
+			create l_path.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), test_set.e_compile_output_name>>)
+
+			create l_file.make (l_path.as_string)
+			l_file.open_read_append
+
+			l_file.put_string (cached_whole_file)
+
+			l_file.close
 		end
 
 feature {NONE} -- Implementation
@@ -34,18 +56,30 @@ feature {NONE} -- Implementation
 	on_new_character (a_character: CHARACTER_8)
 			-- <Precursor>
 		do
-			print ("%N " + generating_type.out + " on_new_character " + a_character.out)
+--			print ("%N " + generating_type.out + " on_new_character " + a_character.out)
 		end
 
 	on_new_line
 			-- <Precursor>
 		do
-			print ("%N " + generating_type.out + " on_new_line " + buffer)
+			if not attached compilation_result then
+				create compilation_result
+			end
+--			print ("%N " + generating_type.out + " on_new_line " + buffer)
+			compilation_result.update (buffer.twin)
+			-- Write to output file
 
+			cached_whole_file.append (buffer.twin + "%N")
 		end
 
 	compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT
 			-- Compilation result
+
+	test_set: EQA_EW_SYSTEM_TEST_SET
+			-- System level test set current managed
+
+	cached_whole_file: STRING
+			-- Cached whole output file
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"

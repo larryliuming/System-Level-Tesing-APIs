@@ -227,13 +227,14 @@ feature -- Command
 			end
 		end
 
-	value (var: STRING): detachable STRING
+	value (a_var: STRING): detachable STRING
 			-- Value associated with environment variable
 			-- `var' (Void if no associated value)
 		require
-			variable_not_void: var /= Void
+			variable_not_void: a_var /= Void
 		do
-			Result := table.item (var)
+--			Result := table.item (var)
+			Result := get (a_var)
 		end
 
 feature {NONE} -- Constants
@@ -276,6 +277,7 @@ feature {NONE} -- Implementation
 	table: HASH_TABLE [STRING, STRING]
 			-- Table which associates environment variable
 			-- names (keys) with their values
+			-- FIXME: Should remove it? since the variables defined in OS and Base library already have it, see {EXECUTION_ENVIRONMENT}.environ
 
 	list: ARRAYED_LIST [STRING]
 			-- List of operating system environment variables
