@@ -249,6 +249,18 @@ feature {EQA_EW_COMPILE_RESULT_INST} -- Internal command
 				and linked_list_matches (validity_errors, a_other.validity_errors)
 		end
 
+	set_compilation_paused
+			-- Set `compilation_paused' with True
+		do
+			compilation_paused := True
+		end;
+
+	set_compilation_finished
+			-- Set `compilation_finished' with True
+		do
+			compilation_finished := True
+		end
+
 feature {NONE} -- Syntax error implementation
 
 	new_syntax_error (line: STRING): EQA_EW_EIFFEL_SYNTAX_ERROR
@@ -450,7 +462,7 @@ feature {NONE} -- Implementation
 
 	raw_compiler_output: STRING
 			-- Raw output of compiler, if not Void
-			
+
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"

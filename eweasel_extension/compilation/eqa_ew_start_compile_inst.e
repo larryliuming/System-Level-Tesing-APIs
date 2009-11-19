@@ -57,7 +57,7 @@ feature -- Command
 					l_name := l_file_name.as_string
 					create l_compilation.make (l_compile_cmd, compiler_arguments (test_set, test_set.environment), l_name, test_set)
 					test_set.set_e_compilation (l_compilation)
-					test_set.set_e_compilation_result (l_compilation.next_compile_result)
+--					test_set.set_e_compilation_result (l_compilation.next_compile_result)
 --					execute_ok := True
 				else
 					assert.assert (l_exec_error, False)

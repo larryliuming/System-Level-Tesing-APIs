@@ -18,18 +18,15 @@ create
 
 feature {NONE} -- Initializatin
 
-	make (a_compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT; a_test_set: EQA_EW_SYSTEM_TEST_SET)
+	make (a_test_set: EQA_EW_SYSTEM_TEST_SET)
 			-- Creation method
 		require
-			not_void: attached a_compilation_result
 			not_void: attached a_test_set
 		do
 			initialize_buffer
-			compilation_result := a_compilation_result
 			test_set := a_test_set
 			create cached_whole_file.make_empty
 		ensure
-			set: compilation_result = a_compilation_result
 			set: test_set = a_test_set
 		end
 
@@ -51,6 +48,11 @@ feature -- Command
 			l_file.close
 		end
 
+feature -- Query
+
+	compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT
+			-- Compilation result
+
 feature {NONE} -- Implementation
 
 	on_new_character (a_character: CHARACTER_8)
@@ -71,9 +73,6 @@ feature {NONE} -- Implementation
 
 			cached_whole_file.append (buffer.twin + "%N")
 		end
-
-	compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT
-			-- Compilation result
 
 	test_set: EQA_EW_SYSTEM_TEST_SET
 			-- System level test set current managed

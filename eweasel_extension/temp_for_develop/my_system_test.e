@@ -44,7 +44,7 @@ feature -- Test
 			l_output_path.extend ("attach004")
 			prepare_system (l_output_path)
 
-			create l_processor.make (e_compilation_result, Current)
+			create l_processor.make (Current)
 			current_execution.set_output_processor (l_processor)
 			current_execution.set_error_processor (l_processor)
 

@@ -48,13 +48,14 @@ feature {NONE} -- Creation method
 --			end
 			savefile_name := a_save
 
-			create l_processor.make (a_test_set.e_compilation_result, a_test_set)
+			create l_processor.make (a_test_set)
 			a_test_set.set_output_processor (l_processor)
 			a_test_set.set_output_path (a_save)
 
 			a_test_set.run_system (l_args)
 
 			l_processor.write_output_to_file
+			a_test_set.set_e_compilation_result (l_processor.compilation_result)
 		ensure
 --			input_file_available: input /= Void
 --			output_file_available: output /= Void
@@ -65,12 +66,12 @@ feature -- Query
 	suspended: BOOLEAN
 			-- Is process suspended awaiting user input?
 
-	next_compile_result: EQA_EW_EIFFEL_COMPILATION_RESULT
-			-- Next compile result
-			-- Delegate to EQA_EW_OUTPUT_PROCESSER and use EQA_EW_STRING_UTILITY to update line?
-		local
-			l_time_to_stop: BOOLEAN
-		do
+--	next_compile_result: EQA_EW_EIFFEL_COMPILATION_RESULT
+--			-- Next compile result
+--			-- Delegate to EQA_EW_OUTPUT_PROCESSER and use EQA_EW_STRING_UTILITY to update line?
+--		local
+--			l_time_to_stop: BOOLEAN
+--		do
 --			create Result
 --			from
 --				read_line
@@ -95,7 +96,7 @@ feature -- Query
 --			if end_of_file then
 --				terminate
 --			end
-		end
+--		end
 
 	savefile_name: STRING
 			-- Name of file to which output read from process

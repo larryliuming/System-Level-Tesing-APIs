@@ -19,13 +19,17 @@ feature -- Query
 
 feature -- Command
 
-	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
+	execute (a_test: EQA_EW_SYSTEM_TEST_SET; a_expected_result: STRING)
 			-- Execute `Current' as one of the
 			-- instructions of `test'.
 			-- Set `execute_ok' to indicate whether successful.
+		require
+			not_void: attached a_expected_result
 		local
 			l_cr: EQA_EW_EIFFEL_COMPILATION_RESULT
 		do
+			prepare_expected_compile_result (a_expected_result)
+
 			l_cr := a_test.e_compilation_result
 			if l_cr = Void then
 				execute_ok := False
@@ -49,6 +53,10 @@ feature -- Command
 				end
 				a_test.set_e_compilation_result (Void)
 			end
+
+			if not execute_ok then
+				assert.assert (failure_explanation, False)
+			end
 		end
 
 	init_ok: BOOLEAN
@@ -58,6 +66,104 @@ feature -- Command
 			-- Was last call to `execute' successful?
 
 feature {NONE} -- Implementation
+
+	prepare_expected_compile_result (a_expected_result: STRING)
+			-- Prepare `expected_compile_result' base on parsing `a_expected_result'
+			-- Modified from {EW_COMPILE_RESULT_INST}.inst_initialize
+		require
+			not_void: attached a_expected_result
+		local
+			l_phrases: LIST [STRING]
+			l_pos: INTEGER
+			l_mod_args, l_type: STRING
+			l_cr: EQA_EW_EIFFEL_COMPILATION_RESULT
+		do
+			l_mod_args := a_expected_result
+			l_pos := string_util.first_white_position (l_mod_args)
+			if l_pos = 0 then
+				l_type := l_mod_args
+				create l_mod_args.make (0)
+			else
+				l_type := l_mod_args.substring (1, l_pos - 1)
+				l_mod_args.keep_tail (l_mod_args.count - l_pos)
+			end
+			l_type.to_lower
+			create l_cr
+			l_phrases := string_util.broken_at (l_mod_args, Phrase_separator)
+			string_util.trim_white_space (l_phrases)
+			l_phrases := string_util.empty_strings_removed (l_phrases)
+			if equal (l_type, Ok_result) then
+				if l_phrases.count > 0 then
+					failure_explanation := "no arguments allowed for OK result"
+					init_ok := False
+				else
+					l_cr.set_compilation_finished
+					init_ok := True
+				end
+			elseif equal (l_type, Syntax_error_result) or equal (l_type, Syntax_warning_result) then
+				if l_phrases.count = 0 then
+					init_ok := False
+					failure_explanation := "no class/line_no pairs specified for syntax error or syntax warning"
+				else
+					from
+						init_ok := True
+						l_phrases.start
+					until
+						l_phrases.after or not init_ok
+					loop
+						process_syntax_phrase (l_phrases.item, l_cr)
+						l_phrases.forth
+					end
+				end
+			elseif equal (l_type, Validity_error_result) or equal (l_type, Validity_warning_result) then
+				if l_phrases.count = 0 then
+					init_ok := False
+					failure_explanation := "no class/constraint lists specified for validity error or validity warning"
+				else
+					from
+						init_ok := True
+						l_phrases.start
+					until
+						l_phrases.after or not init_ok
+					loop
+						process_validity_phrase (l_phrases.item, l_cr)
+						l_phrases.forth
+					end
+				end
+			else
+				init_ok := False
+				create failure_explanation.make (0)
+				failure_explanation.append ("unknown keyword: ")
+				failure_explanation.append (l_type)
+			end
+			if l_cr.syntax_errors /= Void then
+				if equal (l_type, Syntax_error_result) then
+					l_cr.set_compilation_paused
+				else
+					l_cr.set_compilation_finished
+				end
+			elseif l_cr.validity_errors /= Void then
+				if equal (l_type, Validity_error_result) then
+					l_cr.set_compilation_paused
+				else
+					l_cr.set_compilation_finished
+				end
+			end
+			-- No need to sort expected compile result
+			-- since all key fields are known for each
+			-- syntax or validity error when it is added.
+			-- But sort it anyway, just to be safe
+			l_cr.sort
+			expected_compile_result := l_cr
+		ensure
+			created: attached expected_compile_result
+		end
+
+	assert: EQA_COMMONLY_USED_ASSERTIONS
+			-- Assert utilities
+		once
+			create Result
+		end
 
 	expected_compile_result: EQA_EW_EIFFEL_COMPILATION_RESULT
 			-- Result expected from compilation

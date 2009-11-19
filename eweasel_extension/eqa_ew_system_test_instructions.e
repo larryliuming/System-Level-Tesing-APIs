@@ -136,7 +136,7 @@ feature -- Command
 			l_inst: EQA_EW_COMPILE_RESULT_INST
 		do
 			create l_inst
-			l_inst.execute (test_set)
+			l_inst.execute (test_set, a_result)
 		end
 
 feature {NONE} -- Implementation
