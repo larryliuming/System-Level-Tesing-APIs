@@ -16,7 +16,7 @@ feature -- Command
 			-- Update `Current' to reflect the presence of
 			-- `a_line' as next line in compiler output.
 		local
-			l_s: SEQ_STRING;
+			l_s: SEQ_STRING
 		do
 			create l_s.make (a_line.count)
 			l_s.append (a_line)
@@ -75,12 +75,75 @@ feature -- Command
 			end
 		end
 
+feature {NONE} -- Syntax error implementation
+
+	new_syntax_error (line: STRING): EQA_EW_EIFFEL_SYNTAX_ERROR
+			-- Create a syntax error object
+		require
+			line_not_void: line /= Void
+		local
+			words: LIST [STRING]
+			line_no, kind: STRING
+			class_name: STRING
+			count: INTEGER
+		do
+			words := string_util.broken_into_words (line)
+			count := words.count
+			if count >= 5 then
+				line_no := words.i_th (5)
+			end
+			if count >= 7 then
+				kind := words.i_th (7)
+				kind.to_lower
+				if equal (kind, "class") then
+					if count >= 8 then
+						class_name := words.i_th (8)
+					else
+						create class_name.make (0)
+					end
+				elseif equal (kind, "ace") then
+					create class_name.make (0)
+				elseif equal (kind, "cluster_properties") then
+					create class_name.make (0)
+					class_name.append ("_USE_FILE")
+				else
+					create class_name.make (0)
+					class_name.append ("%"UNKNOWN%"")
+				end
+			else
+				create class_name.make (0)
+			end
+			create Result.make (class_name)
+			if string_util.is_integer (line_no) then
+				Result.set_line_number (line_no.to_integer)
+			end
+		end
+
 feature {NONE} -- Implementation
 
 	string_util: EQA_EW_STRING_UTILITIES
 			-- String utilities
 		once
 			create Result
+		end
+
+	analyze_syntax_error (a_line: STRING)
+			-- Analyze syntax error
+		require
+			line_not_void: a_line /= Void
+		do
+			add_syntax_error (new_syntax_error (a_line))
+		end
+
+	add_syntax_error (a_err: EQA_EW_EIFFEL_SYNTAX_ERROR)
+			-- Add syntax error
+		require
+			error_not_void: a_err /= Void
+		do
+			if syntax_errors = Void then
+				create syntax_errors.make
+			end
+			syntax_errors.extend (a_err)
 		end
 
 	in_error: BOOLEAN
@@ -119,6 +182,9 @@ feature {NONE} -- Implementation
 
 	compilation_finished: BOOLEAN
 			-- Did compilation finish normally?
+
+	syntax_errors: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_SYNTAX_ERROR]
+			-- Syntax errors reported by compiler
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
