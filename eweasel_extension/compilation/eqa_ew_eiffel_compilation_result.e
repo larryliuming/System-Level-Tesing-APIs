@@ -34,7 +34,7 @@ feature -- Command
 			elseif string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Validity_error_prefix, a_line) or
 			       string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Validity_warning_prefix, a_line) then
 				in_error := True
---				analyze_validity_error (a_line)
+				analyze_validity_error (a_line)
 			elseif string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Resume_prompt, a_line) then
 				compilation_paused := True
 			elseif string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Missing_precompile_prompt, a_line) then
@@ -65,7 +65,7 @@ feature -- Command
 			elseif string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Finished_prefix, a_line) then
 				compilation_finished := True
 			elseif in_error then
---				analyze_error_line (a_line)
+				analyze_error_line (a_line)
 			end
 			l_s.to_lower
 			l_s.start
@@ -233,6 +233,27 @@ feature {NONE} -- Syntax error implementation
 			-- Last validity error being inserted
 
 feature {NONE} -- Implementation
+
+	analyze_error_line (a_line: STRING)
+			-- Analyze error line
+		require
+			line_not_void: a_line /= Void
+		local
+			l_words: LIST [STRING]
+			l_class_name: STRING
+		do
+			if string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Class_name_prefix, a_line) then
+				l_words := string_util.broken_into_words (a_line)
+				if l_words.count >= 2 then
+					l_class_name := l_words.i_th (2)
+					check
+						last_validity_error_not_void: last_validity_error /= Void
+					end
+					last_validity_error.set_class_name (l_class_name)
+				end
+				in_error := False
+			end
+		end
 
 	string_util: EQA_EW_STRING_UTILITIES
 			-- String utilities
