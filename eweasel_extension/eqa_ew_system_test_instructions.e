@@ -44,6 +44,45 @@ feature -- Command
 			l_inst.execute
 		end
 
+	copy_sub (a_source_file, a_dest_directory, a_dest_file: STRING)
+			--	Similar to `copy_raw' except that occurrences of a
+			--	substitution variable, such as $NAME, are replaced by the
+			--	value given to NAME in the last define, define_file or
+			--	define_directory instruction which set it (or are left as
+			--	$NAME if NAME has not been defined).
+		require
+			not_void: a_source_file /= Void
+			not_void: a_dest_directory /= Void
+			not_void: a_dest_file /= Void
+		local
+			l_inst: EQA_EW_COPY_SUB_INST
+		do
+			create l_inst.make (a_source_file, a_dest_directory, a_dest_file, test_set)
+			l_inst.execute
+		end
+
+	Compile_melted (a_output_filename: STRING)
+			--	Run the Eiffel compiler in the test directory $TEST with the
+			--	Ace file specified by the last `ace' instruction.  Since the
+			--	Ace file is always assumed to be in the test directory, it
+			--	must have previously been copied into this directory.
+
+			--	Compile_melted does not request freezing of the system
+
+			--	The optional <output-file-name> specifies
+			--	the name of the file in the output directory $OUTPUT into
+			--	which output from this compilation will be written, so that it
+			--	can potentially be compared with a known correct output file.
+			--	If <output-file-name> is omitted, compilation results are
+			--	written to a file with an unadvertised but obvious name (which
+			--	could possibly change) in the output directory.
+		local
+			l_inst: EQA_EW_COMPILE_MELTED_INST
+		do
+			create l_inst.make (test_set, a_output_filename)
+			l_inst.execute
+		end
+
 feature {NONE} -- Implementation
 
 	test_set: EQA_EW_SYSTEM_TEST_SET

@@ -13,6 +13,9 @@ class
 inherit
 	EQA_EW_START_COMPILE_INST
 
+create
+	make
+	
 feature -- Query
 
 	compilation_options: LIST [STRING]
