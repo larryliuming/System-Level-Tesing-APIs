@@ -133,11 +133,10 @@ feature -- Command
 		require
 			not_void: a_result /= Void
 		local
---			l_inst: EW_TEST_INSTRUCTION
+			l_inst: EQA_EW_COMPILE_RESULT_INST
 		do
---			l_inst := test_command_table.item (Compile_result_keyword)
---			init_command (l_inst, "compile_result", a_result)
---			execute_inst (l_inst)
+			create l_inst
+			l_inst.execute (test_set)
 		end
 
 feature {NONE} -- Implementation
