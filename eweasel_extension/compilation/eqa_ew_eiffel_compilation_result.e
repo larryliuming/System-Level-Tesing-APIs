@@ -161,6 +161,21 @@ feature {NONE} -- Syntax error implementation
 			end
 		end
 
+	new_validity_error (a_line: STRING): EQA_EW_EIFFEL_VALIDITY_ERROR
+			-- Create a validity error object
+		require
+			line_not_void: a_line /= Void
+		local
+			l_words: LIST [STRING]
+			l_code: STRING
+			l_class_name: STRING
+		do
+			l_words := string_util.broken_into_words (a_line)
+			l_code := l_words.i_th (3)
+			create l_class_name.make (0)
+			create Result.make (l_class_name, l_code)
+		end
+
 	analyze_syntax_error (a_line: STRING)
 			-- Analyze syntax error
 		require
@@ -169,12 +184,20 @@ feature {NONE} -- Syntax error implementation
 			add_syntax_error (new_syntax_error (a_line))
 		end
 
-	analyze_syntax_warning (line: STRING)
+	analyze_syntax_warning (a_line: STRING)
 			-- Analyze syntax warning
 		require
-			line_not_void: line /= Void
+			line_not_void: a_line /= Void
 		do
-			add_syntax_error (new_syntax_warning (line))
+			add_syntax_error (new_syntax_warning (a_line))
+		end
+
+	analyze_validity_error (a_line: STRING)
+			-- Analyze validity error
+		require
+			line_not_void: a_line /= Void
+		do
+			add_validity_error (new_validity_error (a_line))
 		end
 
 	add_syntax_error (a_err: EQA_EW_EIFFEL_SYNTAX_ERROR)
@@ -187,6 +210,27 @@ feature {NONE} -- Syntax error implementation
 			end
 			syntax_errors.extend (a_err)
 		end
+
+	add_validity_error (a_err: EQA_EW_EIFFEL_VALIDITY_ERROR)
+			-- Add validity error
+		require
+			error_not_void: a_err /= Void
+		do
+			if validity_errors = Void then
+				create validity_errors.make
+			end
+			validity_errors.extend (a_err)
+			last_validity_error := a_err
+		end
+
+	syntax_errors: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_SYNTAX_ERROR]
+			-- Syntax errors reported by compiler
+
+	validity_errors: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_VALIDITY_ERROR]
+			-- Validity errors reported by compiler
+
+	last_validity_error: EQA_EW_EIFFEL_VALIDITY_ERROR
+			-- Last validity error being inserted
 
 feature {NONE} -- Implementation
 
@@ -232,9 +276,6 @@ feature {NONE} -- Implementation
 
 	compilation_finished: BOOLEAN
 			-- Did compilation finish normally?
-
-	syntax_errors: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_SYNTAX_ERROR]
-			-- Syntax errors reported by compiler
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
