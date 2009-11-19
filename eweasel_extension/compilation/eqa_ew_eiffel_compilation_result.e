@@ -27,10 +27,10 @@ feature -- Command
 					in_error := False
 				end
 			elseif string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Syntax_error_prefix, a_line) then
---				analyze_syntax_error (a_line)
+				analyze_syntax_error (a_line)
 
 			elseif string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Syntax_warning_prefix, a_line) then
---				analyze_syntax_warning (a_line)
+				analyze_syntax_warning (a_line)
 			elseif string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Validity_error_prefix, a_line) or
 			       string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Validity_warning_prefix, a_line) then
 				in_error := True
@@ -119,12 +119,46 @@ feature {NONE} -- Syntax error implementation
 			end
 		end
 
-feature {NONE} -- Implementation
-
-	string_util: EQA_EW_STRING_UTILITIES
-			-- String utilities
-		once
-			create Result
+	new_syntax_warning (a_line: STRING): EQA_EW_EIFFEL_SYNTAX_ERROR
+				-- Create a syntax warning object
+		require
+			line_not_void: a_line /= Void
+		local
+			l_words: LIST [STRING]
+			l_line_no, l_kind: STRING
+			l_class_name: STRING
+			l_count: INTEGER
+		do
+			l_words := string_util.broken_into_words (a_line)
+			l_count := l_words.count
+			if l_count >= 6 then
+				l_line_no := l_words.i_th (6)
+			end
+			if l_count >= 8 then
+				l_kind := l_words.i_th (8)
+				l_kind.to_lower
+				if equal (l_kind, "class") then
+					if l_count >= 9 then
+						l_class_name := l_words.i_th (9)
+					else
+						create l_class_name.make (0)
+					end
+				elseif equal (l_kind, "ace") then
+					create l_class_name.make (0)
+				elseif equal (l_kind, "cluster_properties") then
+					create l_class_name.make (0)
+					l_class_name.append ("_USE_FILE")
+				else
+					create l_class_name.make (0)
+					l_class_name.append ("%"UNKNOWN%"")
+				end
+			else
+				create l_class_name.make (0)
+			end
+			create Result.make (l_class_name)
+			if string_util.is_integer (l_line_no) then
+				Result.set_line_number (l_line_no.to_integer)
+			end
 		end
 
 	analyze_syntax_error (a_line: STRING)
@@ -133,6 +167,14 @@ feature {NONE} -- Implementation
 			line_not_void: a_line /= Void
 		do
 			add_syntax_error (new_syntax_error (a_line))
+		end
+
+	analyze_syntax_warning (line: STRING)
+			-- Analyze syntax warning
+		require
+			line_not_void: line /= Void
+		do
+			add_syntax_error (new_syntax_warning (line))
 		end
 
 	add_syntax_error (a_err: EQA_EW_EIFFEL_SYNTAX_ERROR)
@@ -144,6 +186,14 @@ feature {NONE} -- Implementation
 				create syntax_errors.make
 			end
 			syntax_errors.extend (a_err)
+		end
+
+feature {NONE} -- Implementation
+
+	string_util: EQA_EW_STRING_UTILITIES
+			-- String utilities
+		once
+			create Result
 		end
 
 	in_error: BOOLEAN
