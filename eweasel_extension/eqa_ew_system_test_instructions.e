@@ -61,7 +61,7 @@ feature -- Command
 			l_inst.execute
 		end
 
-	Compile_melted (a_output_filename: STRING)
+	compile_melted (a_output_filename: STRING)
 			--	Run the Eiffel compiler in the test directory $TEST with the
 			--	Ace file specified by the last `ace' instruction.  Since the
 			--	Ace file is always assumed to be in the test directory, it
@@ -81,6 +81,63 @@ feature -- Command
 		do
 			create l_inst.make (test_set, a_output_filename)
 			l_inst.execute
+		end
+
+	compile_result (a_result: STRING)
+			--Check that the compilation result from the last
+			--compile_melted, compile_frozen, compile_final or
+			--resume_compile instruction matches <result>.  If it does not,
+			--then the test has failed.  If the result matches <result>,
+			--continue processing with the next test instruction.  To
+			--specify no class for <class> below, use NONE (which matches
+			--only if the compiler does not report the error in a particular
+			--class).  <result> can be:
+
+			--	syntax_error  { <class> <line-number> ";" ... }+
+			--		
+			--		Matches if compiler reported a syntax error on each
+			--		of the indicated classes at the given line numbers,
+			--		in the order indicated.
+			--		If <line-number> is omitted, then matches if
+			--		compiler reported a syntax error on class
+			--		<class>, regardless of position.  To specify
+			--		no class (which means "syntax error on the Ace
+			--		file"), use NONE.
+
+			--	validity_error { <class> <validity-code-list> ";" ...}+
+			--		
+			--		Matches if compiler reported the indicated
+			--		validity errors in the named classes in the
+			--		order listed.  This validity code list is a
+			--		white space separated list of validity codes
+			--		from "Eiffel: The Language".
+
+			--	validity_warning { <class> <validity-code-list> ";" ...}+
+			--		
+			--		Matches if compiler reported the indicated
+			--		validity errors in the named classes in the
+			--		order listed.  This validity code list is a
+			--		white space separated list of validity codes
+			--		from "Eiffel: The Language".  This is
+			--		identical to validity_error, except that
+			--		the compilation is expected to complete
+			--		for validity_warning whereas it is expected
+			--		to be paused for validity_error.
+
+			--	ok
+
+			--		Matches if compiler did not report any syntax
+			--		or validity errors and no system failure or
+			--		run-time panic occurred and the system was
+			--		successfully recompiled.
+		require
+			not_void: a_result /= Void
+		local
+--			l_inst: EW_TEST_INSTRUCTION
+		do
+--			l_inst := test_command_table.item (Compile_result_keyword)
+--			init_command (l_inst, "compile_result", a_result)
+--			execute_inst (l_inst)
 		end
 
 feature {NONE} -- Implementation

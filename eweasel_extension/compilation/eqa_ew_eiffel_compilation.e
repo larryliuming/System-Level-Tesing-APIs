@@ -48,7 +48,7 @@ feature {NONE} -- Creation method
 --			end
 			savefile_name := a_save
 
-			create l_processor.initialize_buffer
+			create l_processor.make (a_test_set.e_compilation_result)
 			a_test_set.set_output_processor (l_processor)
 
 			a_test_set.run_system (l_args)

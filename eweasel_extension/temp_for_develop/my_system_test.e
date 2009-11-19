@@ -41,7 +41,7 @@ feature -- Test
 			l_output_path.extend ("attach004_test_output")
 			prepare_system (l_output_path)
 
-			create l_processor.initialize_buffer
+			create l_processor.make (e_compilation_result)
 			current_execution.set_output_processor (l_processor)
 			current_execution.set_error_processor (l_processor)
 
@@ -58,22 +58,26 @@ feature -- Test
 --			test_setup.setup_one_test_case ("object-test-with-local-use-failure", "attach004", "tcf pass object_test attached_types ")
 --			test_name ("object-test-with-local-use-failure")
 --			test_description ("Ensures the locally scoped object test variable cannot be used in the test")
-			l_insts.copy_raw ("test.e", "$CLUSTER", "test.e")
+			i.copy_raw ("test.e", "$CLUSTER", "test.e")
 
-			l_insts.copy_sub ("Ace", "$TEST", "Ace")
---			compile_melted (Void)
---			compile_result ("validity_error TEST VEEN")
+			i.copy_sub ("Ace", "$TEST", "Ace")
+			i.compile_melted (Void)
+			i.compile_result ("validity_error TEST VEEN")
+
 --			test_end
 		end
 
 feature {NONE} -- Implementation
 
-	l_insts: EQA_EW_SYSTEM_TEST_INSTRUCTIONS
+	i: EQA_EW_SYSTEM_TEST_INSTRUCTIONS
 			-- All new instructions
+		once
+			create Result.make (Current)
+		end
 
 ;note
-	copyright: "Copyright (c) 1984-2009, Eiffel Software"
-	license: "GPL version 2 (see http://www.eiffel.com/licensing/gpl.txt)"
+	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
+	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	licensing_options: "http://www.eiffel.com/licensing"
 	copying: "[
 			This file is part of Eiffel Software's Eiffel Development Environment.

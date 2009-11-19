@@ -14,7 +14,20 @@ inherit
 		end
 
 create
-	initialize_buffer
+	make
+
+feature {NONE} -- Initializatin
+
+	make (a_compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT)
+			-- Creation method
+		require
+			not_void: attached a_compilation_result
+		do
+			initialize_buffer
+			compilation_result := a_compilation_result
+		ensure
+			set: compilation_result = a_compilation_result
+		end
 
 feature {NONE} -- Implementation
 
@@ -28,10 +41,13 @@ feature {NONE} -- Implementation
 			-- <Precursor>
 		do
 			print ("%N " + generating_type.out + " on_new_line " + buffer)
-			
+
 		end
 
-note
+	compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT
+			-- Compilation result
+
+;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	licensing_options: "http://www.eiffel.com/licensing"

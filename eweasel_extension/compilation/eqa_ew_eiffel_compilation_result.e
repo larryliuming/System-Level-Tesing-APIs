@@ -10,6 +10,122 @@ note
 class
 	EQA_EW_EIFFEL_COMPILATION_RESULT
 
+feature -- Query
+
+	had_panic: BOOLEAN
+			-- Did a panic occur during compilation?
+
+	had_exception: BOOLEAN
+			-- Did an exception occur during compilation?
+
+	missing_precompile: BOOLEAN
+			-- Was a missing precompile detected during
+			-- compilation?
+
+	execution_failure: BOOLEAN
+			-- Did a system execution failure occur during
+			-- compilation?
+
+	illegal_instruction: BOOLEAN
+			-- Was an illegal instruction executed
+			-- during compilation?
+			-- FIXME: This feature should be removed in new testing tool eweasel?
+
+	compilation_paused: BOOLEAN
+			-- Did compilation pause and await user input
+			-- before resuming?
+
+	compilation_aborted: BOOLEAN
+			-- Was compilation aborted prematurely, usually
+			-- due to an exception?
+
+	compilation_finished: BOOLEAN
+			-- Did compilation finish normally?
+
+	exception_tag: STRING
+			-- Tag of exception which aborted compilation,
+			-- if any
+
+	syntax_errors: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_SYNTAX_ERROR]
+			-- Syntax errors reported by compiler
+
+	validity_errors: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_VALIDITY_ERROR]
+			-- Validity errors reported by compiler
+
+	summary: STRING
+			-- Summary of `Current'
+		local
+			l_status: STRING
+		do
+			create Result.make (0)
+			if syntax_errors /= Void then
+				from
+					syntax_errors.start
+				until
+					syntax_errors.after
+				loop
+					Result.extend ('%T')
+					Result.append (syntax_errors.item.summary)
+					Result.extend ('%N')
+					syntax_errors.forth
+				end
+			end
+			if validity_errors /= Void then
+				from
+					validity_errors.start
+				until
+					validity_errors.after
+				loop
+					Result.extend ('%T')
+					Result.append (validity_errors.item.summary)
+					Result.extend ('%N')
+					validity_errors.forth
+				end
+			end
+
+			create l_status.make (0)
+			if compilation_paused then
+				l_status.append ("paused ")
+			end
+			if compilation_aborted then
+				l_status.append ("aborted ")
+			end
+			if compilation_finished then
+				l_status.append ("completed ")
+			end
+			if missing_precompile then
+				l_status.append ("missing_precompile ")
+			end
+			if execution_failure then
+				l_status.append ("system_failed ")
+			end
+			if had_exception then
+				l_status.append ("had_exception ")
+				if (exception_tag /= Void) then
+					l_status.append ("(")
+					l_status.append (exception_tag)
+					l_status.append (") ")
+				end
+			end
+			if had_panic then
+				l_status.append ("had_panic ")
+			end
+			if illegal_instruction then
+				l_status.append ("illegal_instruction ")
+			end
+			if l_status.count = 0 then
+				l_status.append ("unknown	")
+				if raw_compiler_output /= Void then
+					l_status.extend ('%N')
+					l_status.append ("Raw compiler output:")
+					l_status.extend ('%N')
+					l_status.append (raw_compiler_output)
+				end
+			end
+			l_status.prepend ("%TFinal status:  ")
+			Result.append (l_status)
+		end
+
 feature -- Command
 
 	update (a_line: STRING)
@@ -73,6 +189,64 @@ feature -- Command
 			if not l_s.after then
 				had_panic := True
 			end
+		end
+
+feature {EQA_EW_COMPILE_RESULT_INST} -- Internal command
+
+	add_validity_error (a_err: EQA_EW_EIFFEL_VALIDITY_ERROR)
+			-- Add validity error
+		require
+			error_not_void: a_err /= Void
+		do
+			if validity_errors = Void then
+				create validity_errors.make
+			end
+			validity_errors.extend (a_err)
+			last_validity_error := a_err
+		end
+
+	add_syntax_error (a_err: EQA_EW_EIFFEL_SYNTAX_ERROR)
+			-- Add syntax error
+		require
+			error_not_void: a_err /= Void
+		do
+			if syntax_errors = Void then
+				create syntax_errors.make
+			end
+			syntax_errors.extend (a_err)
+		end
+
+	sort
+			-- Sort `syntax_errors' and `validity_errors'.
+			-- Even though they are sorted lists, they may
+			-- not be correctly sorted because items may
+			-- have been added before full key was set
+		do
+			if syntax_errors /= Void and then syntax_errors.count > 1 then
+				syntax_errors.sort
+			end
+			if validity_errors /= Void and then validity_errors.count > 1 then
+				validity_errors.sort
+			end
+		end
+
+	matches (a_other: EQA_EW_EIFFEL_COMPILATION_RESULT): BOOLEAN
+			-- Do `Current' and `a_other' represent the
+			-- same compilation result?
+		require
+			other_not_void: a_other /= Void
+		do
+			Result := had_panic = a_other.had_panic and
+				had_exception = a_other.had_exception and
+				missing_precompile = a_other.missing_precompile and
+				execution_failure = a_other.execution_failure and
+				illegal_instruction = a_other.illegal_instruction
+				and compilation_paused = a_other.compilation_paused
+				and compilation_aborted = a_other.compilation_aborted
+				and compilation_finished = a_other.compilation_finished
+				and equal(exception_tag, a_other.exception_tag)
+				and linked_list_matches (syntax_errors, a_other.syntax_errors)
+				and linked_list_matches (validity_errors, a_other.validity_errors)
 		end
 
 feature {NONE} -- Syntax error implementation
@@ -200,35 +374,6 @@ feature {NONE} -- Syntax error implementation
 			add_validity_error (new_validity_error (a_line))
 		end
 
-	add_syntax_error (a_err: EQA_EW_EIFFEL_SYNTAX_ERROR)
-			-- Add syntax error
-		require
-			error_not_void: a_err /= Void
-		do
-			if syntax_errors = Void then
-				create syntax_errors.make
-			end
-			syntax_errors.extend (a_err)
-		end
-
-	add_validity_error (a_err: EQA_EW_EIFFEL_VALIDITY_ERROR)
-			-- Add validity error
-		require
-			error_not_void: a_err /= Void
-		do
-			if validity_errors = Void then
-				create validity_errors.make
-			end
-			validity_errors.extend (a_err)
-			last_validity_error := a_err
-		end
-
-	syntax_errors: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_SYNTAX_ERROR]
-			-- Syntax errors reported by compiler
-
-	validity_errors: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_VALIDITY_ERROR]
-			-- Validity errors reported by compiler
-
 	last_validity_error: EQA_EW_EIFFEL_VALIDITY_ERROR
 			-- Last validity error being inserted
 
@@ -265,39 +410,47 @@ feature {NONE} -- Implementation
 			-- Are we analyzing lines which are part of
 			-- a syntax or validity error?
 
-	had_exception: BOOLEAN
-			-- Did an exception occur during compilation?
+	linked_list_matches (a_list1, a_list2: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_ERROR]): BOOLEAN
+			-- Dose list match?
+		local
+			l_count1, l_count2: INTEGER
+			l_different: BOOLEAN
+		do
+			if a_list1 = Void then
+				l_count1 := 0
+			else
+				l_count1 := a_list1.count
+			end
+			if a_list2 = Void then
+				l_count2 := 0
+			else
+				l_count2 := a_list2.count
+			end
+			if l_count1 = 0 and l_count2 = 0 then
+				Result := True
+			elseif l_count1 /= l_count2 then
+				Result := False
+			else
+				from
+					a_list1.start
+					a_list2.start
+				until
+					a_list1.after or a_list2.after or l_different
+				loop
+					if not equal (a_list1.item, a_list2.item) then
+						l_different := True
+					else
+						a_list1.forth
+						a_list2.forth
+					end
+				end
+				Result := not l_different
+			end
+		end
 
-	compilation_paused: BOOLEAN
-			-- Did compilation pause and await user input
-			-- before resuming?
-
-	compilation_aborted: BOOLEAN
-			-- Was compilation aborted prematurely, usually
-			-- due to an exception?
-
-	missing_precompile: BOOLEAN
-			-- Was a missing precompile detected during
-			-- compilation?
-
-	exception_tag: STRING
-			-- Tag of exception which aborted compilation,
-			-- if any
-
-	execution_failure: BOOLEAN
-			-- Did a system execution failure occur during
-			-- compilation?
-
-	illegal_instruction: BOOLEAN
-			-- Was an illegal instruction executed
-			-- during compilation?
-
-	had_panic: BOOLEAN
-			-- Did a panic occur during compilation?
-
-	compilation_finished: BOOLEAN
-			-- Did compilation finish normally?
-
+	raw_compiler_output: STRING
+			-- Raw output of compiler, if not Void
+			
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
