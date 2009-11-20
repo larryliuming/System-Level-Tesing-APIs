@@ -55,6 +55,8 @@ feature {NONE} -- Initialization
 			-- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
 			-- Following environment vairable would be set by {EQA_EW_EIFFEL_COMPILATION}.make
 --			a_env.put ("/usr/local/Eiffel65/studio/spec/linux-x86/bin/ec", "EQA_EXECUTABLE")
+			a_env.put ( "/usr/local/Eiffel65/precomp/spec/linux-x86/base.ecf", "PRECOMPILED_BASE")
+			a_env.put ("/usr/local/Eiffel65/precomp/spec/linux-x86/base-mt.ecf", "PRECOMPILED_BASE_MT")
 
 			a_env.put ("", "EWEASEL_DOTNET_SETTING")
 
