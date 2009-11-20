@@ -22,38 +22,38 @@ feature -- Command
 			create l_info
 
 --			environment.*set
-			initial_environment (environment, "attach004")
+
 		end
 
 feature -- Test
 
-	new_test_attached004
-			-- New version of test attach004
-		local
-			l_output_path: EQA_SYSTEM_PATH
-			l_processor: EQA_EW_OUTPUT_PROCESSOR
-		do
-			create l_output_path.make_empty
+--	new_test_attached004
+--			-- New version of test attach004
+--		local
+--			l_output_path: EQA_SYSTEM_PATH
+--			l_processor: EQA_EW_OUTPUT_PROCESSOR
+--		do
+--			create l_output_path.make_empty
 
-			--Must use full path since current user's system environment virables not work
-			environment.put ("/usr/local/Eiffel65/studio/spec/linux-x86/bin/ec", "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
---			environment.put ("geant", "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
+--			--Must use full path since current user's system environment virables not work
+--			environment.put ("/usr/local/Eiffel65/studio/spec/linux-x86/bin/ec", "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
+----			environment.put ("geant", "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
 
-	--		environment.system ("ec") -- This feature is used for running ad-hoc executables
+--	--		environment.system ("ec") -- This feature is used for running ad-hoc executables
 
-			l_output_path.extend ("attach004")
-			prepare_system (l_output_path)
+--			l_output_path.extend ("attach004")
+--			prepare_system (l_output_path)
 
-			create l_processor.make (Current)
-			current_execution.set_output_processor (l_processor)
-			current_execution.set_error_processor (l_processor)
+--			create l_processor.make (Current)
+--			current_execution.set_output_processor (l_processor)
+--			current_execution.set_error_processor (l_processor)
 
-			environment.set_target_directory ("/home/larryliuming/eweasel/spec/linux-x86/bin")
+--			environment.set_target_directory ("/home/larryliuming/eweasel/spec/linux-x86/bin")
 
-			environment.set_source_directory ("/home/larryliuming/eweasel/")
+--			environment.set_source_directory ("/home/larryliuming/eweasel/")
 
-			run_system (<<>>)
-		end
+--			run_system (<<>>)
+--		end
 
 	new_test_attached004_1
 			-- New version of test attach004
@@ -61,21 +61,29 @@ feature -- Test
 --			test_setup.setup_one_test_case ("object-test-with-local-use-failure", "attach004", "tcf pass object_test attached_types ")
 --			test_name ("object-test-with-local-use-failure")
 --			test_description ("Ensures the locally scoped object test variable cannot be used in the test")
-			i.copy_raw ("test.e", "$CLUSTER", "test.e")
+			init_env (environment, "attach004")
+			copy_raw ("test.e", "$CLUSTER", "test.e")
 
-			i.copy_sub ("Ace", "$TEST", "Ace")
-			i.compile_melted (Void)
-			i.compile_result ("validity_error TEST VEEN")
+			copy_sub ("Ace", "$TEST", "Ace")
+			compile_melted (Void)
+			compile_result ("validity_error TEST VEEN")
 
 --			test_end
 		end
 
-feature {NONE} -- Implementation
-
-	i: EQA_EW_SYSTEM_TEST_INSTRUCTIONS
-			-- All new instructions
-		once
-			create Result.make (Current)
+	test_agent004 is
+			-- Test agent004
+		do
+--			test_setup.setup_one_test_case ("agent-crash", "agent004", "tcf pass agents ")
+--			test_name ("agent-crash")
+--			test_description ("When using an agent on a open target compiler crashes at degree 2.")
+			init_env (environment, "agent004")
+			copy_sub ("Ace", "$TEST", "Ace")
+			copy_raw ("test.e", "$CLUSTER", "test.e")
+			copy_raw ("test1.e", "$CLUSTER", "test1.e")
+			compile_melted (Void)
+			compile_result ("ok")
+--			test_end
 		end
 
 ;note

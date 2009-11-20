@@ -24,9 +24,16 @@ inherit
 			default_create
 		end
 
+	EQA_EW_SYSTEM_TEST_INSTRUCTIONS
+		export
+			{NONE} all
+		undefine
+			default_create
+		end
+
 feature {NONE} -- Initialization
 
-	initial_environment (a_env: EQA_SYSTEM_ENVIRONMENT; a_test_dir_name: STRING)
+	init_env (a_env: EQA_SYSTEM_ENVIRONMENT; a_test_dir_name: STRING)
 			-- Initial environment environment in which to
 			-- execute `test'.  The result may be safely
 			-- modified by the caller.

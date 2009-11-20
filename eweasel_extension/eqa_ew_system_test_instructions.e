@@ -11,20 +11,20 @@ note
 class
 	EQA_EW_SYSTEM_TEST_INSTRUCTIONS
 
-create
-	make
+--create
+--	make
 
-feature {NONE} -- Initialization
+--feature {NONE} -- Initialization
 
-	make (a_system_test: EQA_EW_SYSTEM_TEST_SET)
-			-- Creation method
-		require
-			not_void: attached a_system_test
-		do
-			test_set := a_system_test
-		ensure
-			set: test_set = a_system_test
-		end
+--	make (a_system_test: EQA_EW_SYSTEM_TEST_SET)
+--			-- Creation method
+--		require
+--			not_void: attached a_system_test
+--		do
+--			test_set := a_system_test
+--		ensure
+--			set: test_set = a_system_test
+--		end
 
 feature -- Command
 
@@ -143,6 +143,11 @@ feature {NONE} -- Implementation
 
 	test_set: EQA_EW_SYSTEM_TEST_SET
 			-- Test set that current managed
+		do
+			Result ?= Current
+		ensure
+			not_void: Result /= Void
+		end
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
