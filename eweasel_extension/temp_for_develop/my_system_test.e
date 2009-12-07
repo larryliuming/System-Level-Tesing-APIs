@@ -21,7 +21,7 @@ feature -- Command
 
 feature -- Test
 
-	new_test_attached004_1
+	new_test_attached004
 			-- New version of test attach004
 		do
 			init_env (environment, "attach004")
@@ -32,8 +32,8 @@ feature -- Test
 			compile_result ("validity_error TEST VEEN")
 		end
 
-	test_agent004 is
-			-- Test agent004
+	new_test_agent004 is
+			-- New version of test agent004
 		do
 			init_env (environment, "agent004")
 			copy_sub ("Ace", "$TEST", "Ace")
