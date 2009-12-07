@@ -19,9 +19,14 @@ inherit
 			{NONE} all
 		end
 
+	EQA_EW_TEST_INSTRUCTION
+		export
+			{NONE} all
+		end
+
 feature -- Command
 
-	execute
+	execute (a_test: EQA_EW_SYSTEM_TEST_SET) 
 			-- <Precursor>
 		local
 			l_name, l_compile_cmd, l_exec_error: STRING
@@ -73,29 +78,6 @@ feature -- Command
 		end
 
 feature {NONE} -- Query
-
-	executable_file_error (a_s: STRING): STRING
-			-- If file `a_s' does not exist or is not a file or
-			-- is not executable, string describing the
-			-- problem.  Void otherwise
-		local
-			l_f: RAW_FILE
-			l_fname: STRING
-		do
-			if a_s /= Void then
-				l_fname := a_s
-			else
-				l_fname := "(Void file name)"
-			end
-			create l_f.make (l_fname)
-			if not l_f.exists then
-				Result := "file " + l_fname + " not found"
-			elseif not l_f.is_plain then
-				Result := "file " + l_fname + " not a plain file"
-			elseif not l_f.is_executable then
-				Result := "file " + l_fname + " not executable"
-			end
-		end
 
 	compiler_arguments (a_test: EQA_EW_SYSTEM_TEST_SET; a_env: EQA_SYSTEM_ENVIRONMENT): LINKED_LIST [STRING]
 			-- The arguments to the compiler for test `test'.

@@ -16,6 +16,11 @@ inherit
 			{NONE} all
 		end
 
+	EQA_EW_TEST_INSTRUCTION
+		export
+			{NONE} all
+		end
+
 feature {NONE} -- Initialization
 
 	make (a_source_file, a_dest_directory, a_dest_file: STRING; a_test: EQA_EW_SYSTEM_TEST_SET)
@@ -46,9 +51,12 @@ feature -- Query
 	test_set: EQA_EW_SYSTEM_TEST_SET
 			-- The test set current managed
 
+	execute_ok: BOOLEAN
+			-- Was last call to `execute' successful?
+
 feature -- Commannd
 
-	execute
+	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
 			-- Execute `Current' as one of the
 			-- instructions of `test'.
 			-- Set `execute_ok' to indicate whether successful.

@@ -13,7 +13,7 @@ class
 inherit
 	EQA_SYSTEM_TEST_SET
 		export
-			{EQA_EW_COPY_INST, EQA_EW_START_COMPILE_INST, EQA_EW_EIFFEL_COMPILATION, EQA_SYSTEM_OUTPUT_PROCESSOR} environment
+			{EQA_EW_TEST_INSTRUCTION, EQA_EW_EIFFEL_COMPILATION, EQA_SYSTEM_OUTPUT_PROCESSOR} environment
 			{EQA_EW_EIFFEL_COMPILATION} run_system
 		end
 
@@ -121,7 +121,10 @@ feature {NONE} -- Initialization
 feature -- Query
 
 	ecf_name: STRING
-			-- Name of Ecf (ace) file for Eiffel compilations.
+			-- Name of Ecf (ace) file for Eiffel compilations
+
+	system_name: STRING
+			-- Name of executable file specified in Ace
 
 	copy_wait_required: BOOLEAN
 			-- Must we wait for one second before copying a
@@ -144,6 +147,9 @@ feature -- Query
 	e_compile_count: INTEGER
 			-- Number of Eiffel compilations started
 
+	execution_count: INTEGER;
+			-- Number of system executions started
+
 	e_compile_output_name: STRING
 			-- Name of file for output from current Eiffel
 			-- compilation
@@ -153,8 +159,20 @@ feature -- Query
 			Result.append_integer (e_compile_count)
 		end
 
+	execution_output_name: STRING
+			-- Name of file for output from current system
+			-- execution
+		do
+			create Result.make (0)
+			Result.append (Execution_output_prefix)
+			Result.append_integer (execution_count)
+		end
+
 	e_compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT
 			-- Result of the last Eiffel compilation.
+
+	execution_result: EQA_EW_EXECUTION_RESULT
+			-- Result of the last Eiffel system execution.
 
 feature -- Command
 
@@ -166,6 +184,12 @@ feature -- Command
 		ensure
 			wait_not_required: not copy_wait_required
 		end
+
+	increment_execution_count
+			-- Increment `execution_count' by 1
+		do
+			execution_count := execution_count + 1
+		end;
 
 	increment_e_compile_count
 			-- Increment `e_compile_count' by 1
@@ -197,6 +221,18 @@ feature -- Command
 			e_compilation_result := a_e
 		ensure
 			set: e_compilation_result = a_e
+		end
+
+	set_execution_result (a_e: EQA_EW_EXECUTION_RESULT)
+			-- Set `execution_result' with `a_e'
+		do
+			execution_result := a_e
+		end
+
+	set_system_name (a_name: STRING)
+			-- Set `system_name' with `a_name'
+		do
+			system_name := a_name
 		end
 
 feature {EQA_EW_EIFFEL_COMPILATION} -- Internal command
@@ -250,6 +286,10 @@ feature {NONE} -- Implementation
 			-- only have a resolution of one second)
 
 	Eiffel_compile_output_prefix: STRING = "e_compile"
+			-- File name prefix for Eiffel compile output
+
+	Execution_output_prefix: STRING = "execution"
+			-- File name prefix for execution output
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"

@@ -9,27 +9,34 @@ class EQA_EW_COMPILE_RESULT_INST
 --inherit
 --	EW_TEST_INSTRUCTION
 --	EW_STRING_UTILITIES
+inherit
+	EQA_EW_TEST_INSTRUCTION
+
+create
+	make
+
+feature {NONE} -- Intialization
+
+	make (a_expected_result: STRING)
+			-- Creation method
+		do
+			prepare_expected_compile_result (a_expected_result)
+		end
 
 feature -- Query
 
-	failure_explanation: STRING
-			-- Explanation of why last `initialize' or
-			-- `execute' which was not OK failed (Void
-			-- if no explanation available)
+	execute_ok: BOOLEAN
+			-- Was last call to `execute' successful?
 
 feature -- Command
 
-	execute (a_test: EQA_EW_SYSTEM_TEST_SET; a_expected_result: STRING)
+	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
 			-- Execute `Current' as one of the
 			-- instructions of `test'.
 			-- Set `execute_ok' to indicate whether successful.
-		require
-			not_void: attached a_expected_result
 		local
 			l_cr: EQA_EW_EIFFEL_COMPILATION_RESULT
 		do
-			prepare_expected_compile_result (a_expected_result)
-
 			l_cr := a_test.e_compilation_result
 			if l_cr = Void then
 				execute_ok := False
@@ -61,9 +68,6 @@ feature -- Command
 
 	init_ok: BOOLEAN
 			-- Was last call to `initialize' successful?
-
-	execute_ok: BOOLEAN
-			-- Was last call to `execute' successful?
 
 feature {NONE} -- Implementation
 

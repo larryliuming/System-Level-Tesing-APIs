@@ -30,16 +30,10 @@ feature -- Query
 			-- Name of file where output from compile is
 			-- to be placed
 
-feature -- Command
+	execute_ok: BOOLEAN
+			-- Was last call to `execute' successful?
 
-	execute
-			-- Execute `Current' as one of the
-			-- instructions of `test'.
-			-- Set `execute_ok' to indicate whether successful.
-		deferred
-		end
-
-note
+;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	source: "[

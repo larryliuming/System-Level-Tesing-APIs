@@ -41,7 +41,7 @@ feature -- Command
 			l_inst: EQA_EW_COPY_RAW_INST
 		do
 			create l_inst.make (a_source_file, a_dest_directory, a_dest_file, test_set)
-			l_inst.execute
+			l_inst.execute (test_set)
 		end
 
 	copy_sub (a_source_file, a_dest_directory, a_dest_file: STRING)
@@ -58,7 +58,7 @@ feature -- Command
 			l_inst: EQA_EW_COPY_SUB_INST
 		do
 			create l_inst.make (a_source_file, a_dest_directory, a_dest_file, test_set)
-			l_inst.execute
+			l_inst.execute (test_set)
 		end
 
 	compile_melted (a_output_filename: STRING)
@@ -79,8 +79,8 @@ feature -- Command
 		local
 			l_inst: EQA_EW_COMPILE_MELTED_INST
 		do
-			create l_inst.make (test_set, a_output_filename)
-			l_inst.execute
+			create l_inst.make (test_set, a_output_filename) 	--FIXME: pass `test_set' two times?
+			l_inst.execute (test_set)							--FIXME: pass `test_set' two times?
 		end
 
 	compile_result (a_result: STRING)
@@ -135,8 +135,21 @@ feature -- Command
 		local
 			l_inst: EQA_EW_COMPILE_RESULT_INST
 		do
-			create l_inst
-			l_inst.execute (test_set, a_result)
+			create l_inst.make (a_result)
+			l_inst.execute (test_set)
+		end
+
+	execute_work (a_input_file: STRING; a_output_file: STRING; a_args: STRING)
+			--	Execute the workbench version of the system named by the last
+			--	`system' instruction (or `test' if no previous system
+			--	instruction).  The system will get its input from `a_input_file'
+			--	in the source directory $SOURCE and will place its output in
+			--	`a_output-file' in the output directory $OUTPUT.  If present,
+			--	the optional `a_args' will be passed to the system as command
+			--	line arguments.  To specify no input file or no output file,
+			--	use the name NONE.
+		do
+
 		end
 
 feature {NONE} -- Implementation
