@@ -1,78 +1,78 @@
 note
 	description: "A C compilation result"
 	legal: "See notice at end of class."
-	status: "See notice at end of class.";
+	status: "See notice at end of class."
 	date: "93/08/30"
 
 class EQA_EW_C_COMPILATION_RESULT
 
 feature -- Properties
 
-	failure: BOOLEAN;
+	failure: BOOLEAN
 			-- Did an error occur while doing C compilations
 			-- and or links?
 
-	compilations_completed: BOOLEAN;
+	compilations_completed: BOOLEAN
 			-- Did all compilations/links finish successfully?
 
 	summary: STRING
 			-- Summary of `Current'
 		do
-			create Result.make (0);
+			create Result.make (0)
 			if failure then
-				Result.append ("failure ");
+				Result.append ("failure ")
 			else
-				Result.append ("no_failure ");
-			end;
+				Result.append ("no_failure ")
+			end
 			if compilations_completed then
-				Result.append ("C_compilation_completed");
+				Result.append ("C_compilation_completed")
 			else
-				Result.append ("C_compilation_not_completed");
-			end;
-		end;
+				Result.append ("C_compilation_not_completed")
+			end
+		end
 
 feature -- Update
 
-	set_compilations_completed (b: BOOLEAN)
+	set_compilations_completed (a_b: BOOLEAN)
 		do
-			compilations_completed := b;
-		end;
+			compilations_completed := a_b
+		end
 
-	update (line: STRING)
+	update (a_line: STRING)
 			-- Update `Current' to reflect the presence of
-			-- `line' as next line in C compilation process output.
+			-- `a_line' as next line in C compilation process output.
 		local
-			s: SEQ_STRING;
+			l_s: SEQ_STRING
 		do
-			create s.make (line.count);
-			s.append (line);
-			s.to_lower;
-			s.start;
-			s.search_string_after (Failure_string1, 0);
-			if not s.after then
-				failure := True;
-			end;
-			s.start;
-			s.search_string_after (Failure_string2, 0);
-			if not s.after then
-				failure := True;
-			end;
-			s.start;
-			s.search_string_after (Failure_string3, 0);
-			if not s.after then
-				failure := True;
-			end;
-			s.start;
-			s.search_string_after (Failure_string4, 0);
-			if not s.after then
-				failure := True;
-			end;
-			s.start;
-			s.search_string_after (Completed_string, 0);
-			if not s.after then
-				compilations_completed := True;
-			end;
-		end;
+			create l_s.make (a_line.count)
+			l_s.append (a_line)
+			l_s.to_lower
+			l_s.start
+			l_s.search_string_after (Failure_string1, 0)
+			if not l_s.after then
+				failure := True
+			end
+			l_s.start
+			l_s.search_string_after (Failure_string2, 0)
+			if not l_s.after then
+				failure := True
+			end
+			l_s.start
+			l_s.search_string_after (Failure_string3, 0)
+			if not l_s.after then
+				failure := True
+			end
+			l_s.start
+			l_s.search_string_after (Failure_string4, 0)
+			if not l_s.after then
+				failure := True
+			end
+			l_s.start
+			l_s.search_string_after (Completed_string, 0)
+			if not l_s.after then
+				compilations_completed := True
+			end
+		end
 
 feature -- Comparison
 
@@ -80,25 +80,25 @@ feature -- Comparison
 			-- Do `Current' and `other' represent the
 			-- same compilation result?
 		require
-			other_not_void: other /= Void;
+			other_not_void: other /= Void
 		do
-			Result := equal (Current, other);
-		end;
+			Result := equal (Current, other)
+		end
 
 
 feature {NONE} -- String constants
 
-	Failure_string1: STRING = "fatal error";
+	Failure_string1: STRING = "fatal error"
 
-	Failure_string2: STRING = "fatal:";
+	Failure_string2: STRING = "fatal:"
 
-	Failure_string3: STRING = " error ";
+	Failure_string3: STRING = " error "
 
-	Failure_string4: STRING = "waiting for unfinished jobs";
+	Failure_string4: STRING = "waiting for unfinished jobs"
 
-	Completed_string: STRING = "c compilation completed";
+	Completed_string: STRING = "c compilation completed"
 
-note
+;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	copying: "[
