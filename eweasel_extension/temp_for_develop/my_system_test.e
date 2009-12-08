@@ -43,6 +43,38 @@ feature -- Test
 			compile_result ("ok")
 		end
 
+	new_test_attach001 is
+			-- Test attach001
+		do
+--			test_setup.setup_one_test_case ("object-test-semantics", "attach001", "tcf pass execution object_test expanded attached_types ")
+--			test_name ("object-test-semantics")
+--			test_description ("Object test should succeed and fail as expected.")
+			copy_raw ("e.e", "$CLUSTER", "e.e")
+			copy_raw ("test.e", "$CLUSTER", "test.e")
+			copy_raw ("x.e", "$CLUSTER", "x.e")
+			copy_sub ("Ace", "$TEST", "Ace")
+			compile_melted (Void)
+			compile_result ("ok")
+			execute_work ("NONE", "exec_output_m", Void)
+			execute_result ("ok")
+			compare ("exec_output_m", "output")
+			compile_frozen ("")
+			compile_result ("ok")
+			c_compile_work ("")
+			c_compile_result ("ok")
+			execute_work ("NONE", "exec_output_w", Void)
+			execute_result ("ok")
+			compare ("exec_output_w", "output")
+			compile_final ("")
+			compile_result ("ok")
+			c_compile_final (Void)
+			c_compile_result ("ok")
+			execute_final ("NONE", "exec_output_f", Void)
+			execute_result ("ok")
+			compare ("exec_output_f", "output")
+--			test_end
+		end
+
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
