@@ -27,7 +27,7 @@ feature {NONE} -- Creation method
 			not_void: attached a_test_set
 		local
 			l_args: ARRAY [STRING]
-			l_processor: EQA_EW_OUTPUT_PROCESSOR
+			l_processor: EQA_EW_COMPILATION_OUTPUT_PROCESSOR
 		do
 --			process_make (cmd, args, Void, Void, save)
 			a_test_set.environment.put (a_cmd, "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?

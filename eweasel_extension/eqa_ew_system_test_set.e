@@ -13,8 +13,8 @@ class
 inherit
 	EQA_SYSTEM_TEST_SET
 		export
-			{EQA_EW_TEST_INSTRUCTION, EQA_EW_EIFFEL_COMPILATION, EQA_SYSTEM_OUTPUT_PROCESSOR} environment
-			{EQA_EW_EIFFEL_COMPILATION} run_system
+			{EQA_EW_TEST_INSTRUCTION, EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION, EQA_SYSTEM_OUTPUT_PROCESSOR} environment
+			{EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION} run_system
 		end
 
 	EQA_EW_OS_ACCESS
@@ -235,7 +235,7 @@ feature -- Command
 			system_name := a_name
 		end
 
-feature {EQA_EW_EIFFEL_COMPILATION} -- Internal command
+feature {EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION} -- Internal command
 
 	set_output_path (a_path: STRING)
 			-- Set `a_path' as system execution output file name
@@ -250,7 +250,7 @@ feature {EQA_EW_EIFFEL_COMPILATION} -- Internal command
 			current_execution.set_output_path (l_path)
 		end
 
-	set_output_processor (a_processor: EQA_EW_OUTPUT_PROCESSOR)
+	set_output_processor (a_processor: EQA_SYSTEM_OUTPUT_PROCESSOR)
 			-- Set `a_process' as system execution output processor
 		require
 			not_void: attached a_processor

@@ -4,7 +4,7 @@ note
 	revision: "$Revision$"
 
 class
-	EQA_EW_COMPILATION_OUTPUT_PROCESSOR
+	EQA_EW_EXECUTION_OUTPUT_PROCESSOR
 
 inherit
 	EQA_SYSTEM_OUTPUT_PROCESSOR
@@ -50,7 +50,7 @@ feature -- Command
 
 feature -- Query
 
-	compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT
+	execution_result: EQA_EW_EXECUTION_RESULT
 			-- Compilation result
 
 feature {NONE} -- Implementation
@@ -63,10 +63,10 @@ feature {NONE} -- Implementation
 	on_new_line
 			-- <Precursor>
 		do
-			if not attached compilation_result then
-				create compilation_result
+			if not attached execution_result then
+				create execution_result
 			end
-			compilation_result.update (buffer.twin)
+			execution_result.update (buffer.twin)
 			-- Write to output file
 
 			cached_whole_file.append (buffer.twin + "%N")

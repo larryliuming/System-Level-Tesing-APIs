@@ -65,8 +65,8 @@ feature -- Command
 						end
 					end
 					if execute_ok then
-						create l_execution.make (l_prog, arguments, l_execute_cmd, l_exec_dir, l_infile, l_outfile, l_savefile)
-						a_test.set_execution_result (l_execution.next_execution_result)
+						create l_execution.make (l_prog, arguments, l_execute_cmd, l_exec_dir, l_infile, l_outfile, l_savefile, a_test)
+--						a_test.set_execution_result (l_execution.next_execution_result)
 					end
 				else
 					failure_explanation := l_exec_error
