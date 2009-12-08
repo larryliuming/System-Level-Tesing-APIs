@@ -13,8 +13,8 @@ class
 inherit
 	EQA_SYSTEM_TEST_SET
 		export
-			{EQA_EW_TEST_INSTRUCTION, EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION, EQA_SYSTEM_OUTPUT_PROCESSOR} environment
-			{EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION} run_system
+			{EQA_EW_TEST_INSTRUCTION, EQA_EW_EIFFEL_COMPILATION, EQA_EW_C_COMPILATION, EQA_EW_SYSTEM_EXECUTION, EQA_SYSTEM_OUTPUT_PROCESSOR} environment
+			{EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION, EQA_EW_C_COMPILATION} run_system
 		end
 
 	EQA_EW_OS_ACCESS
@@ -147,6 +147,9 @@ feature -- Query
 	e_compile_count: INTEGER
 			-- Number of Eiffel compilations started
 
+	c_compile_count: INTEGER
+			-- Number of C compilations started
+
 	execution_count: INTEGER;
 			-- Number of system executions started
 
@@ -157,6 +160,15 @@ feature -- Query
 			create Result.make (0)
 			Result.append (Eiffel_compile_output_prefix)
 			Result.append_integer (e_compile_count)
+		end
+
+	c_compile_output_name: STRING
+			-- Name of file for output from current C
+			-- compilation
+		do
+			create Result.make (0)
+			Result.append (C_compile_output_prefix)
+			Result.append_integer (c_compile_count)
 		end
 
 	execution_output_name: STRING
@@ -170,6 +182,9 @@ feature -- Query
 
 	e_compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT
 			-- Result of the last Eiffel compilation.
+
+	c_compilation_result: EQA_EW_C_COMPILATION_RESULT
+			-- Result of the last C compilation.
 
 	execution_result: EQA_EW_EXECUTION_RESULT
 			-- Result of the last Eiffel system execution.
@@ -195,6 +210,12 @@ feature -- Command
 			-- Increment `e_compile_count' by 1
 		do
 			e_compile_count := e_compile_count + 1
+		end
+
+	increment_c_compile_count
+			-- Increment `c_compile_count' by 1
+		do
+			c_compile_count := c_compile_count + 1
 		end
 
 	set_e_compile_start_time (a_t: INTEGER)
@@ -223,6 +244,14 @@ feature -- Command
 			set: e_compilation_result = a_e
 		end
 
+	set_c_compilation_result (a_c: EQA_EW_C_COMPILATION_RESULT)
+			-- Set `c_compilation_result' with `a_c'
+		do
+			c_compilation_result := a_c
+		ensure
+			set: c_compilation_result = a_c
+		end
+
 	set_execution_result (a_e: EQA_EW_EXECUTION_RESULT)
 			-- Set `execution_result' with `a_e'
 		do
@@ -235,7 +264,7 @@ feature -- Command
 			system_name := a_name
 		end
 
-feature {EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION} -- Internal command
+feature {EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION, EQA_EW_C_COMPILATION} -- Internal command
 
 	set_output_path (a_path: STRING)
 			-- Set `a_path' as system execution output file name
@@ -287,6 +316,9 @@ feature {NONE} -- Implementation
 
 	Eiffel_compile_output_prefix: STRING = "e_compile"
 			-- File name prefix for Eiffel compile output
+
+	C_compile_output_prefix: STRING = "c_compile";
+			-- File name prefix for C compile output
 
 	Execution_output_prefix: STRING = "execution"
 			-- File name prefix for execution output

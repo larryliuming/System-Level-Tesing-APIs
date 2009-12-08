@@ -246,9 +246,11 @@ feature -- Command
 			--	to a file with an unadvertised but obvious name (which could
 			--	possibly change) in the output directory.
 		local
---			l_inst: EW_TEST_INSTRUCTION
+			l_inst: EQA_EW_C_COMPILE_WORK_INST
 --			l_temp: STRING
 		do
+			create l_inst.make (a_output_filename)
+			l_inst.execute (test_set)
 --			l_inst := test_command_table.item (C_compile_work_keyword)
 --			if a_output_filename = Void then
 --				l_temp := ""
