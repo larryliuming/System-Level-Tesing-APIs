@@ -79,8 +79,8 @@ feature -- Command
 		local
 			l_inst: EQA_EW_COMPILE_MELTED_INST
 		do
-			create l_inst.make (test_set, a_output_filename) 	--FIXME: pass `test_set' two times?
-			l_inst.execute (test_set)							--FIXME: pass `test_set' two times?
+			create l_inst.make (a_output_filename)
+			l_inst.execute (test_set)
 		end
 
 	compile_result (a_result: STRING)
@@ -221,7 +221,7 @@ feature -- Command
 			l_inst: EQA_EW_COMPILE_FROZEN_INST
 --			l_temp: STRING
 		do
-			create l_inst.make (test_set, a_output_filename)
+			create l_inst.make (a_output_filename)
 
 			l_inst.execute (test_set)
 --			l_inst := test_command_table.item (Compile_frozen_keyword)
@@ -289,7 +289,7 @@ feature -- Command
 			l_inst: EQA_EW_COMPILE_FINAL_INST
 --			l_temp: STRING
 		do
-			create l_inst.make (test_set, a_output_filename)
+			create l_inst.make (a_output_filename)
 			l_inst.execute (test_set)
 --			l_inst := test_command_table.item (Compile_final_keyword)
 --			if a_output_filename = Void then

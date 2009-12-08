@@ -26,7 +26,7 @@ inherit
 
 feature -- Command
 
-	execute (a_test: EQA_EW_SYSTEM_TEST_SET) 
+	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
 			-- <Precursor>
 		local
 			l_name, l_compile_cmd, l_exec_error: STRING
@@ -39,30 +39,30 @@ feature -- Command
 			-- is current directory
 
 			l_curr_dir := current_working_directory
-			l_test_dir := test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name)
+			l_test_dir := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name)
 			-- FIXME: remove if -project_path works
 			-- if test_dir /= Void then
 			-- 	change_working_directory (test_dir);
 			-- end
-			l_compilation := test_set.e_compilation
+			l_compilation := a_test.e_compilation
 			if l_compilation = Void or else not l_compilation.suspended then
-				l_compile_cmd := test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Compile_command_name)
+				l_compile_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Compile_command_name)
 				l_exec_error := executable_file_error (l_compile_cmd)
 				if l_exec_error = Void then
-					test_set.increment_e_compile_count
-					test_set.set_e_compile_start_time (os.current_time_in_seconds)
+					a_test.increment_e_compile_count
+					a_test.set_e_compile_start_time (os.current_time_in_seconds)
 					if output_file_name /= Void then
 						l_name := output_file_name
 					else
-						l_name := test_set.e_compile_output_name
+						l_name := a_test.e_compile_output_name
 					end
---					create l_file_name.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), l_name>>)
+--					create l_file_name.make (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), l_name>>)
 					create l_file_name.make (<<l_name>>)
 --					l_name := os.full_file_name (,)
 					l_name := l_file_name.as_string
-					create l_compilation.make (l_compile_cmd, compiler_arguments (test_set, test_set.environment), l_name, test_set)
-					test_set.set_e_compilation (l_compilation)
---					test_set.set_e_compilation_result (l_compilation.next_compile_result)
+					create l_compilation.make (l_compile_cmd, compiler_arguments (a_test, a_test.environment), l_name, a_test)
+					a_test.set_e_compilation (l_compilation)
+--					a_test.set_e_compilation_result (l_compilation.next_compile_result)
 --					execute_ok := True
 				else
 					assert.assert (l_exec_error, False)
