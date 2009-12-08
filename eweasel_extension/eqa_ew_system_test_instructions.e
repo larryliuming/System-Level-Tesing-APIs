@@ -212,20 +212,18 @@ feature -- Command
 			create l_inst.make (a_output_filename + " " + a_correct_output_filename)
 
 			l_inst.execute (test_set)
---			l_inst := test_command_table.item (Compare_keyword)
-
---			init_command (l_inst, "compare", a_output_filename + " " + a_correct_output_filename)
-
---			execute_inst (l_inst)
 		end
 
 	Compile_frozen (a_output_filename: STRING)
 			-- Similar to `Compile_melted'
 			-- Compile_frozen requests freezing of the system
 		local
---			l_inst: EW_TEST_INSTRUCTION
+			l_inst: EQA_EW_COMPILE_FROZEN_INST
 --			l_temp: STRING
 		do
+			create l_inst.make (test_set, a_output_filename)
+
+			l_inst.execute (test_set)
 --			l_inst := test_command_table.item (Compile_frozen_keyword)
 --			if a_output_filename = Void then
 --				l_temp := ""

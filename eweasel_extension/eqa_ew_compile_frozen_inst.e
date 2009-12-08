@@ -1,14 +1,10 @@
 note
-	description: "[
-					Summary description for {EQA_EW_COMPILE_MELTED_INST}.
-					
-					For old version, pleaase check {EW_COMPILE_MELTED_INST}
-																					]"
+	description: "Summary description for {EQA_EW_COMPILE_FORZEN_INST}."
 	date: "$Date$"
 	revision: "$Revision$"
 
 class
-	EQA_EW_COMPILE_MELTED_INST
+	EQA_EW_COMPILE_FROZEN_INST
 
 inherit
 	EQA_EW_START_COMPILE_INST
@@ -23,8 +19,8 @@ feature {NONE} -- Implementation
 		once
 			create {ARRAYED_LIST [STRING]} Result.make (1)
 			Result.extend ("-verbose")
-			Result.extend ("-melt")
-		end
+			Result.extend ("-freeze")
+		end;
 
 note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
