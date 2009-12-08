@@ -207,8 +207,11 @@ feature -- Command
 			not_void: a_output_filename /= Void
 			not_void: a_correct_output_filename /= Void
 		local
---			l_inst: EW_TEST_INSTRUCTION
+			l_inst: EQA_EW_COMPARE_INST
 		do
+			create l_inst.make (a_output_filename + " " + a_correct_output_filename)
+
+			l_inst.execute (test_set)
 --			l_inst := test_command_table.item (Compare_keyword)
 
 --			init_command (l_inst, "compare", a_output_filename + " " + a_correct_output_filename)
