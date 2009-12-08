@@ -286,9 +286,11 @@ feature -- Command
 			-- Similar to `Compile_melted'
 			-- Compile_final requests finalizing of the system with assertions discarded
 		local
---			l_inst: EW_TEST_INSTRUCTION
+			l_inst: EQA_EW_COMPILE_FINAL_INST
 --			l_temp: STRING
 		do
+			create l_inst.make (test_set, a_output_filename)
+			l_inst.execute (test_set)
 --			l_inst := test_command_table.item (Compile_final_keyword)
 --			if a_output_filename = Void then
 --				l_temp := ""
