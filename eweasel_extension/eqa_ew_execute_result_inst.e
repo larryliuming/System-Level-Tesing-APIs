@@ -8,9 +8,19 @@ class EQA_EW_EXECUTE_RESULT_INST
 
 inherit
 	EQA_EW_TEST_INSTRUCTION
---	EW_STRING_UTILITIES
 
-feature
+create
+	make
+
+feature {NONE} -- Intialization
+
+	make (a_result: STRING)
+			-- Creation method
+		require
+			not_void: attached a_result
+		do
+			inst_initialize (a_result)
+		end
 
 	inst_initialize (a_line: STRING)
 			-- Initialize instruction from `a_line'.  Set
@@ -57,6 +67,8 @@ feature
 			end
 		end
 
+feature -- Command
+
 	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
 			-- Execute `Current' as one of the
 			-- instructions of `a_test'.
@@ -83,6 +95,8 @@ feature
 				a_test.set_execution_result (Void)
 			end
 		end
+
+feature {NONE} -- Implementation
 
 	init_ok: BOOLEAN
 			-- Was last call to `initialize' successful?

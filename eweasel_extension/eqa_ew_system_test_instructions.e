@@ -188,11 +188,12 @@ feature -- Command
 		require
 			not_void: a_result /= Void
 		local
---			l_inst: EW_TEST_INSTRUCTION
+			l_inst: EQA_EW_EXECUTE_RESULT_INST
 		do
+			create l_inst.make (a_result)
 --			l_inst := test_command_table.item (Execute_result_keyword)
 --			init_command (l_inst, "execute_result", a_result)
---			execute_inst (l_inst)
+			l_inst.execute (test_set)
 		end
 
 	Compare (a_output_filename, a_correct_output_filename: STRING)
