@@ -1,98 +1,98 @@
 note
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
-	keywords: "Eiffel test";
+	keywords: "Eiffel test"
 	date: "93/08/30"
 
 class EQA_EW_EXECUTE_RESULT_INST
 
 inherit
 	EQA_EW_TEST_INSTRUCTION
---	EW_STRING_UTILITIES;
+--	EW_STRING_UTILITIES
 
 feature
 
-	inst_initialize (line: STRING)
-			-- Initialize instruction from `line'.  Set
+	inst_initialize (a_line: STRING)
+			-- Initialize instruction from `a_line'.  Set
 			-- `init_ok' to indicate whether
 			-- initialization was successful.
 		local
-			words: LIST [STRING];
-			count: INTEGER;
-			er: EQA_EW_EXECUTION_RESULT;
-			type: STRING;
+			l_words: LIST [STRING]
+			l_count: INTEGER
+			l_er: EQA_EW_EXECUTION_RESULT
+			l_type: STRING
 		do
-			words := string_util.broken_into_words (line);
-			count := words.count;
-			if count /= 1 then
-				init_ok := False;
-				failure_explanation := "exactly one argument required";
+			l_words := string_util.broken_into_words (a_line)
+			l_count := l_words.count
+			if l_count /= 1 then
+				init_ok := False
+				failure_explanation := "exactly one argument required"
 			else
-				create er;
-				type := words.first;
-				type.to_lower;
-				if equal (type, "ok") then
-					er.set_execution_finished (True);
-					er.set_execution_failure (False);
-					init_ok := True;
-				elseif equal (type, "failed") then
-					er.set_execution_finished (False);
-					er.set_execution_failure (True);
-					init_ok := True;
-				elseif equal (type, "failed_silently") then
-					er.set_execution_finished (False);
-					er.set_execution_failure (False);
-					init_ok := True;
-				elseif equal (type, "completed_but_failed") then
-					er.set_execution_finished (True);
-					er.set_execution_failure (True);
-					init_ok := True;
+				create l_er
+				l_type := l_words.first
+				l_type.to_lower
+				if equal (l_type, "ok") then
+					l_er.set_execution_finished (True)
+					l_er.set_execution_failure (False)
+					init_ok := True
+				elseif equal (l_type, "failed") then
+					l_er.set_execution_finished (False)
+					l_er.set_execution_failure (True)
+					init_ok := True
+				elseif equal (l_type, "failed_silently") then
+					l_er.set_execution_finished (False)
+					l_er.set_execution_failure (False)
+					init_ok := True
+				elseif equal (l_type, "completed_but_failed") then
+					l_er.set_execution_finished (True)
+					l_er.set_execution_failure (True)
+					init_ok := True
 				else
-					init_ok := False;
-					create failure_explanation.make (0);
-					failure_explanation.append ("unknown keyword: ");
-					failure_explanation.append (type);
-				end;
-				expected_execution_result := er;
+					init_ok := False
+					create failure_explanation.make (0)
+					failure_explanation.append ("unknown keyword: ")
+					failure_explanation.append (l_type)
+				end
+				expected_execution_result := l_er
 			end
-		end;
+		end
 
-	execute (test: EQA_EW_SYSTEM_TEST_SET)
+	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
 			-- Execute `Current' as one of the
-			-- instructions of `test'.
+			-- instructions of `a_test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			er: EQA_EW_EXECUTION_RESULT
+			l_er: EQA_EW_EXECUTION_RESULT
 		do
-			er := test.execution_result;
-			if er = Void then
-				execute_ok := False;
-				create failure_explanation.make (0);
-				failure_explanation.append ("no pending execution result to check");
+			l_er := a_test.execution_result
+			if l_er = Void then
+				execute_ok := False
+				create failure_explanation.make (0)
+				failure_explanation.append ("no pending execution result to check")
 
 			else
-				execute_ok := er.matches (expected_execution_result);
+				execute_ok := l_er.matches (expected_execution_result)
 				if not execute_ok then
-					create failure_explanation.make (0);
-					failure_explanation.append ("actual execution result does not match expected result%N");
-					failure_explanation.append ("Actual result:%N");
-					failure_explanation.append (test.execution_result.summary);
-					failure_explanation.append ("%NExpected result:%N");
-					failure_explanation.append (expected_execution_result.summary);
+					create failure_explanation.make (0)
+					failure_explanation.append ("actual execution result does not match expected result%N")
+					failure_explanation.append ("Actual result:%N")
+					failure_explanation.append (a_test.execution_result.summary)
+					failure_explanation.append ("%NExpected result:%N")
+					failure_explanation.append (expected_execution_result.summary)
 				end
-				test.set_execution_result (Void);
+				a_test.set_execution_result (Void)
 			end
-		end;
+		end
 
-	init_ok: BOOLEAN;
+	init_ok: BOOLEAN
 			-- Was last call to `initialize' successful?
 
-	execute_ok: BOOLEAN;
+	execute_ok: BOOLEAN
 			-- Was last call to `execute' successful?
 
 feature {NONE} -- Implementation
 
-	expected_execution_result: EQA_EW_EXECUTION_RESULT;
+	expected_execution_result: EQA_EW_EXECUTION_RESULT
 			-- Result expected from system compilation
 
 	string_util: EQA_EW_STRING_UTILITIES
@@ -101,7 +101,7 @@ feature {NONE} -- Implementation
 			create Result
 		end
 
-note
+;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	copying: "[
