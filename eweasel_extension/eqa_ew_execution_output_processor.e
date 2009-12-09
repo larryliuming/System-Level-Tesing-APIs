@@ -18,7 +18,7 @@ create
 
 feature {NONE} -- Initializatin
 
-	make (a_test_set: EQA_EW_SYSTEM_TEST_SET)
+	make (a_test_set: EQA_EW_SYSTEM_TEST_SET; a_output_file: STRING)
 			-- Creation method
 		require
 			not_void: attached a_test_set
@@ -26,8 +26,10 @@ feature {NONE} -- Initializatin
 			initialize_buffer
 			test_set := a_test_set
 			create cached_whole_file.make_empty
+			output_file_name := a_output_file
 		ensure
 			set: test_set = a_test_set
+			set: output_file_name = a_output_file
 		end
 
 feature -- Command
@@ -37,10 +39,16 @@ feature -- Command
 		local
 			l_file: PLAIN_TEXT_FILE
 			l_path: EQA_SYSTEM_PATH
+			l_output: STRING
 		do
-			create l_path.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), test_set.e_compile_output_name>>)
+			if attached output_file_name then
+				l_output := output_file_name
+			else
+				create l_path.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), test_set.execution_output_name>>)
+				l_output := l_path.as_string
+			end
 
-			create l_file.make (l_path.as_string)
+			create l_file.make (l_output)
 			l_file.open_read_append
 
 			l_file.put_string (cached_whole_file)
@@ -52,6 +60,9 @@ feature -- Query
 
 	execution_result: EQA_EW_EXECUTION_RESULT
 			-- Compilation result
+
+	output_file_name: detachable STRING
+			-- Output file name, full path
 
 feature {NONE} -- Implementation
 

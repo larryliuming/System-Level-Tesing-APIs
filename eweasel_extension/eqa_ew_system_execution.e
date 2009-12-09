@@ -46,14 +46,15 @@ feature {NONE} -- Intialization
 
 --			savefile_name := a_outf
 
-			create l_processor.make (a_test_set)
+			create l_processor.make (a_test_set, a_savef)
 			a_test_set.set_output_processor (l_processor)
 
-			if attached a_outf then
-				a_test_set.set_output_path (a_outf)
-			else
-				a_test_set.set_output_path (a_test_set.execution_output_name)
-			end
+-- FIXME: what is following `set_output_path' really used for...?
+--			if attached a_savef then
+--				a_test_set.set_output_path (a_savef)
+--			else
+--				a_test_set.set_output_path (a_test_set.execution_output_name)
+--			end
 
 			a_test_set.run_system (l_args)
 
