@@ -48,7 +48,12 @@ feature {NONE} -- Intialization
 
 			create l_processor.make (a_test_set)
 			a_test_set.set_output_processor (l_processor)
-			a_test_set.set_output_path (a_outf)
+
+			if attached a_outf then
+				a_test_set.set_output_path (a_outf)
+			else
+				a_test_set.set_output_path (a_test_set.execution_output_name)
+			end
 
 			a_test_set.run_system (l_args)
 

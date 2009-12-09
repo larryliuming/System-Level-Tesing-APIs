@@ -19,11 +19,6 @@ inherit
 			{NONE} all
 		end
 
-	EQA_EW_TEST_INSTRUCTION
-		export
-			{NONE} all
-		end
-
 feature -- Command
 
 	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
@@ -113,12 +108,6 @@ feature {NONE} -- Query
 		deferred
 		ensure
 			result_exists: Result /= Void
-		end
-
-	assert: EQA_COMMONLY_USED_ASSERTIONS
-			-- Assert utilities
-		once
-			create Result
 		end
 
 ;note

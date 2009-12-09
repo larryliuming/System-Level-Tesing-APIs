@@ -165,12 +165,6 @@ feature -- Commannd
 
 feature {NONE} -- Implementation
 
-	assert: EQA_COMMONLY_USED_ASSERTIONS
-			-- Assert utilities
-		once
-			create Result
-		end
-
 	new_file (a_file_name: STRING): FILE
 			-- Create an instance of FILE.
 		require

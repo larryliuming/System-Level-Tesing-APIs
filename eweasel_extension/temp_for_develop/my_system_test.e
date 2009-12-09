@@ -49,6 +49,7 @@ feature -- Test
 --			test_setup.setup_one_test_case ("object-test-semantics", "attach001", "tcf pass execution object_test expanded attached_types ")
 --			test_name ("object-test-semantics")
 --			test_description ("Object test should succeed and fail as expected.")
+			init_env (environment, "attach001")
 			copy_raw ("e.e", "$CLUSTER", "e.e")
 			copy_raw ("test.e", "$CLUSTER", "test.e")
 			copy_raw ("x.e", "$CLUSTER", "x.e")

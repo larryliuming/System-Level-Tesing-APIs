@@ -163,12 +163,6 @@ feature {NONE} -- Implementation
 			created: attached expected_compile_result
 		end
 
-	assert: EQA_COMMONLY_USED_ASSERTIONS
-			-- Assert utilities
-		once
-			create Result
-		end
-
 	expected_compile_result: EQA_EW_EIFFEL_COMPILATION_RESULT
 			-- Result expected from compilation
 

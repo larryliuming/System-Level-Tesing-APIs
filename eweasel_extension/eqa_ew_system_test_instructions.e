@@ -148,10 +148,19 @@ feature -- Command
 			--	the optional `a_args' will be passed to the system as command
 			--	line arguments.  To specify no input file or no output file,
 			--	use the name NONE.
+		require
+			not_void: attached a_input_file
+			not_void: attached a_output_file
 		local
 			l_inst: EQA_EW_EXECUTE_WORK_INST
+			l_temp: STRING
 		do
-			create l_inst
+			l_temp := a_input_file + " " + a_output_file
+			if a_args /= Void then
+				l_temp := l_temp + " " + a_args
+			end
+
+			create l_inst.make (l_temp)
 			l_inst.execute (test_set)
 		end
 

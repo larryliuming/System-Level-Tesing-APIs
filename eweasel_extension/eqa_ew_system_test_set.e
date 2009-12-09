@@ -46,6 +46,8 @@ feature {NONE} -- Initialization
 			l_info: EQA_EVALUATION_INFO
 			l_source_dir_name, l_target_dir: EQA_SYSTEM_PATH
 		do
+--			test_set.set_system_name (a_test_dir_name)
+
 			ecf_name := "Ace"
 			create l_info
 --			create l_path.make_from_string (l_info.test_directory) -- This is target directory
@@ -84,9 +86,9 @@ feature {NONE} -- Initialization
 			l_gen_dir := full_directory_name (l_test_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Eiffel_gen_directory)
 			l_gen_dir := full_directory_name (l_gen_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Default_system_name)
 			l_exec_dir := full_directory_name (l_gen_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Work_c_code_directory)
-			a_env.put ({EQA_EW_PREDEFINED_VARIABLES}.Work_execution_dir_name, l_exec_dir)
+			a_env.put (l_exec_dir, {EQA_EW_PREDEFINED_VARIABLES}.Work_execution_dir_name)
 			l_exec_dir := full_directory_name (l_gen_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Final_c_code_directory)
-			a_env.put ({EQA_EW_PREDEFINED_VARIABLES}.Final_execution_dir_name, l_exec_dir)
+			a_env.put (l_exec_dir, {EQA_EW_PREDEFINED_VARIABLES}.Final_execution_dir_name)
 		end
 
 	associate (a_env: EQA_SYSTEM_ENVIRONMENT; a_var, a_dir: STRING)

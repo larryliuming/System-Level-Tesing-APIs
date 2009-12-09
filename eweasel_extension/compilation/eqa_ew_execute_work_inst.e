@@ -9,6 +9,9 @@ class
 inherit
 	EQA_EW_EXECUTE_INST
 
+create
+	make
+	
 feature {NONE} -- Implementation
 
 	execution_dir_name: STRING

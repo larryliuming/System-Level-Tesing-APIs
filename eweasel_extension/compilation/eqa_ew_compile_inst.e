@@ -6,6 +6,12 @@ note
 deferred class
 	EQA_EW_COMPILE_INST
 
+inherit
+	EQA_EW_TEST_INSTRUCTION
+		export
+			{NONE} all
+		end
+
 feature {NONE} -- Initialization
 
 	make (a_output_file_name: detachable STRING)

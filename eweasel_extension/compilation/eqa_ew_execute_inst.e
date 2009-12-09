@@ -9,7 +9,53 @@ deferred class
 inherit
 	EQA_EW_TEST_INSTRUCTION
 
+feature {NONE} -- Initialization
+
+	make (a_line: STRING)
+			-- Creation method
+		do
+			inst_initialize (a_line)
+		end
+
+	inst_initialize (a_line: STRING)
+			-- Initialize instruction from `a_line'.  Set
+			-- `init_ok' to indicate whether
+			-- initialization was successful.
+		local
+			l_args: LIST [STRING]
+		do
+			l_args := string_util.broken_into_words (a_line)
+			if l_args.count < 2 then
+				init_ok := False
+				failure_explanation := "must have at least 2 arguments"
+			else
+				input_file_name := l_args.i_th (1)
+				output_file_name := l_args.i_th (2)
+				if equal (input_file_name, No_file_name) then
+					input_file_name := Void
+				end
+				if equal (output_file_name, No_file_name) then
+					output_file_name := Void
+				end
+				create arguments.make
+				from
+					l_args.start
+					l_args.forth
+					l_args.forth
+				until
+					l_args.after
+				loop
+					arguments.extend (l_args.item)
+					l_args.forth
+				end
+				init_ok := True
+			end
+		end
+
 feature -- Query
+
+	init_ok: BOOLEAN;
+			-- Was last call to `initialize' successful?
 
 	execute_ok: BOOLEAN
 			-- Was last call to `execute' successful?
@@ -27,13 +73,14 @@ feature -- Command
 			l_execution: EQA_EW_SYSTEM_EXECUTION
 			l_path: EQA_SYSTEM_PATH
 		do
-			l_execute_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Execute_command_name)
-			l_execute_cmd := a_test.environment.substitute (l_execute_cmd)
-			l_exec_error := executable_file_error (l_execute_cmd)
-			if l_exec_error = Void then
+--			l_execute_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Execute_command_name)
+--			l_execute_cmd := a_test.environment.substitute (l_execute_cmd)
+--			l_exec_error := executable_file_error (l_execute_cmd)
+--			if l_exec_error = Void then
 				a_test.increment_execution_count
 				l_exec_dir := a_test.environment.value (execution_dir_name)
-				create l_path.make (<<l_exec_dir, a_test.system_name>>)
+--				create l_path.make (<<l_exec_dir, a_test.system_name>>)
+				create l_path.make (<<l_exec_dir, "test">>) -- FIXME: who set the name `test'?
 				l_prog := l_path.as_string
 				if input_file_name /= Void then
 					create l_path.make (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name), input_file_name>>)
@@ -41,7 +88,7 @@ feature -- Command
 				else
 					l_infile := Void
 				end
-				l_outfile := Void;	-- Pipe output back to parent
+				l_outfile := Void	-- Pipe output back to parent
 				if output_file_name /= Void then
 					l_savefile := output_file_name
 				else
@@ -73,11 +120,17 @@ feature -- Command
 					execute_ok := False
 				end
 
-			else
-				failure_explanation := l_exec_error
-				execute_ok := False
-			end
+--			else
+--				failure_explanation := l_exec_error
+--				execute_ok := False
+--			end
+			assert.assert (failure_explanation, execute_ok)
 		end
+
+feature {NONE} -- Constants
+
+	No_file_name: STRING = "NONE"
+			-- Constant for no file name
 
 feature {NONE} -- Implementation
 
@@ -93,6 +146,12 @@ feature {NONE} -- Implementation
 	execution_dir_name: STRING
 			-- Name of directory where executable resides
 		deferred
+		end
+
+	string_util: EQA_EW_STRING_UTILITIES
+			-- String utilities
+		once
+			create Result
 		end
 
 ;note
