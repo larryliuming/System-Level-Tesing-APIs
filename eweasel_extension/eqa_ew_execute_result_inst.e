@@ -94,6 +94,8 @@ feature -- Command
 				end
 				a_test.set_execution_result (Void)
 			end
+
+			assert (failure_explanation, execute_ok)
 		end
 
 feature {NONE} -- Implementation
