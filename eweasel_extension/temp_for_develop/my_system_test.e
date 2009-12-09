@@ -76,6 +76,38 @@ feature -- Test
 --			test_end
 		end
 
+	new_test_attach023 is
+			-- Test attach023
+		do
+--			test_setup.setup_one_test_case ("attached-wrong-initialization", "attach023", "tcf pass attached_types ")
+--			test_name ("attached-wrong-initialization")
+--			test_description ("An empty routine returing `like Current' without creating its result automaticall call `default_create' even if it is not an attached type or if `default_create' is not a valid creation procedure.")
+			init_env (environment, "attach023")
+
+			copy_raw ("test.e", "$CLUSTER", "test.e")
+			copy_sub ("Ace", "$TEST", "Ace")
+			compile_melted (Void)
+			compile_result ("ok")
+			execute_work ("NONE", "exec_output_m", Void)
+			execute_result ("ok")
+			compare ("exec_output_m", "output")
+			compile_frozen ("")
+			compile_result ("ok")
+			c_compile_work ("")
+			c_compile_result ("ok")
+			execute_work ("NONE", "exec_output_w", Void)
+			execute_result ("ok")
+			compare ("exec_output_w", "output")
+			compile_final ("")
+			compile_result ("ok")
+			c_compile_final (Void)
+			c_compile_result ("ok")
+			execute_final ("NONE", "exec_output_f", Void)
+			execute_result ("ok")
+			compare ("exec_output_f", "output")
+--			test_end
+		end
+
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
