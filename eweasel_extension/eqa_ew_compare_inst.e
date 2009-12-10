@@ -69,6 +69,9 @@ feature -- Command
 				failure_explanation := "file with expected output not a plain file"
 			end
 
+			if not execute_ok then
+				assert.assert (failure_explanation, execute_ok)
+			end
 		end
 
 	init_ok: BOOLEAN
@@ -92,12 +95,12 @@ feature {NONE}  -- Implementation
 		do
 			create l_diff.make
 
-			l_src := file_content (a_file1).to_array
-			l_dst := file_content (a_file2).to_array
+			l_src := file_content (a_file1)
+			l_dst := file_content (a_file2)
 
 			l_diff.compare (l_src, l_src)
 
-			Result := (l_diff.differing_lines.count = 0) -- Note: we can use {EQA_DIFF_UTILITY} to show more infomation
+			Result := not (attached l_diff.differing_lines) -- Note: we can use {EQA_DIFF_UTILITY} to show more infomation
 
 --			from
 --				a_file1.open_read
@@ -124,12 +127,14 @@ feature {NONE}  -- Implementation
 
 feature {NONE} -- Implementation
 
-	file_content (a_file: RAW_FILE): ARRAYED_LIST [STRING]
+	file_content (a_file: RAW_FILE): ARRAY [STRING]
 			-- Content of `a_file'
 		require
 			not_empty: attached a_file
+		local
+			l_arrayed_list: ARRAYED_LIST [STRING]
 		do
-			create Result.make (50)
+			create l_arrayed_list.make (50)
 			if a_file.exists then
 				from
 					a_file.open_read
@@ -139,8 +144,20 @@ feature {NONE} -- Implementation
 				loop
 					a_file.read_line
 
-					Result.extend (a_file.last_string)
+					l_arrayed_list.extend (a_file.last_string)
 				end
+			end
+
+			-- Cannot use `to_array' since, the result lower would be 1 but not 0 which is not acceptable by DIFF.compare
+			create Result.make (0, l_arrayed_list.count - 1)
+			from
+				l_arrayed_list.start
+			until
+				l_arrayed_list.after
+			loop
+				Result.put (l_arrayed_list.item, l_arrayed_list.index - 1)
+
+				l_arrayed_list.forth
 			end
 		ensure
 			not_void: attached Result
