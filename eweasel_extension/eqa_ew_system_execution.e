@@ -55,7 +55,8 @@ feature {NONE} -- Intialization
 			create l_processor.make (a_test_set, a_savef)
 			a_test_set.set_output_processor (l_processor)
 
--- FIXME: what is following `set_output_path' really used for...?
+			-- When {EQA_SYSTEM_EXECUTION}.launch, Testing library would open and write `set_output_path'
+			-- FIXME: what is following `set_output_path' really used for...?
 --			if attached a_savef then
 --				a_test_set.set_output_path (a_savef)
 --			else

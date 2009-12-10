@@ -47,7 +47,7 @@ feature -- Command
 				if l_exec_error = Void then
 					a_test.increment_e_compile_count
 					a_test.set_e_compile_start_time (os.current_time_in_seconds)
-					if output_file_name /= Void then
+					if output_file_name /= Void and then not output_file_name.is_empty then
 						l_name := output_file_name
 					else
 						l_name := a_test.e_compile_output_name
