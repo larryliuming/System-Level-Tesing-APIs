@@ -14,14 +14,20 @@ inherit
 
 feature {NONE} -- Initialization
 
-	make (a_line: STRING)
+	make (a_line: detachable STRING)
 			-- Initialize instruction from `a_line'.  Set
 			-- `init_ok' to indicate whether
 			-- initialization was successful.
 		local
 			l_args: LIST [STRING]
+			l_line: STRING
 		do
-			l_args := string_util.broken_into_words (a_line)
+			if attached a_line then
+				l_line := a_line
+			else
+				create l_line.make_empty
+			end
+			l_args := string_util.broken_into_words (l_line)
 			if l_args.count > 1 then
 				init_ok := False
 				failure_explanation := "must supply 0 or 1 argument"
