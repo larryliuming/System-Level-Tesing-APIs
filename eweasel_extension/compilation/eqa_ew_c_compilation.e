@@ -34,10 +34,9 @@ feature {NONE} -- Initialization
 --			l_system_process: EQA_SYSTEM_EXECUTION_PROCESS
 			l_processor: EQA_EW_C_COMPILATION_OUTPUT_PROCESSOR
 		do
-			a_test_set.environment.put (Shell_command, "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
+			a_test_set.environment.put (a_freeze_cmd, "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
 
 			create l_args.make (4)
-			l_args.extend (a_freeze_cmd)
 			l_args.extend (a_dir)
 			if a_max_procs > 0 then
 				l_args.extend ("-nproc")
@@ -78,10 +77,6 @@ feature {NONE} -- Initialization
 --				terminate
 --			end
 		end
-
-feature {NONE} -- Constant strings
-
-	Shell_command: STRING = "/bin/sh"
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"

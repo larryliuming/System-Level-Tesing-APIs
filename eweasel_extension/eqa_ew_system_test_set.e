@@ -154,6 +154,9 @@ feature -- Query
 			-- Eiffel compilation, if any
 			-- (possibly suspended and awaiting resumption)
 
+	c_compilation: EQA_EW_C_COMPILATION
+			-- Last C compilation, if any
+
 	e_compile_count: INTEGER
 			-- Number of Eiffel compilations started
 
@@ -252,6 +255,14 @@ feature -- Command
 			e_compilation_result := a_e
 		ensure
 			set: e_compilation_result = a_e
+		end
+
+	set_c_compilation (a_c: EQA_EW_C_COMPILATION)
+			-- Set `c_compilation' with `a_c'
+		do
+			c_compilation := a_c
+		ensure
+			set: c_compilation = a_c
 		end
 
 	set_c_compilation_result (a_c: EQA_EW_C_COMPILATION_RESULT)

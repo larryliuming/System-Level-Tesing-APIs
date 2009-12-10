@@ -38,7 +38,7 @@ feature -- Command
 			l_file: PLAIN_TEXT_FILE
 			l_path: EQA_SYSTEM_PATH
 		do
-			create l_path.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), test_set.e_compile_output_name>>)
+			create l_path.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), test_set.c_compile_output_name>>)
 
 			create l_file.make (l_path.as_string)
 			l_file.open_read_append
