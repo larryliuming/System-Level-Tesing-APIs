@@ -74,6 +74,10 @@ feature -- Command
 				end
 				a_test.set_c_compilation_result (Void)
 			end
+
+			if not execute_ok then
+				assert.assert (failure_explanation, execute_ok)
+			end
 		end
 
 feature -- Query
