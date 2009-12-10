@@ -1,8 +1,12 @@
 note
-	description: "An Eiffel syntax error"
+	description: "[
+					An Eiffel syntax error
+																	]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
-	date: "93/08/30"
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class EQA_EW_EIFFEL_SYNTAX_ERROR
 
@@ -34,14 +38,16 @@ feature -- Properties
 
 feature -- Modification
 
-	set_line_number (n: INTEGER)
+	set_line_number (a_n: INTEGER)
+			-- Set `line_number' with `a_n'
 		do
-			line_number := n
+			line_number := a_n
 		end
 
 feature -- Summary
 
 	summary: STRING
+			-- Summary description for current
 		do
 			create Result.make (0)
 			Result.append ("Syntax error in ")
@@ -59,16 +65,18 @@ feature -- Summary
 
 feature -- Comparison
 
-	is_equal (other: like Current): BOOLEAN
+	is_equal (a_other: like Current): BOOLEAN
+			-- <Precursor>
 		do
-			Result := equal (class_name, other.class_name) and
-				line_number = other.line_number
+			Result := equal (class_name, a_other.class_name) and
+				line_number = a_other.line_number
 		end
 
-	is_less alias "<" (other: like Current): BOOLEAN
+	is_less alias "<" (a_other: like Current): BOOLEAN
+			-- <Precursor>
 		do
-			Result := class_name < other.class_name or else
-				(equal (class_name, other.class_name) and line_number < other.line_number)
+			Result := class_name < a_other.class_name or else
+				(equal (class_name, a_other.class_name) and line_number < a_other.line_number)
 		end
 
 ;note

@@ -1,50 +1,52 @@
 note
-	description: "An Eiffel compiler"
+	description: "[
+					An Eiffel compiler output constants
+																								]"
 	legal: "See notice at end of class."
-	status: "See notice at end of class.";
-	keywords: "Eiffel test";
-	date: "93/08/30"
+	status: "See notice at end of class."
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class EQA_EW_EIFFEL_COMPILER_CONSTANTS
 
 feature -- Input prompts
 
-	Resume_prompt: STRING = "Press <Return> to resume compilation or <Q> to quit";
+	Resume_prompt: STRING = "Press <Return> to resume compilation or <Q> to quit"
 
-	Missing_precompile_prompt: STRING = "The project needs to use a precompile library, which has not been compiled.";
-
+	Missing_precompile_prompt: STRING = "The project needs to use a precompile library, which has not been compiled."
 
 feature -- Output constants
 
-	Pass_prefix: STRING = "[";
+	Pass_prefix: STRING = "["
 
-	Pass_string: STRING = "Degree";
+	Pass_string: STRING = "Degree"
 
-	Syntax_error_prefix: STRING = "Syntax error";
+	Syntax_error_prefix: STRING = "Syntax error"
 
-	Syntax_warning_prefix: STRING = "Obsolete syntax";
+	Syntax_warning_prefix: STRING = "Obsolete syntax"
 
-	Validity_error_prefix: STRING = "Error code:";
+	Validity_error_prefix: STRING = "Error code:"
 
-	Validity_warning_prefix: STRING = "Warning code:";
+	Validity_warning_prefix: STRING = "Warning code:"
 
-	Class_name_prefix: STRING = "Class:";
+	Class_name_prefix: STRING = "Class:"
 
-	Aborted_prefix: STRING = "ISE Eiffel: Session aborted";
+	Aborted_prefix: STRING = "ISE Eiffel: Session aborted"
 
-	Exception_prefix: STRING = "Exception tag: ";
+	Exception_prefix: STRING = "Exception tag: "
 
-	Exception_occurred_prefix: STRING = "Exception occurred";
+	Exception_occurred_prefix: STRING = "Exception occurred"
 
-	Failure_prefix: STRING = "ec: system execution failed.";
+	Failure_prefix: STRING = "ec: system execution failed."
 
-	Illegal_inst_prefix: STRING = "Illegal instruction";
+	Illegal_inst_prefix: STRING = "Illegal instruction"
 
-	Finished_prefix: STRING = "System Recompiled";
+	Finished_prefix: STRING = "System Recompiled"
 
-	Panic_string: STRING = " panic";
+	Panic_string: STRING = " panic"
 
-note
+;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	copying: "[

@@ -4,8 +4,11 @@ note
 					
 					For old version, please check {EW_EIFFEL_EWEASEL_TEST}
 																			]"
-	date: "$Date$"
-	revision: "$Revision$"
+	legal: "See notice at end of class."
+	status: "See notice at end of class."
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class
 	EQA_EW_SYSTEM_TEST_SET
@@ -46,13 +49,8 @@ feature {NONE} -- Initialization
 			l_info: EQA_EVALUATION_INFO
 			l_source_dir_name, l_target_dir, l_temp_path: EQA_SYSTEM_PATH
 		do
---			test_set.set_system_name (a_test_dir_name)
-
 			ecf_name := "Ace"
 			create l_info
---			create l_path.make_from_string (l_info.test_directory) -- This is target directory
-
---			l_test_dir := full_directory_name (l_path, a_test_dir_name) -- See {EWEASEL_TEST_CATALOG_SAMPLE}
 
 			-- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
 			-- Following environment vairable would be set by {EQA_EW_EIFFEL_COMPILATION}.make
@@ -67,13 +65,12 @@ feature {NONE} -- Initialization
 			a_env.set_source_directory ("/home/larryliuming/eweasel/tests")
 
 			create l_source_dir_name.make (<<a_env.source_directory, a_test_dir_name>>)
---			l_test_dir := file_system.build_source_path (l_source_dir_name) -- Cannot use {EQA_FILE_SYSTEM}.build_source_path since it adding additional string to path
+			-- l_test_dir := file_system.build_source_path (l_source_dir_name) -- Cannot use {EQA_FILE_SYSTEM}.build_source_path since it adding additional string to path
 			l_test_dir := l_source_dir_name.as_string
 			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.source_dir_name, l_test_dir)
 
 			-- FIXME: Cannot use `a_env.target_directory', since by default, {EQA_SYSTEM_ENVIRONMENT}.target_directory is "/temp" ?
 
---			create l_target_dir.make (<<a_env.current_working_directory, a_test_dir_name>>)
 			create l_target_dir.make (<<a_env.current_working_directory>>)
 			l_test_dir := l_target_dir.as_string
 			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name, l_test_dir)

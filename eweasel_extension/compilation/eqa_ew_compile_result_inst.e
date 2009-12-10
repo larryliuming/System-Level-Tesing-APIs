@@ -1,14 +1,60 @@
 note
+	description: "[
+					Check that the compilation result from the last
+					compile_melted, compile_frozen, compile_final or
+					resume_compile instruction matches <result>.  If it does not,
+					then the test has failed.  If the result matches <result>,
+					continue processing with the next test instruction.  To
+					specify no class for <class> below, use NONE (which matches
+					only if the compiler does not report the error in a particular
+					class).  <result> can be:
+
+					syntax_error  { <class> <line-number> ";" ... }+
+
+						Matches if compiler reported a syntax error on each
+						of the indicated classes at the given line numbers,
+						in the order indicated.
+						If <line-number> is omitted, then matches if
+						compiler reported a syntax error on class
+						<class>, regardless of position.  To specify
+						no class (which means "syntax error on the Ecf
+						file"), use NONE.
+
+					validity_error { <class> <validity-code-list> ";" ...}+
+
+						Matches if compiler reported the indicated
+						validity errors in the named classes in the
+						order listed.  This validity code list is a
+						white space separated list of validity codes
+						from "Eiffel: The Language".
+
+					validity_warning { <class> <validity-code-list> ";" ...}+
+
+						Matches if compiler reported the indicated
+						validity errors in the named classes in the
+						order listed.  This validity code list is a
+						white space separated list of validity codes
+						from "Eiffel: The Language".  This is
+						identical to validity_error, except that
+						the compilation is expected to complete
+						for validity_warning whereas it is expected
+						to be paused for validity_error.
+
+					ok
+
+						Matches if compiler did not report any syntax
+						or validity errors and no system failure or
+						run-time panic occurred and the system was
+						successfully recompiled.
+																								]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
 	keywords: "Eiffel test"
-	date: "93/08/30"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class EQA_EW_COMPILE_RESULT_INST
 
---inherit
---	EW_TEST_INSTRUCTION
---	EW_STRING_UTILITIES
 inherit
 	EQA_EW_TEST_INSTRUCTION
 
@@ -249,6 +295,14 @@ feature {NONE} -- Implementation
 			end
 		end
 
+	string_util: EQA_EW_STRING_UTILITIES
+			-- String utilities
+		once
+			create Result
+		end
+
+feature {NONE} -- Constants
+
 	No_class_name: STRING = "NONE"
 
 	Phrase_separator: CHARACTER = ';'
@@ -263,13 +317,7 @@ feature {NONE} -- Implementation
 
 	Validity_warning_result: STRING = "validity_warning"
 
-	string_util: EQA_EW_STRING_UTILITIES
-			-- String utilities
-		once
-			create Result
-		end
-
-note
+;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	copying: "[

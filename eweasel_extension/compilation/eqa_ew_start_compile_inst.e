@@ -1,7 +1,12 @@
 note
-	description: "Summary description for {EQA_EW_START_COMPILE_INST}."
-	date: "$Date$"
-	revision: "$Revision$"
+	description: "[
+					Ancestor class for all compilation instructions
+																								]"
+	legal: "See notice at end of class."
+	status: "See notice at end of class."
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 deferred class
 	EQA_EW_START_COMPILE_INST
@@ -35,10 +40,7 @@ feature -- Command
 
 			l_curr_dir := current_working_directory
 			l_test_dir := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name)
-			-- FIXME: remove if -project_path works
-			-- if test_dir /= Void then
-			-- 	change_working_directory (test_dir);
-			-- end
+
 			l_compilation := a_test.e_compilation
 			if l_compilation = Void or else not l_compilation.suspended then
 				l_compile_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Compile_command_name)
@@ -52,23 +54,22 @@ feature -- Command
 					else
 						l_name := a_test.e_compile_output_name
 					end
---					create l_file_name.make (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), l_name>>)
 					create l_file_name.make (<<l_name>>)
---					l_name := os.full_file_name (,)
+
 					l_name := l_file_name.as_string
 					create l_compilation.make (l_compile_cmd, compiler_arguments (a_test, a_test.environment), l_name, a_test)
 					a_test.set_e_compilation (l_compilation)
---					a_test.set_e_compilation_result (l_compilation.next_compile_result)
---					execute_ok := True
+
+					execute_ok := True
 				else
+					failure_explanation := l_exec_error
+					execute_ok := False
 					assert.assert (l_exec_error, False)
---					failure_explanation := exec_error
---					execute_ok := False
 				end
 			else
 				assert.assert ("suspended compilation in progress", False)
---				failure_explanation := "suspended compilation in progress"
---				execute_ok := False
+				failure_explanation := "suspended compilation in progress"
+				assert.assert (failure_explanation, False)
 			end
 			change_working_directory (l_curr_dir)
 		end
@@ -100,7 +101,6 @@ feature {NONE} -- Query
 			Result.extend ("-config")
 			create l_file_name.make (<<a_env.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name), a_test.ecf_name>>)
 			Result.extend (l_file_name.as_string)
---			Result.extend (os.full_file_name (, ))
 		end
 
 	compilation_options: LIST [STRING]
@@ -113,7 +113,26 @@ feature {NONE} -- Query
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
-	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
+	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
+	copying: "[
+			This file is part of the EiffelWeasel Eiffel Regression Tester.
+
+			The EiffelWeasel Eiffel Regression Tester is free
+			software; you can redistribute it and/or modify it under
+			the terms of the GNU General Public License version 2 as published
+			by the Free Software Foundation.
+
+			The EiffelWeasel Eiffel Regression Tester is
+			distributed in the hope that it will be useful, but
+			WITHOUT ANY WARRANTY; without even the implied warranty
+			of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+			See the GNU General Public License version 2 for more details.
+
+			You should have received a copy of the GNU General Public
+			License version 2 along with the EiffelWeasel Eiffel Regression Tester
+			if not, write to the Free Software Foundation,
+			Inc., 51 Franklin St, Fifth Floor, Boston, MA
+		]"
 	source: "[
 			Eiffel Software
 			5949 Hollister Ave., Goleta, CA 93117 USA
@@ -121,4 +140,6 @@ feature {NONE} -- Query
 			Website http://www.eiffel.com
 			Customer support http://support.eiffel.com
 		]"
+
+
 end

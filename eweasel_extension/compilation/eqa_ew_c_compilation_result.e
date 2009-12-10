@@ -1,8 +1,12 @@
 note
-	description: "A C compilation result"
+	description: "[
+					A C compilation result
+																]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
+	keywords: "Eiffel test"
 	date: "93/08/30"
+	revision: "$Revision: 79073 $"
 
 class EQA_EW_C_COMPILATION_RESULT
 

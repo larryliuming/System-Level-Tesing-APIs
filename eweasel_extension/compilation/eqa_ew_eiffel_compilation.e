@@ -1,11 +1,14 @@
 note
 	description: "[
-						Summary description for {EQA_EW_EIFFEL_COMPILATION}.
+						An Eiffel compilation
 						
 						For old version, please check {EW_EIFFEL_COMPILATION}
 																						]"
-	date: "$Date$"
-	revision: "$Revision$"
+	legal: "See notice at end of class."
+	status: "See notice at end of class."
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class
 	EQA_EW_EIFFEL_COMPILATION
@@ -29,7 +32,6 @@ feature {NONE} -- Creation method
 			l_args: ARRAY [STRING]
 			l_processor: EQA_EW_COMPILATION_OUTPUT_PROCESSOR
 		do
---			process_make (cmd, args, Void, Void, save)
 			a_test_set.environment.put (a_cmd, "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
 
 			from
@@ -43,9 +45,6 @@ feature {NONE} -- Creation method
 				a_args.forth
 			end
 
---			if savef /= Void then
---				create savefile.make_open_write (savef);
---			end
 			savefile_name := a_save
 
 			create l_processor.make (a_test_set)
@@ -56,9 +55,6 @@ feature {NONE} -- Creation method
 
 			l_processor.write_output_to_file
 			a_test_set.set_e_compilation_result (l_processor.compilation_result)
-		ensure
---			input_file_available: input /= Void
---			output_file_available: output /= Void
 		end
 
 feature -- Query
@@ -66,44 +62,9 @@ feature -- Query
 	suspended: BOOLEAN
 			-- Is process suspended awaiting user input?
 
---	next_compile_result: EQA_EW_EIFFEL_COMPILATION_RESULT
---			-- Next compile result
---			-- Delegate to EQA_EW_OUTPUT_PROCESSER and use EQA_EW_STRING_UTILITY to update line?
---		local
---			l_time_to_stop: BOOLEAN
---		do
---			create Result
---			from
---				read_line
---			until
---				end_of_file or time_to_stop
---			loop
---				savefile.put_string (last_string)
---				savefile.new_line
---				savefile.flush
---				Result.update (last_string)
---				if suspended then
---					time_to_stop := True
---				else
---					read_line
---				end
---			end
---			if not Result.is_status_known then
---				-- Save raw compiler output so it can
---				-- be displayed
---				Result.set_raw_compiler_output (savefile_contents)
---			end
---			if end_of_file then
---				terminate
---			end
---		end
-
 	savefile_name: STRING
 			-- Name of file to which output read from process
 			-- is written, if not Void
-
---feature {NONE} -- Implementation
-
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"

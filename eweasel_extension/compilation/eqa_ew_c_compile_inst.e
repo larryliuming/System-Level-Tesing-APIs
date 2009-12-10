@@ -1,16 +1,17 @@
 note
+	description: "[
+					Ancestor for all C compilation instructions
+																								]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
 	keywords: "Eiffel test"
-	date: "93/08/30"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 deferred class EQA_EW_C_COMPILE_INST
 
 inherit
 	EQA_EW_TEST_INSTRUCTION
---	EW_STRING_UTILITIES
---	EW_PREDEFINED_VARIABLES
---	EW_OS_ACCESS
 
 feature {NONE} -- Initialization
 
@@ -68,7 +69,6 @@ feature -- Command
 
 				create l_compilation.make (l_dir, l_save, l_freeze_cmd, l_max_c_processes, a_test)
 				a_test.set_c_compilation (l_compilation)
---				a_test.set_c_compilation_result (compilation.next_compile_result)
 				execute_ok := True
 			else
 				failure_explanation := l_exec_error

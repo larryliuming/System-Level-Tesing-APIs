@@ -1,8 +1,13 @@
 note
+	description: "[
+					Similar to `execute_work', except that the final version of
+					the system is executed.
+																								]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
 	keywords: "Eiffel test"
-	date: "93/08/30"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class EQA_EW_EXECUTE_FINAL_INST
 
@@ -11,7 +16,7 @@ inherit
 
 create
 	make
-	
+
 feature {NONE} -- Implementation
 
 	execution_dir_name: STRING
@@ -20,7 +25,7 @@ feature {NONE} -- Implementation
 			Result := {EQA_EW_PREDEFINED_VARIABLES}.Final_execution_dir_name
 		end
 
-note
+;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	copying: "[

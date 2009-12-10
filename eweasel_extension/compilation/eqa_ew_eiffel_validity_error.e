@@ -1,8 +1,12 @@
 note
-	description: "An Eiffel validity error"
+	description: "[
+					An Eiffel validity error
+																	]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
-	date: "93/08/30"
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class EQA_EW_EIFFEL_VALIDITY_ERROR
 
@@ -38,6 +42,7 @@ feature -- Properties
 feature -- Modification
 
 	set_validity_code (a_code: STRING)
+			-- Set `validity_code' with `a_code'
 		require
 			a_code_not_void: a_code /= Void
 		do
@@ -49,6 +54,7 @@ feature -- Modification
 feature -- Summary
 
 	summary: STRING
+			-- Summary description for current
 		do
 			create Result.make (0)
 			Result.append ("Validity error")
@@ -65,11 +71,13 @@ feature -- Summary
 feature -- Comparison
 
 	is_equal (other: like Current): BOOLEAN
+			-- <Precursor>
 		do
 			Result := class_name.is_equal (other.class_name) and validity_code.is_equal (other.validity_code)
 		end
 
 	is_less alias "<" (other: like Current): BOOLEAN
+			-- <Precursor>
 		do
 			Result := class_name < other.class_name or else
 				(equal (class_name, other.class_name) and validity_code < other.validity_code)

@@ -1,11 +1,27 @@
 note
 	description: "[
-					Summary description for {EQA_EW_COMPILE_MELTED_INST}.
-					
+					Run the Eiffel compiler in the test directory $TEST with the
+					Ecf file specified by the last `ace' instruction.  Since the
+					Ecf file is always assumed to be in the test directory, it
+					must have previously been copied into this directory.
+
+					Compile_melted does not request freezing of the system
+
+					The optional <output-file-name> specifies
+					the name of the file in the output directory $OUTPUT into
+					which output from this compilation will be written, so that it
+					can potentially be compared with a known correct output file.
+					If <output-file-name> is omitted, compilation results are
+					written to a file with an unadvertised but obvious name (which
+					could possibly change) in the output directory.
+
 					For old version, pleaase check {EW_COMPILE_MELTED_INST}
 																					]"
-	date: "$Date$"
-	revision: "$Revision$"
+	legal: "See notice at end of class."
+	status: "See notice at end of class."
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class
 	EQA_EW_COMPILE_MELTED_INST

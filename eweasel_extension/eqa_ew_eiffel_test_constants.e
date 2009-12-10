@@ -1,28 +1,33 @@
 note
-	description: "Eiffel test constants"
+	description: "[
+					Eiffel test constants
+																								]"
 	legal: "See notice at end of class."
-	status: "See notice at end of class.";
-	date: "93/08/30"
+	status: "See notice at end of class."
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
+
 
 class EQA_EW_EIFFEL_TEST_CONSTANTS
 
 feature -- Constants
 
-	Default_ace_name: STRING = "Ace";
+	Default_ace_name: STRING = "Ace"
 
-	Default_system_name: STRING = "test";
+	Default_system_name: STRING = "test"
 
 feature -- Miscellaneous constants
 
-	Eiffel_gen_directory: STRING = "EIFGENs";
+	Eiffel_gen_directory: STRING = "EIFGENs"
 
-	Work_c_code_directory: STRING = "W_code";
+	Work_c_code_directory: STRING = "W_code"
 
-	Final_c_code_directory: STRING = "F_code";
+	Final_c_code_directory: STRING = "F_code"
 
-	Eiffel_project_extension: STRING = ".epr";
+	Eiffel_project_extension: STRING = ".epr"
 
-note
+;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	copying: "[

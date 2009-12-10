@@ -1,17 +1,14 @@
 note
-	description: "A C compilation"
+	description: "[
+					A C compilation
+																	]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
 	keywords: "Eiffel test"
 	date: "93/08/30"
+	revision: "$Revision: 79073 $"
 
 class EQA_EW_C_COMPILATION
-
---inherit
---	EW_EWEASEL_PROCESS
---		rename
---			make as process_make
---		end
 
 create
 	make
@@ -31,7 +28,6 @@ feature {NONE} -- Initialization
 			not_void: attached a_test_set
 		local
 			l_args: ARRAYED_LIST [STRING]
---			l_system_process: EQA_SYSTEM_EXECUTION_PROCESS
 			l_processor: EQA_EW_C_COMPILATION_OUTPUT_PROCESSOR
 		do
 			a_test_set.environment.put (a_freeze_cmd, "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
@@ -46,36 +42,8 @@ feature {NONE} -- Initialization
 			create l_processor.make (a_test_set)
 			a_test_set.set_output_processor (l_processor)
 			a_test_set.run_system (l_args.to_array)
---			create l_system_process.make (l_processor, l_processor,
---			process_make (Shell_command, args, Void, Void, a_save)
 			l_processor.write_output_to_file
 			a_test_set.set_c_compilation_result (l_processor.compilation_result)
-		end
-
-	next_compile_result: EQA_EW_C_COMPILATION_RESULT
-			--
-		local
-			time_to_stop: BOOLEAN
-		do
---			create Result
---			from
---				read_line
---			until
---				end_of_file or time_to_stop
---			loop
---				savefile.put_string (last_string)
---				savefile.new_line
---				savefile.flush
---				Result.update (last_string)
---				if suspended then
---					time_to_stop := True
---				else
---					read_line
---				end
---			end
---			if end_of_file then
---				terminate
---			end
 		end
 
 ;note

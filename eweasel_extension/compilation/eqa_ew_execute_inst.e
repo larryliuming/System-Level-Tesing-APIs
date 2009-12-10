@@ -1,7 +1,12 @@
 note
-	description: "Summary description for {EQA_EW_EXECUTE_INST}."
-	date: "$Date$"
-	revision: "$Revision$"
+	description: "[
+					Ancestor for all execution instructions
+																								]"
+	legal: "See notice at end of class."
+	status: "See notice at end of class."
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 deferred class
 	EQA_EW_EXECUTE_INST
@@ -54,7 +59,7 @@ feature {NONE} -- Initialization
 
 feature -- Query
 
-	init_ok: BOOLEAN;
+	init_ok: BOOLEAN
 			-- Was last call to `initialize' successful?
 
 	execute_ok: BOOLEAN
@@ -113,7 +118,6 @@ feature -- Command
 					end
 					if execute_ok then
 						create l_execution.make (l_prog, arguments, l_execute_cmd, l_exec_dir, l_infile, l_outfile, l_savefile, a_test)
---						a_test.set_execution_result (l_execution.next_execution_result)
 					end
 				else
 					failure_explanation := l_exec_error
@@ -157,7 +161,26 @@ feature {NONE} -- Implementation
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
-	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
+	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
+	copying: "[
+			This file is part of the EiffelWeasel Eiffel Regression Tester.
+
+			The EiffelWeasel Eiffel Regression Tester is free
+			software; you can redistribute it and/or modify it under
+			the terms of the GNU General Public License version 2 as published
+			by the Free Software Foundation.
+
+			The EiffelWeasel Eiffel Regression Tester is
+			distributed in the hope that it will be useful, but
+			WITHOUT ANY WARRANTY; without even the implied warranty
+			of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+			See the GNU General Public License version 2 for more details.
+
+			You should have received a copy of the GNU General Public
+			License version 2 along with the EiffelWeasel Eiffel Regression Tester
+			if not, write to the Free Software Foundation,
+			Inc., 51 Franklin St, Fifth Floor, Boston, MA
+		]"
 	source: "[
 			Eiffel Software
 			5949 Hollister Ave., Goleta, CA 93117 USA
@@ -165,4 +188,6 @@ feature {NONE} -- Implementation
 			Website http://www.eiffel.com
 			Customer support http://support.eiffel.com
 		]"
+
+
 end

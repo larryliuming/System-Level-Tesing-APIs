@@ -1,8 +1,13 @@
 note
+	description: "[
+					Similar to `Compile_melted'
+					Compile_final requests finalizing of the system with assertions discarded
+																								]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
 	keywords: "Eiffel test"
-	date: "93/08/30"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class EQA_EW_COMPILE_FINAL_INST
 

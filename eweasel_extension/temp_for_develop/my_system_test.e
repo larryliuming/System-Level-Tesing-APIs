@@ -1,5 +1,9 @@
 note
-	description: "New version of test attach004"
+	description: "[
+					New version of eweasel tests
+					
+					This class only valid for new eweasel development
+																		]"
 	date: "$Date$"
 	revision: "$Revision$"
 

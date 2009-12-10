@@ -1,8 +1,40 @@
 note
+	description: "[
+					Check that the result from the last execute_work or
+					execute_final instruction matches <result>.  If it does not,
+					then the test has failed and the rest of the test instructions
+					are skipped.  If the result matches <result>, continue
+					processing with the next test instruction.  <result> can be:
+
+					ok
+
+					Matches if no exception trace or run-time
+					panic occurred and there were no error
+					messages of any kind.
+
+					failed
+
+					Matches if system did not complete normally
+					(did not exit with 0 status) and output includes
+					a "system execution failed" string
+
+					failed_silently
+
+					Matches if system did not complete normally
+					(did not exit with 0 status) but output does not
+					include a "system execution failed" string
+
+					completed_but_failed
+
+					Matches if system completed normally
+					(exited with 0 status) but output includes
+					a "system execution failed" string
+																								]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
 	keywords: "Eiffel test"
-	date: "93/08/30"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class EQA_EW_EXECUTE_RESULT_INST
 

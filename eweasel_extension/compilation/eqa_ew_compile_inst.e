@@ -1,7 +1,12 @@
 note
-	description: "Summary description for {EQA_EW_COMPILE_INST}."
-	date: "$Date$"
-	revision: "$Revision$"
+	description: "[
+					Ancestor for all Eiffel compilation instructions
+																								]"
+	legal: "See notice at end of class."
+	status: "See notice at end of class."
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 deferred class
 	EQA_EW_COMPILE_INST
@@ -24,9 +29,6 @@ feature {NONE} -- Initialization
 		end
 
 feature -- Query
-
---	test_set: EQA_EW_SYSTEM_TEST_SET
---			-- System level test set current managed
 
 	output_file_name: STRING
 			-- Name of file where output from compile is

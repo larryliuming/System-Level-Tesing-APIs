@@ -1,7 +1,13 @@
 note
-	description: "Summary description for {EQA_EW_SYSTEM_EXECUTION}."
-	date: "$Date$"
-	revision: "$Revision$"
+	description: "[
+					Similar to `Compile_melted'
+					Compile_final requests finalizing of the system with assertions discarded
+																								]"
+	legal: "See notice at end of class."
+	status: "See notice at end of class."
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class
 	EQA_EW_SYSTEM_EXECUTION
@@ -22,35 +28,21 @@ feature {NONE} -- Intialization
 			-- Write all output from the new process to
 			-- file `savef'.
 		require
-			program_not_void: a_prog /= Void;
-			arguments_not_void: a_args /= Void;
-			directory_not_void: a_dir /= Void;
-			save_name_not_void: a_savef /= Void;
+			program_not_void: a_prog /= Void
+			arguments_not_void: a_args /= Void
+			directory_not_void: a_dir /= Void
+			save_name_not_void: a_savef /= Void
 		local
---			real_args: LINKED_LIST [STRING];
 			l_real_args: ARRAYED_LIST [STRING]
 			l_processor: EQA_EW_EXECUTION_OUTPUT_PROCESSOR
 		do
 			a_test_set.environment.put (a_execute_cmd, "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
 
---			from
-				create l_real_args.make (a_args.count + 2)
---				l_real_args.extend (a_execute_cmd)
-				l_real_args.extend (a_dir)
-				l_real_args.extend (a_prog)
-				l_real_args.finish
-				l_real_args.merge_right (a_args)
---				a_args.start
---				l_args.put (a_prog, 0)
---			until
---				a_args.after
---			loop
---				l_args.put (a_args.item, a_args.index)
-
---				a_args.forth
---			end
-
---			savefile_name := a_outf
+			create l_real_args.make (a_args.count + 2)
+			l_real_args.extend (a_dir)
+			l_real_args.extend (a_prog)
+			l_real_args.finish
+			l_real_args.merge_right (a_args)
 
 			create l_processor.make (a_test_set, a_savef)
 			a_test_set.set_output_processor (l_processor)
@@ -65,52 +57,34 @@ feature {NONE} -- Intialization
 
 			a_test_set.run_system (l_real_args.to_array)
 
--- Add {EQA_EW_EXECUTION_RESULT}.Completed_string here
--- In orignal eweasel, it was added by script `eiffel_execute' in $EWEASEL/bin
-
 			l_processor.write_output_to_file
 			a_test_set.set_execution_result (l_processor.execution_result)
-
---			create real_args.make;
---			real_args.extend (execute_cmd);
---			real_args.extend (dir);
---			real_args.extend (prog);
---			real_args.finish;
---			real_args.merge_right (args);
---			process_make (Shell_command, real_args, inf, outf, savef);
 		end
-
---feature -- Query
-
---	next_execution_result: EQA_EW_EXECUTION_RESULT
---			-- Next execution result
---		local
---			time_to_stop: BOOLEAN
---		do
---			create Result
---			from
---				read_line
---			until
---				end_of_file or time_to_stop
---			loop
---				savefile.put_string (last_string)
---				savefile.new_line
---				savefile.flush
---				Result.update (last_string)
---				if suspended then
---					time_to_stop := True
---				else
---					read_line
---				end
---			end;
---			if end_of_file then
---				terminate
---			end
---		end
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
+	licensing_options: "http://www.eiffel.com/licensing"
+	copying: "[
+			This file is part of Eiffel Software's Eiffel Development Environment.
+			
+			Eiffel Software's Eiffel Development Environment is free
+			software; you can redistribute it and/or modify it under
+			the terms of the GNU General Public License as published
+			by the Free Software Foundation, version 2 of the License
+			(available at the URL listed under "license" above).
+			
+			Eiffel Software's Eiffel Development Environment is
+			distributed in the hope that it will be useful, but
+			WITHOUT ANY WARRANTY; without even the implied warranty
+			of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+			See the GNU General Public License for more details.
+			
+			You should have received a copy of the GNU General Public
+			License along with Eiffel Software's Eiffel Development
+			Environment; if not, write to the Free Software Foundation,
+			Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+		]"
 	source: "[
 			Eiffel Software
 			5949 Hollister Ave., Goleta, CA 93117 USA

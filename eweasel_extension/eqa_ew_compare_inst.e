@@ -1,16 +1,22 @@
 note
+	description: "[
+					Compare the file <output-file> in the output directory $OUTPUT
+					with the file <correct-output-file> in the source directory
+					$SOURCE.  If they are not identical, then the test has failed
+					and the rest of the test instructions are skipped.  If they
+					are identical, continue processing with the next test
+					instruction.
+																								]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
 	keywords: "Eiffel test"
-	date: "93/08/30"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class EQA_EW_COMPARE_INST
 
 inherit
 	EQA_EW_TEST_INSTRUCTION
---	EW_PREDEFINED_VARIABLES
---	EW_STRING_UTILITIES
---	EW_OS_ACCESS
 
 create
 	make
@@ -89,7 +95,6 @@ feature {NONE}  -- Implementation
 			source_not_void: a_file1 /= Void
 			destination_not_void: a_file2 /= Void
 		local
---			eof1, eof2, unequal: BOOLEAN
 			l_diff: EQA_DIFF_UTILITY
 			l_src, l_dst: ARRAY [STRING_GENERAL]
 		do
@@ -101,28 +106,6 @@ feature {NONE}  -- Implementation
 			l_diff.compare (l_src, l_src)
 
 			Result := not (attached l_diff.differing_lines) -- Note: we can use {EQA_DIFF_UTILITY} to show more infomation
-
---			from
---				a_file1.open_read
---				a_file2.open_read
---			until
---				eof1 or eof2 or unequal
---			loop
---				a_file1.readchar
---				a_file2.readchar
---				eof1 := a_file1.end_of_file
---				eof2 := a_file2.end_of_file
---				if not eof1 and not eof2 then
---					if a_file1.last_character /= a_file2.last_character then
---						unequal := True
---					end
---				elseif (eof1 and not eof2) or (eof2 and not eof1) then
---					unequal := True
---				end
---			end
---			a_file1.close
---			a_file2.close
---			Result := not unequal
 		end
 
 feature {NONE} -- Implementation

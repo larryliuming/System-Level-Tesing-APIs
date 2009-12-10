@@ -1,9 +1,12 @@
 note
-	description: "An Eiffel syntax error"
+	description: "[
+					An Eiffel syntax error
+																				]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
-	date: "$Date: 2009-05-14 01:14:28 +0800 (四, 14  5月 2009) $"
-	revision: "$Revision: 78671 $"
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 deferred class
 	EQA_EW_EIFFEL_ERROR
@@ -31,7 +34,7 @@ feature -- Setting
 invariant
 	class_name_not_void: class_name /= Void
 
-note
+;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	copying: "[

@@ -1,7 +1,12 @@
 note
-	description: "Summary description for {EWEASEL_OUTPUT_PROCESSOR}."
-	date: "$Date$"
-	revision: "$Revision$"
+	description: "[
+					Eiffel compilation output processor
+																				]"
+	legal: "See notice at end of class."
+	status: "See notice at end of class."
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 class
 	EQA_EW_COMPILATION_OUTPUT_PROCESSOR

@@ -1,11 +1,14 @@
 note
 	description: "[
-					New version of copy instruction
+					Ancestor class for all copy instructions
 					
 					For old version, please check {EW_COPY_INST}
 																						]"
-	date: "$Date$"
-	revision: "$Revision$"
+	legal: "See notice at end of class."
+	status: "See notice at end of class."
+	keywords: "Eiffel test"
+	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
+	revision: "$Revision: 79073 $"
 
 deferred class
 	EQA_EW_COPY_INST
@@ -65,22 +68,15 @@ feature -- Commannd
 			l_src, l_dir, l_dest: like new_file
 			l_before_date, l_after_date: INTEGER
 			l_orig_date, l_final_date: INTEGER
-
---			l_factory: EW_EQA_TEST_FACTORY
 			l_file_system: EQA_FILE_SYSTEM
 			l_error: STRING
 		do
---			create l_factory
 			dest_directory := test_set.environment.substitute_recursive (dest_directory)
 			source_file := test_set.environment.substitute_recursive (source_file)
 
---			execute_ok := False;
---			if use_source_environment_variable then
+			execute_ok := False
+
 			create l_src_name.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name),source_file>>)
---				l_src_name := os.full_file_name (, );	
---			else
---				src_name := source_file
---			end
 			create l_dest_name.make (<<dest_directory, dest_file>>)
 
 			create l_file_system.make (test_set.environment)
@@ -99,13 +95,11 @@ feature -- Commannd
 					l_orig_date := 0
 				end
 				if is_fast then
---					copy_file (src, test.environment, dest);
 					l_file_system.copy_file (l_src, test_set.environment, l_dest, substitute)
 					if l_orig_date /= 0 then
 						l_dest.set_date (l_orig_date + 1)
 					end
 				else
-
 					l_before_date := os.current_time_in_seconds
 					from
 					until
@@ -116,7 +110,6 @@ feature -- Commannd
 
 					l_after_date := os.current_time_in_seconds
 
---					copy_file (src, test.environment, dest);
 					l_file_system.copy_file (l_src, test_set.environment, l_dest, substitute)
 
 					l_final_date := l_dest.date
@@ -125,7 +118,6 @@ feature -- Commannd
 						-- Work around possible Linux bug
 						if l_after_date <= l_orig_date then
 							l_error := "ERROR: After date " + l_after_date.out + " not greater than original date " + l_orig_date.out
---							output.append_error (, True)
 							assert.assert (l_error, False)
 						else
 							l_dest.set_date (l_after_date)
@@ -133,7 +125,6 @@ feature -- Commannd
 							if l_final_date /= l_after_date then
 								l_error := "ERROR: failed to set dest modification date to " + l_after_date.out
 								assert.assert (l_error, False)
---								output.append_error (, True)
 							end
 						end
 					end
@@ -142,22 +133,22 @@ feature -- Commannd
 
 					test_set.unset_copy_wait;
 				end
---				execute_ok := True;
+				execute_ok := True
 			elseif not l_src.exists then
 				l_error := "source file not found"
---				failure_explanation := "source file not found";
+				failure_explanation := l_error
 				assert.assert (l_error, False)
 			elseif not l_src.is_plain then
 				l_error := "source file not a plain file"
---				failure_explanation := "source file not a plain file";
+				failure_explanation := l_error
 				assert.assert (l_error, False)
 			elseif not l_dir.exists then
 				l_error := "destination directory not found"
---				failure_explanation := "destination directory not found";
+				failure_explanation := l_error
 				assert.assert (l_error, False)
 			elseif not l_dir.is_directory then
 				l_error := "destination directory not a directory"
---				failure_explanation := "destination directory not a directory";
+				failure_explanation := l_error
 				assert.assert (l_error, False)
 			end
 
@@ -166,7 +157,7 @@ feature -- Commannd
 feature {NONE} -- Implementation
 
 	new_file (a_file_name: STRING): FILE
-			-- Create an instance of FILE.
+			-- Create an instance of FILE
 		require
 			a_file_name_not_void: a_file_name /= Void
 		deferred
@@ -208,11 +199,8 @@ feature {NONE} -- Implementation
 			l_error: STRING
 		do
 			if a_final_date <= a_orig_date then
---				output.append_new_line
 				l_error := "ERROR: final date " + a_final_date.out + " not greater than original date " + a_orig_date.out + " for file " + a_fname
 				l_error.append ("Compile start = " + a_start_date.out + " Before = " + a_before_date.out + " After = " + a_after_date.out)
---				output.append_error (, True)
---				output.append (, True)
 				assert.assert (l_error, False)
 			end
 		end
