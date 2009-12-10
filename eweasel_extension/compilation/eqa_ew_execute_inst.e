@@ -89,7 +89,7 @@ feature -- Command
 					l_infile := Void
 				end
 				l_outfile := Void	-- Pipe output back to parent
-				if output_file_name /= Void then
+				if output_file_name /= Void and then not output_file_name.is_empty then
 					l_savefile := output_file_name
 				else
 					l_savefile := a_test.execution_output_name

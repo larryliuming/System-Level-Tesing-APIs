@@ -164,6 +164,25 @@ feature -- Command
 			l_inst.execute (test_set)
 		end
 
+	Execute_final (a_input_file: STRING; a_output_file: STRING; a_args: STRING)
+			--	Similar to `execute_work', except that the final version of
+			--	the system is executed.
+		require
+			not_void: a_input_file /= Void
+			not_void: a_output_file /= Void
+		local
+			l_inst: EQA_EW_EXECUTE_FINAL_INST
+			l_temp: STRING
+		do
+			l_temp := a_input_file + " " + a_output_file
+			if a_args /= Void then
+				l_temp := l_temp + " " + a_args
+			end
+
+			create l_inst.make (l_temp)
+			l_inst.execute (test_set)
+		end
+
 	Execute_result (a_result: STRING)
 			--	Check that the result from the last execute_work or
 			--	execute_final instruction matches <result>.  If it does not,
@@ -329,30 +348,6 @@ feature -- Command
 --			end
 --			init_command (l_inst, "c_compile_final", l_temp)
 
---			execute_inst (l_inst)
-		end
-
-	Execute_final (a_input_file: STRING; a_output_file: STRING; a_args: STRING)
-			--	Similar to `execute_work', except that the final version of
-			--	the system is executed.
-		require
-			not_void: a_input_file /= Void
-			not_void: a_output_file /= Void
-		local
---			l_inst: EW_TEST_INSTRUCTION
---			l_temp: STRING
---			l_factory: EW_EQA_TEST_FACTORY
-		do
---			l_inst := test_command_table.item (Execute_final_keyword)
---			l_temp := a_input_file + " " + a_output_file
---			if a_args /= Void then
---				l_temp := l_temp + " " + a_args
---			end
-
---			create l_factory
---			l_temp := l_factory.environment.substitute (l_temp)
-
---			init_command (l_inst, "execute_final", l_temp)
 --			execute_inst (l_inst)
 		end
 
