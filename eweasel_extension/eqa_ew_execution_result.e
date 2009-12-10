@@ -117,7 +117,7 @@ feature -- Comparison
 		end
 
 
-feature {NONE} -- String constants
+feature -- String constants
 
 	Completed_string: STRING = "execution completed"
 

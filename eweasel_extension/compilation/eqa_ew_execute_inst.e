@@ -37,7 +37,7 @@ feature {NONE} -- Initialization
 				if equal (output_file_name, No_file_name) then
 					output_file_name := Void
 				end
-				create arguments.make
+				create arguments.make (l_args.count - 2)
 				from
 					l_args.start
 					l_args.forth
@@ -73,10 +73,10 @@ feature -- Command
 			l_execution: EQA_EW_SYSTEM_EXECUTION
 			l_path: EQA_SYSTEM_PATH
 		do
---			l_execute_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Execute_command_name)
---			l_execute_cmd := a_test.environment.substitute (l_execute_cmd)
---			l_exec_error := executable_file_error (l_execute_cmd)
---			if l_exec_error = Void then
+			l_execute_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Execute_command_name)
+			l_execute_cmd := a_test.environment.substitute (l_execute_cmd)
+			l_exec_error := executable_file_error (l_execute_cmd)
+			if l_exec_error = Void then
 				a_test.increment_execution_count
 				l_exec_dir := a_test.environment.value (execution_dir_name)
 --				create l_path.make (<<l_exec_dir, a_test.system_name>>)
@@ -120,10 +120,11 @@ feature -- Command
 					execute_ok := False
 				end
 
---			else
---				failure_explanation := l_exec_error
---				execute_ok := False
---			end
+			else
+				failure_explanation := l_exec_error
+				execute_ok := False
+			end
+
 			assert.assert (failure_explanation, execute_ok)
 		end
 
@@ -140,7 +141,7 @@ feature {NONE} -- Implementation
 	output_file_name: STRING
 			-- Name of output file
 
-	arguments: LINKED_LIST [STRING]
+	arguments: ARRAYED_LIST [STRING]
 			-- Arguments
 
 	execution_dir_name: STRING

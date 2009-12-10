@@ -11,7 +11,7 @@ create
 
 feature {NONE} -- Intialization
 
-	make (a_prog: STRING; a_args: LINKED_LIST [STRING]; a_execute_cmd, a_dir, a_inf, a_outf, a_savef: STRING; a_test_set: EQA_EW_SYSTEM_TEST_SET)
+	make (a_prog: STRING; a_args: ARRAYED_LIST [STRING]; a_execute_cmd, a_dir, a_inf, a_outf, a_savef: STRING; a_test_set: EQA_EW_SYSTEM_TEST_SET)
 			-- Start a new process to execute `prog' with
 			-- arguments `args' using execution command
 			-- `execute_cmd' in directory `dir'.
@@ -28,21 +28,27 @@ feature {NONE} -- Intialization
 			save_name_not_void: a_savef /= Void;
 		local
 --			real_args: LINKED_LIST [STRING];
-			l_args: ARRAY [STRING]
+			l_real_args: ARRAYED_LIST [STRING]
 			l_processor: EQA_EW_EXECUTION_OUTPUT_PROCESSOR
 		do
-			a_test_set.environment.put (a_prog, "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
+			a_test_set.environment.put (a_execute_cmd, "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
 
-			from
-				create l_args.make (0, a_args.count - 1)
-				a_args.start
-			until
-				a_args.after
-			loop
-				l_args.put (a_args.item, a_args.index - 1)
+--			from
+				create l_real_args.make (a_args.count + 2)
+--				l_real_args.extend (a_execute_cmd)
+				l_real_args.extend (a_dir)
+				l_real_args.extend (a_prog)
+				l_real_args.finish
+				l_real_args.merge_right (a_args)
+--				a_args.start
+--				l_args.put (a_prog, 0)
+--			until
+--				a_args.after
+--			loop
+--				l_args.put (a_args.item, a_args.index)
 
-				a_args.forth
-			end
+--				a_args.forth
+--			end
 
 --			savefile_name := a_outf
 
@@ -56,7 +62,10 @@ feature {NONE} -- Intialization
 --				a_test_set.set_output_path (a_test_set.execution_output_name)
 --			end
 
-			a_test_set.run_system (l_args)
+			a_test_set.run_system (l_real_args.to_array)
+
+-- Add {EQA_EW_EXECUTION_RESULT}.Completed_string here
+-- In orignal eweasel, it was added by script `eiffel_execute' in $EWEASEL/bin
 
 			l_processor.write_output_to_file
 			a_test_set.set_execution_result (l_processor.execution_result)

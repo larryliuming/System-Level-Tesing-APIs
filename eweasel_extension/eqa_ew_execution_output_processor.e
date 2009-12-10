@@ -55,7 +55,7 @@ feature -- Command
 
 			l_file.close
 		end
-
+	
 feature -- Query
 
 	execution_result: EQA_EW_EXECUTION_RESULT

@@ -42,6 +42,7 @@ feature -- Command
 			l_compilation := a_test.e_compilation
 			if l_compilation = Void or else not l_compilation.suspended then
 				l_compile_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Compile_command_name)
+				l_compile_cmd := a_test.environment.substitute_recursive (l_compile_cmd)
 				l_exec_error := executable_file_error (l_compile_cmd)
 				if l_exec_error = Void then
 					a_test.increment_e_compile_count

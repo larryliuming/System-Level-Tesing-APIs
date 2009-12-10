@@ -44,7 +44,7 @@ feature {NONE} -- Initialization
 			l_test_dir, l_gen_dir, l_exec_dir: STRING
 			l_path: DIRECTORY_NAME
 			l_info: EQA_EVALUATION_INFO
-			l_source_dir_name, l_target_dir: EQA_SYSTEM_PATH
+			l_source_dir_name, l_target_dir, l_temp_path: EQA_SYSTEM_PATH
 		do
 --			test_set.set_system_name (a_test_dir_name)
 
@@ -89,6 +89,14 @@ feature {NONE} -- Initialization
 			a_env.put (l_exec_dir, {EQA_EW_PREDEFINED_VARIABLES}.Work_execution_dir_name)
 			l_exec_dir := full_directory_name (l_gen_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Final_c_code_directory)
 			a_env.put (l_exec_dir, {EQA_EW_PREDEFINED_VARIABLES}.Final_execution_dir_name)
+
+			-- Copy from $EWEASEL\control\unix_platform
+			create l_temp_path.make (<<"$ISE_EIFFEL", "studio", "spec", "$ISE_PLATFORM", "bin", "ec">>)
+			a_env.put (l_temp_path.as_string, {EQA_EW_PREDEFINED_VARIABLES}.Compile_command_name)
+			create l_temp_path.make (<<"$EWEASEL", "bin", "eiffel_freeze">>)
+			a_env.put (l_temp_path.as_string, {EQA_EW_PREDEFINED_VARIABLES}.Freeze_command_name)
+			create l_temp_path.make (<<"$EWEASEL", "bin", "eiffel_execute">>)
+			a_env.put (l_temp_path.as_string, {EQA_EW_PREDEFINED_VARIABLES}.Execute_command_name)
 		end
 
 	associate (a_env: EQA_SYSTEM_ENVIRONMENT; a_var, a_dir: STRING)
