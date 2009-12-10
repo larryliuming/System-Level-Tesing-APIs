@@ -45,9 +45,6 @@ feature {NONE} -- Initialization
 				set_target_directory (default_target_directory)
 			end
 			initialize_test_suffix
-
-			create table.make (50)
-			create list.make (50)
 		end
 
 	initialize_test_suffix
@@ -85,31 +82,6 @@ feature -- Query
 			-- Directory suffix for `test_set'
 			--
 			-- Note: this should be unique for all tests, so each test has its private testing directory
-
-	add_environment_variable (var: STRING)
-			-- Add `var' to list of operating system environment
-			-- variables that have been defined
-		require
-			variable_not_void: var /= Void
-		do
-			list.extend (var)
-		end
-
-	unset_environment_variables
-			-- Unset all operating system environment
-			-- variables that have been defined (actually,
-			-- set their values to the empty string)
-		do
-			from
-				list.start
-			until
-				list.after
-			loop
-				put ("", list.item)
-				list.forth
-			end
-			list.wipe_out
-		end
 
 feature -- Command
 
@@ -233,7 +205,6 @@ feature -- Command
 		require
 			variable_not_void: a_var /= Void
 		do
---			Result := table.item (var)
 			Result := get (a_var)
 		end
 
@@ -273,15 +244,6 @@ feature {NONE} -- Constants
 			-- variable name off from surrounding text
 
 feature {NONE} -- Implementation
-
-	table: HASH_TABLE [STRING, STRING]
-			-- Table which associates environment variable
-			-- names (keys) with their values
-			-- FIXME: Should remove it? since the variables defined in OS and Base library already have it, see {EXECUTION_ENVIRONMENT}.environ
-
-	list: ARRAYED_LIST [STRING]
-			-- List of operating system environment variables
-			-- that have been defined
 
 	is_identifier_char (c: CHARACTER): BOOLEAN
 			-- Is `c' an identifier character?
