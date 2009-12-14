@@ -295,12 +295,6 @@ feature {NONE} -- Implementation
 			end
 		end
 
-	string_util: EQA_EW_STRING_UTILITIES
-			-- String utilities
-		once
-			create Result
-		end
-
 feature {NONE} -- Constants
 
 	No_class_name: STRING = "NONE"

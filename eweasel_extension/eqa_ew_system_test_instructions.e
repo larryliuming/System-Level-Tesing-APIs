@@ -17,6 +17,46 @@ class
 
 feature -- Command
 
+	Define (a_name, a_value: STRING)
+			--	Define the substitution variable <name> to have the value
+			--	<value>.  If <value> contains white space characters, it must
+			--	be enclosed in double quotes.  Substitution of variable values
+			--	for names is triggered by the '$' character, when substitution
+			--	is being done.  For example, $ABC will be replaced by the last
+			--	value defined for variable ABC.  Case is significant and by
+			--	convention substitution variables are normally given names
+			--	which are all uppercase.  The name starts with the first
+			--	character after the '$' and ends with the first non-identifier
+			--	character (alphanumeric or underline) or end of line.
+			--	Parentheses may be used to set a substitution variable off
+			--	from the surrouding text (e.g., the substitution variable name
+			--	in "$(ABC)D" is ABC, not ABCD).  If the named variable has not
+			--	been defined, it is left as is during substitution (in the
+			--	example above it would remain $(ABC)).  To get a $ character,
+			--	use $$.  Substitution is always done when reading the lines of
+			--	a test suite control file, test control file or test catalog.
+			--	Substitution is done on the lines of a copied file when
+			--	`copy_sub' is used, but not when `copy_raw' is used.
+			-- See
+			-- "http://svn.origo.ethz.ch/viewvc/eiffelstudio/trunk/eweasel/doc/eweasel.doc?annotate=HEAD"
+			-- for more information
+		require
+			not_void: a_name /= Void
+			not_void: a_value /= Void
+		local
+			l_inst: EQA_EW_DEFINE_INST
+			l_value: STRING
+		do
+			l_value := a_value
+			if l_value.is_empty then
+				l_value := "%"%""
+			end
+
+			l_value := test_set.environment.substitute (l_value)
+			create l_inst.make (a_name + " " + l_value)
+			l_inst.execute (test_set)
+		end
+
 	copy_raw (a_source_file, a_dest_directory, a_dest_file: STRING)
 			--	Copy the file named <source-file> from the source directory
 			--	$SOURCE to the <dest-directory> under the name <dest-file>.

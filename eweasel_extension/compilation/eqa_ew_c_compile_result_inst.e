@@ -97,12 +97,6 @@ feature {NONE} -- Implementation
 	expected_compile_result: EQA_EW_C_COMPILATION_RESULT
 			-- Result expected from C compilations
 
-	string_util: EQA_EW_STRING_UTILITIES
-			-- String utilities
-		once
-			create Result
-		end
-
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
