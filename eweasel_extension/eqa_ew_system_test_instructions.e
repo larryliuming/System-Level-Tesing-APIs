@@ -144,6 +144,20 @@ feature -- Command
 			l_inst.execute (test_set)
 		end
 
+	Delete (a_dest_directory, a_dest_file: STRING)
+			--	Delete the file named <dest-file> from the directory
+			--	<dest-directory>.  The destination directory should not
+			--	normally be the source directory $SOURCE.
+		local
+			l_inst: EQA_EW_DELETE_INST
+		do
+--			l_inst := test_command_table.item (Delete_keyword)
+--			init_command (l_inst, "delete", a_dest_directory + " " + a_dest_file)
+--			execute_inst (l_inst)
+			create l_inst.make (a_dest_directory + " " + a_dest_file)
+			l_inst.execute (test_set)
+		end
+
 	copy_raw (a_source_file, a_dest_directory, a_dest_file: STRING)
 			--	Copy the file named <source-file> from the source directory
 			--	$SOURCE to the <dest-directory> under the name <dest-file>.
@@ -190,6 +204,22 @@ feature -- Command
 		do
 			create l_inst.make (a_source_file, a_dest_directory, a_dest_file, test_set)
 			l_inst.execute (test_set)
+		end
+
+	Copy_file (a_source_file, a_dest_directory, a_dest_file: STRING)
+			--	Similar to `copy_bin' except that it lets you copy file from anywhere to anywhere.
+		require
+			not_void: a_source_file /= Void
+			not_void: a_dest_directory /= Void
+			not_void: a_dest_file /= Void
+		local
+			l_inst: EQA_EW_COPY_BIN_INST
+		do
+			create l_inst.make (a_source_file, a_dest_directory, a_dest_file, test_set)
+			l_inst.execute (test_set)
+--			l_inst := test_command_table.item (Copy_file_keyword)
+--			init_command (l_inst, "copy_file", a_source_file + " " + a_dest_directory + " " + a_dest_file)
+--			execute_inst (l_inst)
 		end
 
 	compile_melted (a_output_filename: STRING)
