@@ -39,6 +39,15 @@ feature -- Command
 			l_inst.execute (test_set)
 		end
 
+	Compile_precompiled
+			-- Document not found...
+		local
+			l_inst: EQA_EW_COMPILE_PRECOMPILED_INST
+		do
+			create l_inst.make ("")
+			l_inst.execute (test_set)
+		end
+
 	Define (a_name, a_value: STRING)
 			--	Define the substitution variable <name> to have the value
 			--	<value>.  If <value> contains white space characters, it must
@@ -516,6 +525,28 @@ feature -- Command
 			l_inst: EQA_EW_SETENV_INST
 		do
 			create l_inst.make (a_name + " " + a_value)
+			l_inst.execute (test_set)
+		end
+
+	System (a_system_name: STRING)
+			--	Set the name of the system, to be used to execute it.  Must
+			--	match the system name in the Ace file or unexpected results
+			--	will occur.  Defaults to `test' before it has been set in the
+			--	current test control file.  Case is not changed since the
+			--	system name is really a file name.
+		require
+			not_void: a_system_name /= Void
+		local
+			l_inst: EQA_EW_SYSTEM_INST
+--			l_factory: EW_EQA_TEST_FACTORY
+			l_system_name: STRING
+		do
+--			l_inst := test_command_table.item (System_keyword)
+
+--			create l_factory
+			l_system_name := test_set.environment.substitute (a_system_name)
+
+			create l_inst.make (l_system_name)
 			l_inst.execute (test_set)
 		end
 
