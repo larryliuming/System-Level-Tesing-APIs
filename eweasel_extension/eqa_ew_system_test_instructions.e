@@ -167,6 +167,19 @@ feature -- Command
 			l_inst.execute (test_set)
 		end
 
+	Exit_compile
+			--	Abort a suspended Eiffel compilation so that another
+			--	compilation can be started from scratch.  There can be at most
+			--	one Eiffel compilation in progress at a time.  This
+			--	instruction is identical to `abort_compile' except that
+			--	it does not delete the EIFGENs/test directory tree.
+		local
+			l_inst: EQA_EW_EXIT_COMPILE_INST
+		do
+			create l_inst.make ("")
+			l_inst.execute (test_set)
+		end
+
 	copy_raw (a_source_file, a_dest_directory, a_dest_file: STRING)
 			--	Copy the file named <source-file> from the source directory
 			--	$SOURCE to the <dest-directory> under the name <dest-file>.
