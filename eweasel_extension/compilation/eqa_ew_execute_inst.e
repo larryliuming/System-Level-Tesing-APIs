@@ -85,11 +85,9 @@ feature -- Command
 				a_test.increment_execution_count
 				l_exec_dir := a_test.environment.value (execution_dir_name)
 --				create l_path.make (<<l_exec_dir, a_test.system_name>>)
-				create l_path.make (<<l_exec_dir, "test">>) -- FIXME: who set the name `test'?
-				l_prog := l_path.as_string
+				l_prog := string_util.file_path (<<l_exec_dir, "test">>) -- FIXME: who set the name `test'?
 				if input_file_name /= Void then
-					create l_path.make (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name), input_file_name>>)
-					l_infile := l_path.as_string
+					l_infile := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name), input_file_name>>)
 				else
 					l_infile := Void
 				end
@@ -99,8 +97,8 @@ feature -- Command
 				else
 					l_savefile := a_test.execution_output_name
 				end
-				create l_path.make (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), l_savefile>>)
-				l_savefile := l_path.as_string
+
+				l_savefile := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), l_savefile>>)
 
 				create l_prog_file.make (l_prog)
 				l_exec_error := executable_file_error (l_prog)

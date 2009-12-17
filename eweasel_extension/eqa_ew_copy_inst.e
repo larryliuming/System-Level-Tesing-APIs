@@ -64,7 +64,7 @@ feature -- Commannd
 			-- instructions of `test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			l_src_name, l_dest_name: EQA_SYSTEM_PATH
+			l_src_name, l_dest_name: STRING
 			l_src, l_dir, l_dest: like new_file
 			l_before_date, l_after_date: INTEGER
 			l_orig_date, l_final_date: INTEGER
@@ -76,19 +76,18 @@ feature -- Commannd
 
 			execute_ok := False
 
-			create l_src_name.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name),source_file>>)
-			create l_dest_name.make (<<dest_directory, dest_file>>)
+			l_dest_name := string_util.file_path (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name),source_file>>)
 
 			create l_file_system.make (test_set.environment)
 
-			l_src := new_file (l_src_name.as_string)
+			l_src := new_file (l_dest_name)
 			ensure_dir_exists (dest_directory)
 			l_dir := new_file (dest_directory)
 
 			if (l_src.exists and then l_src.is_plain) and
 			   (l_dir.exists and then l_dir.is_directory) then
 
-				l_dest := new_file (l_dest_name.as_string)
+				l_dest := new_file (string_util.file_path (<<dest_directory, dest_file>>))
 				if l_dest.exists then
 					l_orig_date := l_dest.date
 				else
@@ -129,9 +128,9 @@ feature -- Commannd
 						end
 					end
 
-					check_dates (test_set.e_compile_start_time, l_orig_date, l_final_date, l_before_date, l_after_date, l_dest_name.as_string)
+					check_dates (test_set.e_compile_start_time, l_orig_date, l_final_date, l_before_date, l_after_date, l_dest_name)
 
-					test_set.unset_copy_wait;
+					test_set.unset_copy_wait
 				end
 				execute_ok := True
 			elseif not l_src.exists then

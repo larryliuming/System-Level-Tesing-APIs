@@ -1,6 +1,10 @@
 note
 	description: "[
-					Ancestor for all C compilation instructions
+					Abort a suspended Eiffel compilation so that another
+					compilation can be started from scratch.  There can be at most
+					one Eiffel compilation in progress at a time.  This
+					instruction does a `cleanup' after aborting the compilation,
+					which deletes the entire EIFGENs/test directory tree.
 																								]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
@@ -8,33 +12,37 @@ note
 	date: "$Date: 2009-06-04 08:11:49 +0800 (四, 04  6月 2009) $"
 	revision: "$Revision: 79073 $"
 
-deferred class EQA_EW_C_COMPILE_INST
+class EQA_EW_ABORT_COMPILE_INST
 
 inherit
 	EQA_EW_TEST_INSTRUCTION
+--	EW_STRING_UTILITIES
+--	EW_PREDEFINED_VARIABLES
+--	EW_EIFFEL_TEST_CONSTANTS
+--	EW_OS_ACCESS
+
+create
+	make
 
 feature {NONE} -- Initialization
 
-	make (a_line: detachable STRING)
+	make (a_line: STRING)
+			-- Creation method
+		do
+			inst_initialize (a_line)
+		end
+
+	inst_initialize (a_line: STRING)
 			-- Initialize instruction from `a_line'.  Set
 			-- `init_ok' to indicate whether
 			-- initialization was successful.
 		local
 			l_args: LIST [STRING]
-			l_line: STRING
 		do
-			if attached a_line then
-				l_line := a_line
-			else
-				create l_line.make_empty
-			end
-			l_args := string_util.broken_into_words (l_line)
-			if l_args.count > 1 then
+			l_args := string_util.broken_into_words (a_line)
+			if l_args.count /= 0 then
 				init_ok := False
-				failure_explanation := "must supply 0 or 1 argument"
-			elseif l_args.count = 1 then
-				output_file_name := l_args.i_th (1)
-				init_ok := True
+				failure_explanation := "no arguments allowed"
 			else
 				init_ok := True
 			end
@@ -47,56 +55,32 @@ feature -- Command
 			-- instructions of `a_test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			l_dir, l_save, l_freeze_cmd, l_exec_error: STRING
-			l_max_c_processes: INTEGER
-			l_compilation: EQA_EW_C_COMPILATION
-			l_system_path: EQA_SYSTEM_PATH
+			l_compilation: EQA_EW_EIFFEL_COMPILATION
+			l_dir: STRING
 		do
-			l_freeze_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Freeze_command_name)
-			l_freeze_cmd := a_test.environment.substitute_recursive (l_freeze_cmd)
-			l_exec_error := executable_file_error (l_freeze_cmd)
-			if l_exec_error = Void then
-				a_test.increment_c_compile_count
-				l_dir := a_test.environment.value (compilation_dir_name)
---				l_max_c_processes := a_test.environment.max_c_processes
-				if output_file_name /= Void and then not output_file_name.is_empty then
-					l_save := output_file_name
-				else
-					l_save := a_test.c_compile_output_name
-				end
-				l_save := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), l_save>>)
-
-				create l_compilation.make (l_dir, l_save, l_freeze_cmd, l_max_c_processes, a_test)
-				a_test.set_c_compilation (l_compilation)
-				execute_ok := True
-			else
-				failure_explanation := l_exec_error
+			l_compilation := a_test.e_compilation
+			if l_compilation = Void then
 				execute_ok := False
-			end
-
-			if not execute_ok then
-				assert.assert (failure_explanation, execute_ok)
+				failure_explanation := "no compilation has been started"
+			elseif not l_compilation.suspended then
+				execute_ok := False
+				failure_explanation := "compilation not suspended"
+			else
+--				l_compilation.abort -- FIXME: not implemented, add `abort' to {EQA_EW_SYSTEM_TEST_SET}?
+				l_dir := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name)
+				l_dir := string_util.file_path (<<l_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Eiffel_gen_directory>>)
+				a_test.file_system.delete_directory_tree (l_dir)
+				execute_ok := True
 			end
 		end
 
-feature -- Status
+feature -- Query
 
 	init_ok: BOOLEAN
 			-- Was last call to `initialize' successful?
 
 	execute_ok: BOOLEAN
 			-- Was last call to `execute' successful?
-
-feature {NONE} -- Implementation
-
-	output_file_name: STRING
-			-- Name of file where output from compile is
-			-- to be placed
-
-	compilation_dir_name: STRING
-			-- Name of directory where compilation is to be done
-		deferred
-		end
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
@@ -127,6 +111,11 @@ feature {NONE} -- Implementation
 			Website http://www.eiffel.com
 			Customer support http://support.eiffel.com
 		]"
+
+
+
+
+
 
 
 end

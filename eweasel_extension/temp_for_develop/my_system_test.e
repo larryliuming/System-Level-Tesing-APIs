@@ -12,16 +12,6 @@ class
 
 inherit
 	EQA_EW_SYSTEM_TEST_SET
-		redefine
-			on_prepare
-		end
-
-feature -- Command
-
-	on_prepare
-			-- <Precursor>
-		do
-		end
 
 feature -- Test
 

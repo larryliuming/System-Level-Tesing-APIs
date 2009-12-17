@@ -101,33 +101,6 @@ feature -- Query
 			          (create {DIRECTORY_NAME}.make).is_directory_name_valid (a_name)
 		end
 
-	as_string: STRING
-			-- Represent current as string
-		local
-			l_items: like items
-			l_os: OPERATING_ENVIRONMENT
-		do
-			create Result.make_empty
-			if count > 0 then
-				from
-					l_items := items
-					create l_os
-					l_items.start
-				until
-					l_items.after
-				loop
-					if l_items.index > 1 then
-						Result.append_character (l_os.directory_separator)
-					end
-					Result.append (l_items.item)
-
-					l_items.forth
-				end
-			end
-		ensure
-			not_void: Result /= Void
-		end
-
 feature -- Element change
 
 	extend (a_item: READABLE_STRING_8)

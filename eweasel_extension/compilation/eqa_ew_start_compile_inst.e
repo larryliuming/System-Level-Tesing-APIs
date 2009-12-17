@@ -1,6 +1,6 @@
 note
 	description: "[
-					Ancestor class for all compilation instructions
+					Document not found...
 																								]"
 	legal: "See notice at end of class."
 	status: "See notice at end of class."
@@ -32,7 +32,7 @@ feature -- Command
 			l_name, l_compile_cmd, l_exec_error: STRING
 			l_compilation: EQA_EW_EIFFEL_COMPILATION
 			l_curr_dir, l_test_dir: STRING
-			l_file_name: EQA_SYSTEM_PATH
+--			l_file_name: EQA_SYSTEM_PATH
 		do
 			-- Work around a bug in Eiffel 4.2 (can't start
 			-- es4 on existing project unless project directory
@@ -54,9 +54,9 @@ feature -- Command
 					else
 						l_name := a_test.e_compile_output_name
 					end
-					create l_file_name.make (<<l_name>>)
+--					create l_file_name.make (<<l_name>>)
 
-					l_name := l_file_name.as_string
+--					l_name := l_file_name.as_string
 					create l_compilation.make (l_compile_cmd, compiler_arguments (a_test, a_test.environment), l_name, a_test)
 					a_test.set_e_compilation (l_compilation)
 
@@ -99,8 +99,7 @@ feature {NONE} -- Query
 			Result.extend ("-local")
 				-- Path to configuration file
 			Result.extend ("-config")
-			create l_file_name.make (<<a_env.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name), a_test.ecf_name>>)
-			Result.extend (l_file_name.as_string)
+			Result.extend (string_util.file_path (<<a_env.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name), a_test.ecf_name>>))
 		end
 
 	compilation_options: LIST [STRING]

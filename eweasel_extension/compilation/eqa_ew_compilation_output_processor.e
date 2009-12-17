@@ -41,11 +41,10 @@ feature -- Command
 			-- Write `cached_whole_file' to output file
 		local
 			l_file: PLAIN_TEXT_FILE
-			l_path: EQA_SYSTEM_PATH
+			l_path: EQA_EW_STRING_UTILITIES
 		do
-			create l_path.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), test_set.e_compile_output_name>>)
-
-			create l_file.make (l_path.as_string)
+			create l_path
+			create l_file.make (l_path.file_path (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), test_set.e_compile_output_name>>))
 			l_file.open_read_append
 
 			l_file.put_string (cached_whole_file)

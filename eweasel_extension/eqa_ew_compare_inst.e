@@ -50,13 +50,10 @@ feature -- Command
 		local
 			l_act_name, l_exp_name: STRING
 			l_actual, l_expected: RAW_FILE
-			l_system_path: EQA_SYSTEM_PATH
 		do
 			execute_ok := False
-			create l_system_path.make (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), actual_output_file>>)
-			l_act_name := l_system_path.as_string
-			create l_system_path.make (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name), expected_output_file>>)
-			l_exp_name := l_system_path.as_string
+			l_act_name := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), actual_output_file>>)
+			l_exp_name := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name), expected_output_file>>)
 			create l_actual.make (l_act_name)
 			create l_expected.make (l_exp_name)
 			if (l_actual.exists and then l_actual.is_plain) and

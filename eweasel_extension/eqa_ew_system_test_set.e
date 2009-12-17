@@ -37,6 +37,12 @@ inherit
 
 feature {NONE} -- Initialization
 
+	init (a_test_dir_name: STRING)
+			-- Same as `init_env', initialize with `environment'
+		do
+			init_env (environment, a_test_dir_name)
+		end
+
 	init_env (a_env: EQA_SYSTEM_ENVIRONMENT; a_test_dir_name: STRING)
 			-- Initial environment environment in which to
 			-- execute `test'.  The result may be safely
@@ -48,6 +54,7 @@ feature {NONE} -- Initialization
 			l_test_dir, l_gen_dir, l_exec_dir: STRING
 			l_path: DIRECTORY_NAME
 			l_info: EQA_EVALUATION_INFO
+			l_util: EQA_EW_STRING_UTILITIES
 			l_source_dir_name, l_target_dir, l_temp_path: EQA_SYSTEM_PATH
 		do
 			ecf_name := "Ace"
@@ -65,15 +72,14 @@ feature {NONE} -- Initialization
 
 			a_env.set_source_directory ("/home/larryliuming/eweasel/tests")
 
-			create l_source_dir_name.make (<<a_env.source_directory, a_test_dir_name>>)
+			create l_util
 			-- l_test_dir := file_system.build_source_path (l_source_dir_name) -- Cannot use {EQA_FILE_SYSTEM}.build_source_path since it adding additional string to path
-			l_test_dir := l_source_dir_name.as_string
+			l_test_dir := l_util.file_path (<<a_env.source_directory, a_test_dir_name>>)
 			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.source_dir_name, l_test_dir)
 
 			-- FIXME: Cannot use `a_env.target_directory', since by default, {EQA_SYSTEM_ENVIRONMENT}.target_directory is "/temp" ?
 
-			create l_target_dir.make (<<a_env.current_working_directory>>)
-			l_test_dir := l_target_dir.as_string
+			l_test_dir := l_util.file_path (<<a_env.current_working_directory>>)
 			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name, l_test_dir)
 			a_env.set_target_directory (l_test_dir)
 
@@ -89,12 +95,10 @@ feature {NONE} -- Initialization
 			a_env.put (l_exec_dir, {EQA_EW_PREDEFINED_VARIABLES}.Final_execution_dir_name)
 
 			-- Copy from $EWEASEL\control\unix_platform
-			create l_temp_path.make (<<"$ISE_EIFFEL", "studio", "spec", "$ISE_PLATFORM", "bin", "ec">>)
-			a_env.put (l_temp_path.as_string, {EQA_EW_PREDEFINED_VARIABLES}.Compile_command_name)
-			create l_temp_path.make (<<"$EWEASEL", "bin", "eiffel_freeze">>)
-			a_env.put (l_temp_path.as_string, {EQA_EW_PREDEFINED_VARIABLES}.Freeze_command_name)
-			create l_temp_path.make (<<"$EWEASEL", "bin", "eiffel_execute">>)
-			a_env.put (l_temp_path.as_string, {EQA_EW_PREDEFINED_VARIABLES}.Execute_command_name)
+
+			a_env.put (l_util.file_path (<<"$ISE_EIFFEL", "studio", "spec", "$ISE_PLATFORM", "bin", "ec">>), {EQA_EW_PREDEFINED_VARIABLES}.Compile_command_name)
+			a_env.put (l_util.file_path (<<"$EWEASEL", "bin", "eiffel_freeze">>), {EQA_EW_PREDEFINED_VARIABLES}.Freeze_command_name)
+			a_env.put (l_util.file_path (<<"$EWEASEL", "bin", "eiffel_execute">>), {EQA_EW_PREDEFINED_VARIABLES}.Execute_command_name)
 		end
 
 	associate (a_env: EQA_SYSTEM_ENVIRONMENT; a_var, a_dir: STRING)
@@ -120,10 +124,10 @@ feature {NONE} -- Initialization
 			-- Full name of subdirectory `subdir' of directory
 			-- `dir_name'
 		local
-			l_path: EQA_SYSTEM_PATH
+			l_path: EQA_EW_STRING_UTILITIES
 		do
-			create l_path.make (<<a_path_1, a_path_2>>)
-			Result := l_path.as_string
+			create l_path
+			Result := l_path.file_path (<<a_path_1, a_path_2>>)
 		end
 
 feature -- Query
@@ -199,6 +203,12 @@ feature -- Query
 
 	execution_result: EQA_EW_EXECUTION_RESULT
 			-- Result of the last Eiffel system execution.
+
+	has_env (a_key: STRING): BOOLEAN
+			-- If `a_key' has associate value in `environment'
+		do
+			Result := attached environment.value (a_key)
+		end
 
 feature -- Command
 

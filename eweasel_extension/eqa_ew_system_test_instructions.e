@@ -17,6 +17,28 @@ class
 
 feature -- Command
 
+	Abort_compile
+			--	Abort a suspended Eiffel compilation so that another
+			--	compilation can be started from scratch.  There can be at most
+			--	one Eiffel compilation in progress at a time.  This
+			--	instruction does a `cleanup' after aborting the compilation,
+			--	which deletes the entire EIFGENs/test directory tree.
+		local
+			l_inst: EQA_EW_ABORT_COMPILE_INST
+		do
+			create l_inst.make ("")
+			l_inst.execute (test_set)
+		end
+
+	Compile_quick_melted
+			-- Document not found...
+		local
+			l_inst: EQA_EW_COMPILE_QUICK_MELTED_INST
+		do
+			create l_inst.make ("")
+			l_inst.execute (test_set)
+		end
+
 	Define (a_name, a_value: STRING)
 			--	Define the substitution variable <name> to have the value
 			--	<value>.  If <value> contains white space characters, it must
@@ -57,6 +79,71 @@ feature -- Command
 			l_inst.execute (test_set)
 		end
 
+	Define_directory (a_name: STRING; a_dir_path: ARRAY [STRING])
+			--	Similar to `define', except that <name> is defined to have the
+			--	value which is the name of the directory specified by <path>
+			--	and the subdirectories (which are components of the path name
+			--	to be added onto <path> in an OS-dependent fashion).  This
+			--	allows directory name construction to be (more or less)
+			--	OS-independent.
+		require
+			not_void: a_name /= Void
+			not_void: a_dir_path /= Void
+		local
+			l_inst: EQA_EW_DEFINE_DIR_INST
+			l_path: STRING
+			l_count, l_max: INTEGER
+		do
+			from
+				l_count := a_dir_path.lower
+				l_max := a_dir_path.upper
+				l_path := ""
+			until
+				l_count > l_max
+			loop
+				l_path := l_path + " " + a_dir_path.item (l_count)
+				l_count := l_count + 1
+			end
+			l_path := test_set.environment.substitute (l_path)
+			create l_inst.make (a_name + " " + l_path)
+			l_inst.execute (test_set)
+		end
+
+	Define_file (a_name: STRING; a_dir_path: ARRAY [STRING]; a_file_name: STRING)
+			--	Similar to `define', except that <name> is defined to have the
+			--	value which is the name of the file specified by <path>, the
+			--	<subdirN> subdirectory names and <filename>.  This allows
+			--	construction of full file path names to be (more or less)
+			--	OS-independent.
+		require
+			not_void: a_name /= Void
+			not_void: a_dir_path /= Void
+			not_void: a_file_name /= Void
+		local
+			l_inst: EQA_EW_DEFINE_FILE_INST
+			l_path: STRING
+			l_count, l_max: INTEGER
+--			l_factory: EW_EQA_TEST_FACTORY
+		do
+--			l_inst := test_command_table.item (Define_file_keyword)
+			from
+				l_count := a_dir_path.lower
+				l_max := a_dir_path.upper
+				l_path := ""
+			until
+				l_count > l_max
+			loop
+				l_path := l_path + " " + a_dir_path.item (l_count)
+				l_count := l_count + 1
+			end
+			l_path := l_path + " " + a_file_name
+--			create l_factory
+			l_path := test_set.environment.substitute (l_path)
+
+			create l_inst.make (a_name + " " + l_path)
+			l_inst.execute (test_set)
+		end
+
 	copy_raw (a_source_file, a_dest_directory, a_dest_file: STRING)
 			--	Copy the file named <source-file> from the source directory
 			--	$SOURCE to the <dest-directory> under the name <dest-file>.
@@ -85,6 +172,21 @@ feature -- Command
 			not_void: a_dest_file /= Void
 		local
 			l_inst: EQA_EW_COPY_SUB_INST
+		do
+			create l_inst.make (a_source_file, a_dest_directory, a_dest_file, test_set)
+			l_inst.execute (test_set)
+		end
+
+	Copy_bin (a_source_file, a_dest_directory, a_dest_file: STRING)
+			--	Copy the binary file named <source-file> from the source directory
+			--	$SOURCE to the <dest-directory> under the name <dest-file>.
+			--	The destination directory is created if it does not exist.
+		require
+			not_void: a_source_file /= Void
+			not_void: a_dest_directory /= Void
+			not_void: a_dest_file /= Void
+		local
+			l_inst: EQA_EW_COPY_BIN_INST
 		do
 			create l_inst.make (a_source_file, a_dest_directory, a_dest_file, test_set)
 			l_inst.execute (test_set)
@@ -165,6 +267,16 @@ feature -- Command
 			l_inst: EQA_EW_COMPILE_RESULT_INST
 		do
 			create l_inst.make (a_result)
+			l_inst.execute (test_set)
+		end
+
+	Resume_compile
+			--	Resume an Eiffel compilation which was suspended due to
+			--	detection of a syntax or validity error.
+		local
+			l_inst: EQA_EW_RESUME_COMPILE_INST
+		do
+			create l_inst
 			l_inst.execute (test_set)
 		end
 
@@ -251,6 +363,19 @@ feature -- Command
 			l_inst.execute (test_set)
 		end
 
+	Cleanup_compile
+			--	Clean up a previous Eiffel compilation by deleting the entire
+			--	EIFGENs/test directory tree.  The next Eiffel compilation will
+			--	start with a clean slate.  If there is a suspended Eiffel
+			--	compilation awaiting resumption, the `abort_compile'
+			--	instruction must be used instead of this one.
+		local
+			l_inst: EQA_EW_CLEANUP_INST
+		do
+			create l_inst.make ("")
+			l_inst.execute (test_set)
+		end
+
 	Compare (a_output_filename, a_correct_output_filename: STRING)
 			--	Compare the file <output-file> in the output directory $OUTPUT
 			--	with the file <correct-output-file> in the source directory
@@ -325,6 +450,23 @@ feature -- Command
 			l_inst.execute (test_set)
 		end
 
+	Compile_final_keep (a_output_filename: STRING)
+			--	Similar to `Compile_melted'
+			--	Compile_final_keep requests finalizing of the system with
+			--	assertions kept
+		local
+			l_inst: EQA_EW_COMPILE_FINAL_KEEP_INST
+			l_temp: STRING
+		do
+			if a_output_filename = Void then
+				l_temp := ""
+			else
+				l_temp := a_output_filename
+			end
+			create l_inst.make (a_output_filename)
+			l_inst.execute (test_set)
+		end
+
 	C_compile_final (a_output_filename: STRING)
 			--	Just like `c_compile_work', except that it compiles the C
 			--	files generated by a `compile_final' instruction.
@@ -332,6 +474,18 @@ feature -- Command
 			l_inst: EQA_EW_C_COMPILE_FINAL_INST
 		do
 			create l_inst.make (a_output_filename)
+			l_inst.execute (test_set)
+		end
+
+	Setenv (a_name, a_value: STRING)
+			--	Set environment variable <name> with <value>.
+		require
+			not_void: a_name /= Void
+			not_void: a_value /= Void
+		local
+			l_inst: EQA_EW_SETENV_INST
+		do
+			create l_inst.make (a_name + " " + a_value)
 			l_inst.execute (test_set)
 		end
 

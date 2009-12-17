@@ -44,14 +44,14 @@ feature -- Command
 			-- Write `cached_whole_file' to output file
 		local
 			l_file: PLAIN_TEXT_FILE
-			l_path: EQA_SYSTEM_PATH
+			l_path: EQA_EW_STRING_UTILITIES
 			l_output: STRING
 		do
 			if attached output_file_name then
 				l_output := output_file_name
 			else
-				create l_path.make (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), test_set.execution_output_name>>)
-				l_output := l_path.as_string
+				create l_path
+				l_output := l_path.file_path (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), test_set.execution_output_name>>)
 			end
 
 			create l_file.make (l_output)
