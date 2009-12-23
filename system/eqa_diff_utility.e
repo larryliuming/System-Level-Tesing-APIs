@@ -25,7 +25,7 @@ feature {NONE} -- Initialization
 feature -- Command
 
 	compare (a_src, a_dst: ARRAY [STRING_GENERAL])
-			--
+			-- Compare stings in `a_src' and `a_dst'
 		do
 			diff.set (a_src, a_dst)
 			diff.compute_diff
