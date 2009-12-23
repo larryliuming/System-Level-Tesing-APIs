@@ -29,6 +29,7 @@ feature {NONE} -- Initialization
 		local
 			l_args: ARRAYED_LIST [STRING]
 			l_processor: EQA_EW_C_COMPILATION_OUTPUT_PROCESSOR
+			l_path: EQA_SYSTEM_PATH
 		do
 			a_test_set.environment.put (a_freeze_cmd, "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
 
@@ -40,6 +41,8 @@ feature {NONE} -- Initialization
 			end
 
 			create l_processor.make (a_test_set)
+			create l_path.make (<<a_test_set.c_compile_output_name>>)
+			a_test_set.prepare_system (l_path)
 			a_test_set.set_output_processor (l_processor)
 			a_test_set.run_system (l_args.to_array)
 			l_processor.write_output_to_file

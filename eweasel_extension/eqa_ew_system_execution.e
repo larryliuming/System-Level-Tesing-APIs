@@ -35,6 +35,7 @@ feature {NONE} -- Intialization
 		local
 			l_real_args: ARRAYED_LIST [STRING]
 			l_processor: EQA_EW_EXECUTION_OUTPUT_PROCESSOR
+			l_path: EQA_SYSTEM_PATH
 		do
 			a_test_set.environment.put (a_execute_cmd, "EQA_EXECUTABLE") -- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
 
@@ -45,15 +46,19 @@ feature {NONE} -- Intialization
 			l_real_args.merge_right (a_args)
 
 			create l_processor.make (a_test_set, a_savef)
-			a_test_set.set_output_processor (l_processor)
+
 
 			-- When {EQA_SYSTEM_EXECUTION}.launch, Testing library would open and write `set_output_path'
 			-- FIXME: what is following `set_output_path' really used for...?
---			if attached a_savef then
+			if attached a_savef then
 --				a_test_set.set_output_path (a_savef)
---			else
+				create l_path.make (<<a_savef>>)
+			else
 --				a_test_set.set_output_path (a_test_set.execution_output_name)
---			end
+				create l_path.make (<<a_test_set.execution_output_name>>)
+			end
+			a_test_set.prepare_system (l_path)
+			a_test_set.set_output_processor (l_processor)
 
 			a_test_set.run_system (l_real_args.to_array)
 
