@@ -64,19 +64,22 @@ feature {NONE} -- Initialization
 			-- How to get {EQA_SYSTEM_EXECUTION}.executable_env ?
 			-- Following environment vairable would be set by {EQA_EW_EIFFEL_COMPILATION}.make
 --			a_env.put ("/usr/local/Eiffel65/studio/spec/linux-x86/bin/ec", "EQA_EXECUTABLE")
-			a_env.put ( "/usr/local/Eiffel65/precomp/spec/linux-x86/base.ecf", "PRECOMPILED_BASE")
-			a_env.put ("/usr/local/Eiffel65/precomp/spec/linux-x86/base-mt.ecf", "PRECOMPILED_BASE_MT")
+			a_env.put ( a_env.substitute_recursive ("$ISE_EIFFEL/precomp/spec/$ISE_PLATFORM/base.ecf"), "PRECOMPILED_BASE")
+			a_env.put (a_env.substitute_recursive  ("$ISE_EIFFEL/precomp/spec/$ISE_PLATFORM/base-mt.ecf"), "PRECOMPILED_BASE_MT")
+			a_env.put (a_env.substitute_recursive ("$ISE_EIFFEL/experimental/precomp/spec/$ISE_PLATFORM/base-safe.ecf"), "PRECOMPILED_BASE_SAFE")
 
 			a_env.put ("", "EWEASEL_DOTNET_SETTING")
 
 			a_env.put ("/usr/local/Eiffel65/studio/spec/linux-x86/bin/ec", {EQA_EW_PREDEFINED_VARIABLES}.compile_command_name) -- FIXME: This environment value is used by old eweasel, should be removed?
 
-			a_env.set_source_directory ("/home/larryliuming/eweasel/tests")
+			a_env.set_source_directory (a_env.substitute_recursive ("$EWEASEL/tests"))
 
 			create l_util
 			-- l_test_dir := file_system.build_source_path (l_source_dir_name) -- Cannot use {EQA_FILE_SYSTEM}.build_source_path since it adding additional string to path
 			l_test_dir := l_util.file_path (<<a_env.source_directory, a_test_dir_name>>)
+
 			associate (a_env, {EQA_EW_PREDEFINED_VARIABLES}.source_dir_name, l_test_dir)
+			a_env.set_source_directory (l_test_dir) -- Update {EQA_FILE_SYSTEM}.source_directory
 
 			-- FIXME: Cannot use `a_env.target_directory', since by default, {EQA_SYSTEM_ENVIRONMENT}.target_directory is "/temp" ?
 
