@@ -42,29 +42,6 @@ feature -- Command
 
 feature {NONE} -- Utilities
 
-	executable_file_error (a_s: STRING): STRING
-			-- If file `a_s' does not exist or is not a file or
-			-- is not executable, string describing the
-			-- problem.  Void otherwise
-		local
-			l_f: RAW_FILE
-			l_fname: STRING
-		do
-			if a_s /= Void then
-				l_fname := a_s
-			else
-				l_fname := "(Void file name)"
-			end
-			create l_f.make (l_fname)
-			if not l_f.exists then
-				Result := "file " + l_fname + " not found"
-			elseif not l_f.is_plain then
-				Result := "file " + l_fname + " not a plain file"
-			elseif not l_f.is_executable then
-				Result := "file " + l_fname + " not executable"
-			end
-		end
-
 	assert: EQA_COMMONLY_USED_ASSERTIONS
 			-- Assert utilities
 		once

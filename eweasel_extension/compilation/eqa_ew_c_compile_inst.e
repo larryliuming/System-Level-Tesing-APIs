@@ -51,10 +51,12 @@ feature -- Command
 			l_max_c_processes: INTEGER
 			l_compilation: EQA_EW_C_COMPILATION
 			l_system_path: EQA_SYSTEM_PATH
+			l_file_system: EQA_FILE_SYSTEM
 		do
 			l_freeze_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Freeze_command_name)
 			l_freeze_cmd := a_test.environment.substitute_recursive (l_freeze_cmd)
-			l_exec_error := executable_file_error (l_freeze_cmd)
+			create l_file_system.make (a_test.environment)
+			l_exec_error := l_file_system.executable_file_exists (l_freeze_cmd)
 			if l_exec_error = Void then
 				a_test.increment_c_compile_count
 				l_dir := a_test.environment.value (compilation_dir_name)

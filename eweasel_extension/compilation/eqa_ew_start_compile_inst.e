@@ -32,7 +32,7 @@ feature -- Command
 			l_name, l_compile_cmd, l_exec_error: STRING
 			l_compilation: EQA_EW_EIFFEL_COMPILATION
 			l_curr_dir, l_test_dir: STRING
---			l_file_name: EQA_SYSTEM_PATH
+			l_file_system: EQA_FILE_SYSTEM
 		do
 			-- Work around a bug in Eiffel 4.2 (can't start
 			-- es4 on existing project unless project directory
@@ -45,7 +45,8 @@ feature -- Command
 			if l_compilation = Void or else not l_compilation.suspended then
 				l_compile_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Compile_command_name)
 				l_compile_cmd := a_test.environment.substitute_recursive (l_compile_cmd)
-				l_exec_error := executable_file_error (l_compile_cmd)
+				create l_file_system.make (a_test.environment)
+				l_exec_error := l_file_system.executable_file_exists (l_compile_cmd)
 				if l_exec_error = Void then
 					a_test.increment_e_compile_count
 					a_test.set_e_compile_start_time (os.current_time_in_seconds)
@@ -54,9 +55,6 @@ feature -- Command
 					else
 						l_name := a_test.e_compile_output_name
 					end
---					create l_file_name.make (<<l_name>>)
-
---					l_name := l_file_name.as_string
 					create l_compilation.make (l_compile_cmd, compiler_arguments (a_test, a_test.environment), l_name, a_test)
 					a_test.set_e_compilation (l_compilation)
 

@@ -77,10 +77,12 @@ feature -- Command
 			l_prog_file, l_input_file: RAW_FILE
 			l_execution: EQA_EW_SYSTEM_EXECUTION
 			l_path: EQA_SYSTEM_PATH
+			l_file_system: EQA_FILE_SYSTEM
 		do
 			l_execute_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Execute_command_name)
 			l_execute_cmd := a_test.environment.substitute (l_execute_cmd)
-			l_exec_error := executable_file_error (l_execute_cmd)
+			create l_file_system.make (a_test.environment)
+			l_exec_error := l_file_system.executable_file_exists (l_execute_cmd)
 			if l_exec_error = Void then
 				a_test.increment_execution_count
 				l_exec_dir := a_test.environment.value (execution_dir_name)
@@ -101,7 +103,7 @@ feature -- Command
 				l_savefile := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), l_savefile>>)
 
 				create l_prog_file.make (l_prog)
-				l_exec_error := executable_file_error (l_prog)
+				l_exec_error := l_file_system.executable_file_exists (l_prog)
 				if l_exec_error = Void then
 					execute_ok := True
 					if l_infile /= Void then
