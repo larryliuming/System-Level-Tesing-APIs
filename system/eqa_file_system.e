@@ -260,18 +260,6 @@ feature -- Query
 			end
 		end
 
-	is_dir_exists (a_dir_name: STRING): BOOLEAN
-			-- Try to ensure that directory `dir_name' exists
-			-- (it is not guaranteed to exist at exit).
-		require
-			name_not_void: a_dir_name /= Void
-		local
-			l_dir: DIRECTORY
-		do
-			create l_dir.make (a_dir_name)
-			Result := l_dir.exists
-		end
-
 	is_cycle_included (a_path_1, a_path_2: PATH_NAME): BOOLEAN
 			-- Does `a_path_1' including `a_path_2'
 		require
@@ -511,7 +499,7 @@ feature {NONE} -- Implementation
 				end
 			end
 		end
-		
+
 note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
