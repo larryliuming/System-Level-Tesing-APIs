@@ -567,8 +567,14 @@ feature {NONE} -- Implementation
 
 	test_set: EQA_EW_SYSTEM_TEST_SET
 			-- Test set that current managed
+		require
+			valid: conform_to ({EQA_EW_SYSTEM_TEST_SET})
+		local
+			l_result: EQA_EW_SYSTEM_TEST_SET
 		do
-			Result ?= Current
+			l_result ?= Current
+			check attached l_result end
+			Result := l_result
 		ensure
 			not_void: Result /= Void
 		end

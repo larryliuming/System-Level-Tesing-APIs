@@ -45,14 +45,14 @@ feature -- Query
 	compilation_finished: BOOLEAN
 			-- Did compilation finish normally?
 
-	exception_tag: STRING
+	exception_tag: detachable STRING
 			-- Tag of exception which aborted compilation,
 			-- if any
 
-	syntax_errors: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_SYNTAX_ERROR]
+	syntax_errors: detachable SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_SYNTAX_ERROR]
 			-- Syntax errors reported by compiler
 
-	validity_errors: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_VALIDITY_ERROR]
+	validity_errors: detachable SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_VALIDITY_ERROR]
 			-- Validity errors reported by compiler
 
 	summary: STRING
@@ -136,6 +136,7 @@ feature -- Command
 			-- `a_line' as next line in compiler output.
 		local
 			l_s: SEQ_STRING
+			l_exception_tag: like exception_tag
 		do
 			create l_s.make (a_line.count)
 			l_s.append (a_line)
@@ -167,6 +168,8 @@ feature -- Command
 					create exception_tag.make(0)
 				end
 				a_line.keep_tail(a_line.count - {EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Exception_prefix.count)
+				l_exception_tag := exception_tag
+				check attached l_exception_tag end -- Implied by previous if clause
 				exception_tag.copy (a_line)
 			elseif string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Exception_occurred_prefix, a_line) then
 				had_exception := True
@@ -200,11 +203,15 @@ feature {EQA_EW_COMPILE_RESULT_INST} -- Internal command
 			-- Add validity error
 		require
 			error_not_void: a_err /= Void
+		local
+			l_validity_errors: like validity_errors
 		do
 			if validity_errors = Void then
 				create validity_errors.make
 			end
-			validity_errors.extend (a_err)
+			l_validity_errors := validity_errors
+			check attached l_validity_errors end -- Implied by previous if clause
+			l_validity_errors.extend (a_err)
 			last_validity_error := a_err
 		end
 
@@ -212,11 +219,15 @@ feature {EQA_EW_COMPILE_RESULT_INST} -- Internal command
 			-- Add syntax error
 		require
 			error_not_void: a_err /= Void
+		local
+			l_syntax_errors: like syntax_errors
 		do
 			if syntax_errors = Void then
 				create syntax_errors.make
 			end
-			syntax_errors.extend (a_err)
+			l_syntax_errors := syntax_errors
+			check attached l_syntax_errors end -- Implied by previous if clause
+			l_syntax_errors.extend (a_err)
 		end
 
 	sort
@@ -225,11 +236,11 @@ feature {EQA_EW_COMPILE_RESULT_INST} -- Internal command
 			-- not be correctly sorted because items may
 			-- have been added before full key was set
 		do
-			if syntax_errors /= Void and then syntax_errors.count > 1 then
-				syntax_errors.sort
+			if attached syntax_errors as l_syntax_errors and then l_syntax_errors.count > 1 then
+				l_syntax_errors.sort
 			end
-			if validity_errors /= Void and then validity_errors.count > 1 then
-				validity_errors.sort
+			if attached validity_errors as l_validity_errors and then l_validity_errors.count > 1 then
+				l_validity_errors.sort
 			end
 		end
 
@@ -266,45 +277,46 @@ feature {EQA_EW_COMPILE_RESULT_INST} -- Internal command
 
 feature {NONE} -- Syntax error implementation
 
-	new_syntax_error (line: STRING): EQA_EW_EIFFEL_SYNTAX_ERROR
+	new_syntax_error (a_line: STRING): EQA_EW_EIFFEL_SYNTAX_ERROR
 			-- Create a syntax error object
 		require
-			line_not_void: line /= Void
+			line_not_void: a_line /= Void
 		local
-			words: LIST [STRING]
-			line_no, kind: STRING
-			class_name: STRING
-			count: INTEGER
+			l_words: LIST [STRING]
+			l_line_no: detachable STRING
+			l_kind: STRING
+			l_class_name: STRING
+			l_count: INTEGER
 		do
-			words := string_util.broken_into_words (line)
-			count := words.count
-			if count >= 5 then
-				line_no := words.i_th (5)
+			l_words := string_util.broken_into_words (a_line)
+			l_count := l_words.count
+			if l_count >= 5 then
+				l_line_no := l_words.i_th (5)
 			end
-			if count >= 7 then
-				kind := words.i_th (7)
-				kind.to_lower
-				if equal (kind, "class") then
-					if count >= 8 then
-						class_name := words.i_th (8)
+			if l_count >= 7 then
+				l_kind := l_words.i_th (7)
+				l_kind.to_lower
+				if equal (l_kind, "class") then
+					if l_count >= 8 then
+						l_class_name := l_words.i_th (8)
 					else
-						create class_name.make (0)
+						create l_class_name.make (0)
 					end
-				elseif equal (kind, "ace") then
-					create class_name.make (0)
-				elseif equal (kind, "cluster_properties") then
-					create class_name.make (0)
-					class_name.append ("_USE_FILE")
+				elseif equal (l_kind, "ace") then
+					create l_class_name.make (0)
+				elseif equal (l_kind, "cluster_properties") then
+					create l_class_name.make (0)
+					l_class_name.append ("_USE_FILE")
 				else
-					create class_name.make (0)
-					class_name.append ("%"UNKNOWN%"")
+					create l_class_name.make (0)
+					l_class_name.append ("%"UNKNOWN%"")
 				end
 			else
-				create class_name.make (0)
+				create l_class_name.make (0)
 			end
-			create Result.make (class_name)
-			if string_util.is_integer (line_no) then
-				Result.set_line_number (line_no.to_integer)
+			create Result.make (l_class_name)
+			if attached l_line_no and then string_util.is_integer (l_line_no) then
+				Result.set_line_number (l_line_no.to_integer)
 			end
 		end
 
@@ -314,7 +326,8 @@ feature {NONE} -- Syntax error implementation
 			line_not_void: a_line /= Void
 		local
 			l_words: LIST [STRING]
-			l_line_no, l_kind: STRING
+			l_line_no: detachable STRING
+			l_kind: STRING
 			l_class_name: STRING
 			l_count: INTEGER
 		do
@@ -345,7 +358,7 @@ feature {NONE} -- Syntax error implementation
 				create l_class_name.make (0)
 			end
 			create Result.make (l_class_name)
-			if string_util.is_integer (l_line_no) then
+			if attached l_line_no and then string_util.is_integer (l_line_no) then
 				Result.set_line_number (l_line_no.to_integer)
 			end
 		end
@@ -389,7 +402,7 @@ feature {NONE} -- Syntax error implementation
 			add_validity_error (new_validity_error (a_line))
 		end
 
-	last_validity_error: EQA_EW_EIFFEL_VALIDITY_ERROR
+	last_validity_error: detachable EQA_EW_EIFFEL_VALIDITY_ERROR
 			-- Last validity error being inserted
 
 feature {NONE} -- Implementation
@@ -401,15 +414,17 @@ feature {NONE} -- Implementation
 		local
 			l_words: LIST [STRING]
 			l_class_name: STRING
+			l_last_validity_error: like last_validity_error
 		do
 			if string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Class_name_prefix, a_line) then
 				l_words := string_util.broken_into_words (a_line)
 				if l_words.count >= 2 then
 					l_class_name := l_words.i_th (2)
+					l_last_validity_error := last_validity_error
 					check
-						last_validity_error_not_void: last_validity_error /= Void
+						last_validity_error_not_void: l_last_validity_error /= Void
 					end
-					last_validity_error.set_class_name (l_class_name)
+					l_last_validity_error.set_class_name (l_class_name)
 				end
 				in_error := False
 			end
@@ -425,7 +440,7 @@ feature {NONE} -- Implementation
 			-- Are we analyzing lines which are part of
 			-- a syntax or validity error?
 
-	linked_list_matches (a_list1, a_list2: SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_ERROR]): BOOLEAN
+	linked_list_matches (a_list1, a_list2: detachable SORTED_TWO_WAY_LIST [EQA_EW_EIFFEL_ERROR]): BOOLEAN
 			-- Dose list match?
 		local
 			l_count1, l_count2: INTEGER
@@ -446,6 +461,8 @@ feature {NONE} -- Implementation
 			elseif l_count1 /= l_count2 then
 				Result := False
 			else
+				check attached a_list1 end -- Implied by previous if clause
+				check attached a_list2 end -- Implied by previous if clause
 				from
 					a_list1.start
 					a_list2.start
@@ -463,7 +480,7 @@ feature {NONE} -- Implementation
 			end
 		end
 
-	raw_compiler_output: STRING
+	raw_compiler_output: detachable STRING
 			-- Raw output of compiler, if not Void
 
 ;note
