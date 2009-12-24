@@ -53,7 +53,8 @@ feature -- Command
 		do
 			execute_ok := False
 			l_act_name := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), actual_output_file>>)
-			l_exp_name := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name), expected_output_file>>)
+--			l_exp_name := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name), expected_output_file>>)
+			l_exp_name := a_test.file_system.build_source_path (create {EQA_SYSTEM_PATH}.make (<<expected_output_file>>))
 			create l_actual.make (l_act_name)
 			create l_expected.make (l_exp_name)
 			if (l_actual.exists and then l_actual.is_plain) and
