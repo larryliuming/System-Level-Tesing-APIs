@@ -61,28 +61,28 @@ feature -- Query
 			l_status: STRING
 		do
 			create Result.make (0)
-			if syntax_errors /= Void then
+			if attached syntax_errors as l_syntax_errors then
 				from
-					syntax_errors.start
+					l_syntax_errors.start
 				until
-					syntax_errors.after
+					l_syntax_errors.after
 				loop
 					Result.extend ('%T')
-					Result.append (syntax_errors.item.summary)
+					Result.append (l_syntax_errors.item.summary)
 					Result.extend ('%N')
-					syntax_errors.forth
+					l_syntax_errors.forth
 				end
 			end
-			if validity_errors /= Void then
+			if attached validity_errors as l_validity_errors then
 				from
-					validity_errors.start
+					l_validity_errors.start
 				until
-					validity_errors.after
+					l_validity_errors.after
 				loop
 					Result.extend ('%T')
-					Result.append (validity_errors.item.summary)
+					Result.append (l_validity_errors.item.summary)
 					Result.extend ('%N')
-					validity_errors.forth
+					l_validity_errors.forth
 				end
 			end
 
@@ -104,9 +104,9 @@ feature -- Query
 			end
 			if had_exception then
 				l_status.append ("had_exception ")
-				if (exception_tag /= Void) then
+				if attached exception_tag as l_exception_tag then
 					l_status.append ("(")
-					l_status.append (exception_tag)
+					l_status.append (l_exception_tag)
 					l_status.append (") ")
 				end
 			end
@@ -118,11 +118,11 @@ feature -- Query
 			end
 			if l_status.count = 0 then
 				l_status.append ("unknown	")
-				if raw_compiler_output /= Void then
+				if attached raw_compiler_output as l_raw_compiler_output then
 					l_status.extend ('%N')
 					l_status.append ("Raw compiler output:")
 					l_status.extend ('%N')
-					l_status.append (raw_compiler_output)
+					l_status.append (l_raw_compiler_output)
 				end
 			end
 			l_status.prepend ("%TFinal status:  ")
@@ -170,15 +170,17 @@ feature -- Command
 				a_line.keep_tail(a_line.count - {EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Exception_prefix.count)
 				l_exception_tag := exception_tag
 				check attached l_exception_tag end -- Implied by previous if clause
-				exception_tag.copy (a_line)
+				l_exception_tag.copy (a_line)
 			elseif string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Exception_occurred_prefix, a_line) then
 				had_exception := True
 				if exception_tag = Void then
 					create exception_tag.make(0)
 				end
-				if exception_tag.count = 0 then
+				l_exception_tag := exception_tag
+				check attached l_exception_tag end -- Implied by previous if clause
+				if l_exception_tag.count = 0 then
 					a_line.keep_tail (a_line.count - {EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Exception_occurred_prefix.count)
-					exception_tag.copy (a_line)
+					l_exception_tag.copy (a_line)
 				end
 			elseif string_util.is_prefix ({EQA_EW_EIFFEL_COMPILER_CONSTANTS}.Failure_prefix, a_line) then
 				execution_failure := True
