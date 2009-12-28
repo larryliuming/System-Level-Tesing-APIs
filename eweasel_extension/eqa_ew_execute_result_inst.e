@@ -63,6 +63,7 @@ feature {NONE} -- Intialization
 			l_count: INTEGER
 			l_er: EQA_EW_EXECUTION_RESULT
 			l_type: STRING
+			l_failure_explanation: like failure_explanation
 		do
 			l_words := string_util.broken_into_words (a_line)
 			l_count := l_words.count
@@ -91,9 +92,10 @@ feature {NONE} -- Intialization
 					init_ok := True
 				else
 					init_ok := False
-					create failure_explanation.make (0)
-					failure_explanation.append ("unknown keyword: ")
-					failure_explanation.append (l_type)
+					create l_failure_explanation.make (0)
+					failure_explanation := l_failure_explanation
+					l_failure_explanation.append ("unknown keyword: ")
+					l_failure_explanation.append (l_type)
 				end
 				expected_execution_result := l_er
 			end
@@ -106,28 +108,39 @@ feature -- Command
 			-- instructions of `a_test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			l_er: EQA_EW_EXECUTION_RESULT
+			l_er: detachable EQA_EW_EXECUTION_RESULT
+			l_failure_explanation: like failure_explanation
+			l_expected_execution_result: like expected_execution_result
 		do
 			l_er := a_test.execution_result
 			if l_er = Void then
 				execute_ok := False
-				create failure_explanation.make (0)
-				failure_explanation.append ("no pending execution result to check")
+				create l_failure_explanation.make (0)
+				failure_explanation := l_failure_explanation
+				l_failure_explanation.append ("no pending execution result to check")
 
 			else
-				execute_ok := l_er.matches (expected_execution_result)
+				l_expected_execution_result := expected_execution_result
+				check attached l_expected_execution_result end -- Implied by `init_ok' is True, otherwise assertion would be violated in `inst_initialize'
+				execute_ok := l_er.matches (l_expected_execution_result)
 				if not execute_ok then
-					create failure_explanation.make (0)
-					failure_explanation.append ("actual execution result does not match expected result%N")
-					failure_explanation.append ("Actual result:%N")
-					failure_explanation.append (a_test.execution_result.summary)
-					failure_explanation.append ("%NExpected result:%N")
-					failure_explanation.append (expected_execution_result.summary)
+					create l_failure_explanation.make (0)
+					failure_explanation := l_failure_explanation
+					l_failure_explanation.append ("actual execution result does not match expected result%N")
+					l_failure_explanation.append ("Actual result:%N")
+					l_failure_explanation.append (a_test.execution_result.summary)
+					l_failure_explanation.append ("%NExpected result:%N")
+					l_failure_explanation.append (l_expected_execution_result.summary)
 				end
 				a_test.set_execution_result (Void)
 			end
 
-			assert.assert (failure_explanation, execute_ok)
+			if not execute_ok then
+				l_failure_explanation := failure_explanation
+				check attached l_failure_explanation end -- Implied by previous if clauses
+				assert.assert (l_failure_explanation, False)
+			end
+
 		end
 
 feature {NONE} -- Implementation
@@ -140,7 +153,7 @@ feature {NONE} -- Implementation
 
 feature {NONE} -- Implementation
 
-	expected_execution_result: EQA_EW_EXECUTION_RESULT
+	expected_execution_result: detachable EQA_EW_EXECUTION_RESULT
 			-- Result expected from system compilation
 
 ;note

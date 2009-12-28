@@ -186,8 +186,6 @@ feature {NONE} -- Implementation
 
 	is_fast: BOOLEAN
 			-- Should "speed" mode be used?
-		local
-			l_env: EQA_SYSTEM_ENVIRONMENT
 		do
 			Result := test_set.environment.get ({EQA_EW_PREDEFINED_VARIABLES}.Eweasel_fast_name) /= Void
 		end

@@ -46,12 +46,15 @@ feature -- Command
 			l_file: PLAIN_TEXT_FILE
 			l_path: EQA_EW_STRING_UTILITIES
 			l_output: STRING
+			l_output_dir: detachable STRING
 		do
-			if attached output_file_name then
-				l_output := output_file_name
+			if attached output_file_name as l_output_file_name then
+				l_output := l_output_file_name
 			else
 				create l_path
-				l_output := l_path.file_path (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), test_set.execution_output_name>>)
+				l_output_dir := test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name)
+				check attached l_output_dir end -- Implied by envirnment virables should be set before testing
+				l_output := l_path.file_path (<<l_output_dir, test_set.execution_output_name>>)
 			end
 
 			create l_file.make (l_output)
@@ -64,7 +67,7 @@ feature -- Command
 
 feature -- Query
 
-	execution_result: EQA_EW_EXECUTION_RESULT
+	execution_result: detachable EQA_EW_EXECUTION_RESULT
 			-- Compilation result
 
 	output_file_name: detachable STRING
@@ -79,11 +82,15 @@ feature {NONE} -- Implementation
 
 	on_new_line
 			-- <Precursor>
+		local
+			l_result: like execution_result
 		do
 			if not attached execution_result then
 				create execution_result
 			end
-			execution_result.update (buffer.twin)
+			l_result := execution_result
+			check attached l_result end -- Implied by previous if clause
+			l_result.update (buffer.twin)
 			-- Write to output file
 
 			cached_whole_file.append (buffer.twin + "%N")

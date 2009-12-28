@@ -42,9 +42,12 @@ feature -- Command
 		local
 			l_file: PLAIN_TEXT_FILE
 			l_path: EQA_EW_STRING_UTILITIES
+			l_output_path: detachable STRING
 		do
 			create l_path
-			create l_file.make (l_path.file_path(<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), test_set.c_compile_output_name>>))
+			l_output_path := test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name)
+			check attached l_output_path end -- Implied by environment virable should be set before testing
+			create l_file.make (l_path.file_path(<<l_output_path, test_set.c_compile_output_name>>))
 			l_file.open_read_append
 
 			l_file.put_string (cached_whole_file)
@@ -54,7 +57,7 @@ feature -- Command
 
 feature -- Query
 
-	compilation_result: EQA_EW_C_COMPILATION_RESULT
+	compilation_result: detachable EQA_EW_C_COMPILATION_RESULT
 			-- Compilation result
 
 feature {NONE} -- Implementation
@@ -66,11 +69,15 @@ feature {NONE} -- Implementation
 
 	on_new_line
 			-- <Precursor>
+		local
+			l_result: like compilation_result
 		do
 			if not attached compilation_result then
 				create compilation_result
 			end
-			compilation_result.update (buffer.twin)
+			l_result := compilation_result
+			check attached l_result end -- Implied by previous if clause
+			l_result.update (buffer.twin)
 			-- Write to output file
 
 			cached_whole_file.append (buffer.twin + "%N")

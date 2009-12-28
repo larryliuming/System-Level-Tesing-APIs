@@ -39,6 +39,7 @@ feature {NONE} -- Initialization
 		local
 			l_args: LIST [STRING]
 			l_count: INTEGER
+			l_failure_explanation: like failure_explanation
 		do
 			l_args := string_util.broken_into_words (a_line)
 			l_count := l_args.count
@@ -46,9 +47,10 @@ feature {NONE} -- Initialization
 				failure_explanation := "argument count must be at least 3"
 				init_ok := False
 			elseif l_args.first.item (1) = {EQA_EW_SUBSTITUTION_CONST}.Substitute_char then
-				create failure_explanation.make (0)
-				failure_explanation.append ("variable being defined cannot start with ")
-				failure_explanation.extend ({EQA_EW_SUBSTITUTION_CONST}.Substitute_char)
+				create l_failure_explanation.make (0)
+				failure_explanation := l_failure_explanation
+				l_failure_explanation.append ("variable being defined cannot start with ")
+				l_failure_explanation.extend ({EQA_EW_SUBSTITUTION_CONST}.Substitute_char)
 				init_ok := False
 			else
 				variable := l_args.first
@@ -58,6 +60,11 @@ feature {NONE} -- Initialization
 			if init_ok then
 --				init_environment.define (variable, value)
 			end
+
+			if not init_ok then
+				check attached l_failure_explanation end -- Implied by previous if clause
+				assert.assert (l_failure_explanation, False)
+			end
 		end
 
 feature -- Command
@@ -65,8 +72,16 @@ feature -- Command
 	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
 			-- Execute `Current' as one of the
 			-- instructions of `a_test'.  Always successful.
+		local
+			l_var, l_val: like variable
 		do
-			a_test.environment.put (variable, value)
+			l_var := variable
+			check attached l_var end -- Implied by `init_ok' is True, otherwise assertion would be violated in `inst_initialize'
+
+			l_val := value
+			check attached l_val end -- Implied by `init_ok' is True, otherwise assertion would be violated in `inst_initialize'
+
+			a_test.environment.put (l_var, l_val)
 		end
 
 feature -- Query
@@ -79,10 +94,10 @@ feature -- Query
 
 feature {NONE} -- Implementation
 
-	variable: STRING
+	variable: detachable STRING
 			-- Name of environment value
 
-	value: STRING
+	value: detachable STRING
 			-- Value to be given to environment value
 
 	make_dir_value (a_args: LIST [STRING]): STRING

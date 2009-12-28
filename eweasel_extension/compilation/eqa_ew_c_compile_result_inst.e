@@ -28,6 +28,7 @@ feature {NONE} -- Initialization
 			l_count: INTEGER
 			l_type: STRING
 			l_cr: EQA_EW_C_COMPILATION_RESULT
+			l_failure_explanation: like failure_explanation
 		do
 			l_words := string_util.broken_into_words (a_args)
 			l_count := l_words.count
@@ -44,9 +45,9 @@ feature {NONE} -- Initialization
 					init_ok := True
 				else
 					init_ok := False
-					create failure_explanation.make (0)
-					failure_explanation.append ("unknown keyword: ")
-					failure_explanation.append (l_type)
+					create l_failure_explanation.make (0)
+					l_failure_explanation.append ("unknown keyword: ")
+					l_failure_explanation.append (l_type)
 				end
 			end
 		end
@@ -58,29 +59,37 @@ feature -- Command
 			-- instructions of `a_test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			l_cr: EQA_EW_C_COMPILATION_RESULT
+			l_cr: detachable EQA_EW_C_COMPILATION_RESULT
+			l_failure_explanation: like failure_explanation
+			l_expected_compile_result: like expected_compile_result
 		do
 			l_cr := a_test.c_compilation_result
 			if l_cr = Void then
 				execute_ok := False
-				create failure_explanation.make (0)
-				failure_explanation.append ("no pending C compilation result to check")
+				create l_failure_explanation.make (0)
+				failure_explanation := l_failure_explanation
+				l_failure_explanation.append ("no pending C compilation result to check")
 
 			else
-				execute_ok := l_cr.matches (expected_compile_result)
+				l_expected_compile_result := expected_compile_result
+				check attached l_expected_compile_result end -- Implied by `init_ok' is True, otherwise assertion would be violated in `inst_initialize'
+				execute_ok := l_cr.matches (l_expected_compile_result)
 				if not execute_ok then
-					create failure_explanation.make (0)
-					failure_explanation.append ("actual C compilation result does not match expected result%N")
-					failure_explanation.append ("Actual result: ")
-					failure_explanation.append (l_cr.summary)
-					failure_explanation.append ("%NExpected result: ")
-					failure_explanation.append (expected_compile_result.summary)
+					create l_failure_explanation.make (0)
+					failure_explanation := l_failure_explanation
+					l_failure_explanation.append ("actual C compilation result does not match expected result%N")
+					l_failure_explanation.append ("Actual result: ")
+					l_failure_explanation.append (l_cr.summary)
+					l_failure_explanation.append ("%NExpected result: ")
+					l_failure_explanation.append (l_expected_compile_result.summary)
 				end
 				a_test.set_c_compilation_result (Void)
 			end
 
 			if not execute_ok then
-				assert.assert (failure_explanation, execute_ok)
+				l_failure_explanation := failure_explanation
+				check attached l_failure_explanation end -- Implied by previous if clause
+				assert.assert (l_failure_explanation, execute_ok)
 			end
 		end
 
@@ -94,7 +103,7 @@ feature -- Query
 
 feature {NONE} -- Implementation
 
-	expected_compile_result: EQA_EW_C_COMPILATION_RESULT
+	expected_compile_result: detachable EQA_EW_C_COMPILATION_RESULT
 			-- Result expected from C compilations
 
 ;note

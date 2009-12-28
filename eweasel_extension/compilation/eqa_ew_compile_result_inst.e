@@ -81,13 +81,15 @@ feature -- Command
 			-- instructions of `test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			l_cr: EQA_EW_EIFFEL_COMPILATION_RESULT
+			l_cr: detachable EQA_EW_EIFFEL_COMPILATION_RESULT
+			l_failure_explanation: like failure_explanation
 		do
 			l_cr := a_test.e_compilation_result
 			if l_cr = Void then
 				execute_ok := False
-				create failure_explanation.make (0)
-				failure_explanation.append ("no pending Eiffel compilation result to check")
+				create l_failure_explanation.make (0)
+				failure_explanation := l_failure_explanation
+				l_failure_explanation.append ("no pending Eiffel compilation result to check")
 
 			else
 				-- Make sure syntax and validity errors/warnings
@@ -97,18 +99,21 @@ feature -- Command
 				l_cr.sort
 				execute_ok := l_cr.matches (expected_compile_result)
 				if not execute_ok then
-					create failure_explanation.make (0)
-					failure_explanation.append ("actual compilation result does not match expected result%N")
-					failure_explanation.append ("Actual result:%N")
-					failure_explanation.append (l_cr.summary)
-					failure_explanation.append ("%NExpected result:%N")
-					failure_explanation.append (expected_compile_result.summary)
+					create l_failure_explanation.make (0)
+					failure_explanation := l_failure_explanation
+					l_failure_explanation.append ("actual compilation result does not match expected result%N")
+					l_failure_explanation.append ("Actual result:%N")
+					l_failure_explanation.append (l_cr.summary)
+					l_failure_explanation.append ("%NExpected result:%N")
+					l_failure_explanation.append (expected_compile_result.summary)
 				end
 				a_test.set_e_compilation_result (Void)
 			end
 
 			if not execute_ok then
-				assert.assert (failure_explanation, False)
+				l_failure_explanation := failure_explanation
+				check attached l_failure_explanation end -- Implied by previous if clauses
+				assert.assert (l_failure_explanation, False)
 			end
 		end
 
@@ -127,6 +132,7 @@ feature {NONE} -- Implementation
 			l_pos: INTEGER
 			l_mod_args, l_type: STRING
 			l_cr: EQA_EW_EIFFEL_COMPILATION_RESULT
+			l_failure_explanation: like failure_explanation
 		do
 			l_mod_args := a_expected_result
 			l_pos := string_util.first_white_position (l_mod_args)
@@ -182,9 +188,10 @@ feature {NONE} -- Implementation
 				end
 			else
 				init_ok := False
-				create failure_explanation.make (0)
-				failure_explanation.append ("unknown keyword: ")
-				failure_explanation.append (l_type)
+				create l_failure_explanation.make (0)
+				failure_explanation := l_failure_explanation
+				l_failure_explanation.append ("unknown keyword: ")
+				l_failure_explanation.append (l_type)
 			end
 			if l_cr.syntax_errors /= Void then
 				if equal (l_type, Syntax_error_result) then
@@ -221,8 +228,9 @@ feature {NONE} -- Implementation
 		local
 			l_words: LIST [STRING]
 			l_count: INTEGER
-			l_cname, l_line_no: STRING
+			l_cname, l_line_no: detachable STRING
 			l_syn: EQA_EW_EIFFEL_SYNTAX_ERROR
+			l_failure_explanation: like failure_explanation
 		do
 			l_words := string_util.broken_into_words (a_phrase)
 			l_count := l_words.count
@@ -232,17 +240,21 @@ feature {NONE} -- Implementation
 			end
 			if l_count /= 2 then
 				init_ok := False
-				create failure_explanation.make (0)
-				failure_explanation.append ("wrong number of arguments for syntax error phrase: ")
-				failure_explanation.append (a_phrase)
-			elseif not string_util.is_integer (l_line_no) then
+				create l_failure_explanation.make (0)
+				failure_explanation := l_failure_explanation
+				l_failure_explanation.append ("wrong number of arguments for syntax error phrase: ")
+				l_failure_explanation.append (a_phrase)
+			elseif attached l_line_no and then not string_util.is_integer (l_line_no) then
 				init_ok := False
-				create failure_explanation.make (0)
-				failure_explanation.append ("syntax error has non-integer line number: ")
-				failure_explanation.append (l_line_no)
+				create l_failure_explanation.make (0)
+				failure_explanation := l_failure_explanation
+				l_failure_explanation.append ("syntax error has non-integer line number: ")
+				l_failure_explanation.append (l_line_no)
 			else
+				check attached l_cname end -- Implied by previous if clause
 				l_cname := real_class_name (l_cname)
 				create l_syn.make (l_cname)
+				check attached l_line_no end -- Implied by previous if clause
 				l_syn.set_line_number (l_line_no.to_integer)
 				a_cr.add_syntax_error (l_syn)
 			end
@@ -260,14 +272,16 @@ feature {NONE} -- Implementation
 			l_count: INTEGER
 			l_cname: STRING
 			l_val: EQA_EW_EIFFEL_VALIDITY_ERROR
+			l_failure_explanation: like failure_explanation
 		do
 			l_words := string_util.broken_into_words (a_phrase)
 			l_count := l_words.count
 			if l_count < 2 then
 				init_ok := False
-				create failure_explanation.make (0)
-				failure_explanation.append ("validity error phrase has less than 2 arguments: ")
-				failure_explanation.append (a_phrase)
+				create l_failure_explanation.make (0)
+				failure_explanation := l_failure_explanation
+				l_failure_explanation.append ("validity error phrase has less than 2 arguments: ")
+				l_failure_explanation.append (a_phrase)
 			else
 				from
 					l_words.start

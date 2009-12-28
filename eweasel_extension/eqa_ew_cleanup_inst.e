@@ -55,8 +55,9 @@ feature -- Command
 			-- instructions of `a_test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			l_compilation: EQA_EW_EIFFEL_COMPILATION
-			l_dir, l_eif_dir: STRING
+			l_compilation: detachable EQA_EW_EIFFEL_COMPILATION
+			l_dir: detachable STRING
+			l_eif_dir: STRING
 		do
 			l_compilation := a_test.e_compilation
 			if l_compilation = Void then
@@ -67,6 +68,7 @@ feature -- Command
 				failure_explanation := "suspended compilation - use `abort_compile' instead"
 			else
 				l_dir := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name)
+				check attached l_dir end -- Implied by enviroment values have been set before testing
 				l_eif_dir := string_util.file_path (<<l_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Eiffel_gen_directory>>)
 				a_test.file_system.delete_directory_tree (l_eif_dir)
 				delete_project_files (l_dir)

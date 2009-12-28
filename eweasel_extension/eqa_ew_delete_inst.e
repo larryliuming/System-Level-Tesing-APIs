@@ -22,28 +22,23 @@ create
 
 feature {NONE} -- Initialization
 
-	make (a_line: STRING)
+	make (a_del_directory, a_del_file: STRING)
 			-- Creation method
+		require
+			not_void: attached a_del_directory
+			not_void: attached a_del_file
 		do
-			inst_initialize (a_line)
+			inst_initialize (a_del_directory, a_del_file)
 		end
 
-	inst_initialize (line: STRING)
-			-- Initialize instruction from `line'.  Set
-			-- `init_ok' to indicate whether
-			-- initialization was successful.
-		local
-			args: LIST [STRING]
+	inst_initialize (a_del_directory, a_del_file: STRING)
+			-- Initialize instruction
+		require
+			not_void: attached a_del_directory
+			not_void: attached a_del_file
 		do
-			args := string_util.broken_into_words (line)
-			if args.count /= 2 then
-				failure_explanation := "argument count is not 2"
-				init_ok := False
-			else
-				del_directory := args.i_th (1)
-				del_file := args.i_th (2)
-				init_ok := True
-			end
+			del_directory := a_del_directory
+			del_file := a_del_file
 		end
 
 feature -- Command
@@ -87,9 +82,6 @@ feature -- Command
 		end
 
 feature -- Query
-
-	init_ok: BOOLEAN
-			-- Was last call to `initialize' successful?
 
 	execute_ok: BOOLEAN
 			-- Was last call to `execute' successful?

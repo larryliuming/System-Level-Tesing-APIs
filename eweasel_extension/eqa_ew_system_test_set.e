@@ -20,6 +20,7 @@ inherit
 			EQA_SYSTEM_OUTPUT_PROCESSOR, EQA_EW_SYSTEM_TEST_INSTRUCTIONS} environment
 			{EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION, EQA_EW_C_COMPILATION} run_system
 			{EQA_EW_C_COMPILATION, EQA_EW_SYSTEM_EXECUTION} prepare_system
+			{ANY} current_execution
 		end
 
 	EQA_EW_OS_ACCESS
@@ -53,10 +54,8 @@ feature {NONE} -- Initialization
 			test_not_void: a_env /= Void
 		local
 			l_test_dir, l_gen_dir, l_exec_dir: STRING
-			l_path: DIRECTORY_NAME
 			l_info: EQA_EVALUATION_INFO
 			l_util: EQA_EW_STRING_UTILITIES
-			l_source_dir_name, l_target_dir, l_temp_path: EQA_SYSTEM_PATH
 		do
 			ecf_name := "Ace"
 			create l_info
@@ -136,10 +135,10 @@ feature {NONE} -- Initialization
 
 feature -- Query
 
-	ecf_name: STRING
+	ecf_name: detachable STRING
 			-- Name of Ecf (ace) file for Eiffel compilations
 
-	system_name: STRING
+	system_name: detachable STRING
 			-- Name of executable file specified in Ace
 
 	copy_wait_required: BOOLEAN
@@ -156,11 +155,11 @@ feature -- Query
 			-- when last Eiffel compilation was started or
 			-- resumed
 
-	e_compilation: EQA_EW_EIFFEL_COMPILATION
+	e_compilation: detachable EQA_EW_EIFFEL_COMPILATION
 			-- Eiffel compilation, if any
 			-- (possibly suspended and awaiting resumption)
 
-	c_compilation: EQA_EW_C_COMPILATION
+	c_compilation: detachable EQA_EW_C_COMPILATION
 			-- Last C compilation, if any
 
 	e_compile_count: INTEGER
@@ -199,13 +198,13 @@ feature -- Query
 			Result.append_integer (execution_count)
 		end
 
-	e_compilation_result: EQA_EW_EIFFEL_COMPILATION_RESULT
+	e_compilation_result: detachable EQA_EW_EIFFEL_COMPILATION_RESULT
 			-- Result of the last Eiffel compilation.
 
-	c_compilation_result: EQA_EW_C_COMPILATION_RESULT
+	c_compilation_result: detachable EQA_EW_C_COMPILATION_RESULT
 			-- Result of the last C compilation.
 
-	execution_result: EQA_EW_EXECUTION_RESULT
+	execution_result: detachable EQA_EW_EXECUTION_RESULT
 			-- Result of the last Eiffel system execution.
 
 	has_env (a_key: STRING): BOOLEAN
@@ -261,7 +260,7 @@ feature -- Command
 			set: e_compilation = a_e
 		end
 
-	set_e_compilation_result (a_e: EQA_EW_EIFFEL_COMPILATION_RESULT)
+	set_e_compilation_result (a_e: detachable EQA_EW_EIFFEL_COMPILATION_RESULT)
 			-- Set `e_compilation_result' with `a_e'
 		do
 			e_compilation_result := a_e
@@ -277,7 +276,7 @@ feature -- Command
 			set: c_compilation = a_c
 		end
 
-	set_c_compilation_result (a_c: EQA_EW_C_COMPILATION_RESULT)
+	set_c_compilation_result (a_c: detachable EQA_EW_C_COMPILATION_RESULT)
 			-- Set `c_compilation_result' with `a_c'
 		do
 			c_compilation_result := a_c
@@ -285,7 +284,7 @@ feature -- Command
 			set: c_compilation_result = a_c
 		end
 
-	set_execution_result (a_e: EQA_EW_EXECUTION_RESULT)
+	set_execution_result (a_e: detachable EQA_EW_EXECUTION_RESULT)
 			-- Set `execution_result' with `a_e'
 		do
 			execution_result := a_e
@@ -305,11 +304,14 @@ feature {EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION, EQA_EW_C_COMPILATIO
 			not_void: attached a_path
 		local
 			l_path: EQA_SYSTEM_PATH
+			l_execution: like current_execution
 		do
 			prepare_system_if_needed
 
 			create l_path.make (<<a_path>>)
-			current_execution.set_output_path (l_path)
+			l_execution := current_execution
+			check attached l_execution end -- Implied by postcondition of `prepare_system_if_needed'			
+			l_execution.set_output_path (l_path)
 		end
 
 	set_output_processor (a_processor: EQA_SYSTEM_OUTPUT_PROCESSOR)
@@ -317,12 +319,14 @@ feature {EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION, EQA_EW_C_COMPILATIO
 		require
 			not_void: attached a_processor
 		local
-			l_path: EQA_SYSTEM_PATH
+			l_execution: like current_execution
 		do
 			prepare_system_if_needed
 
-			current_execution.set_output_processor (a_processor)
-			current_execution.set_error_processor (a_processor)
+			l_execution := current_execution
+			check attached l_execution end -- Implied by postcondition of `prepare_system_if_needed'
+			l_execution.set_output_processor (a_processor)
+			l_execution.set_error_processor (a_processor)
 		end
 
 	prepare_system_if_needed

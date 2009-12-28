@@ -43,6 +43,8 @@ feature {NONE} -- Intialization
 		local
 			l_args: LIST [STRING]
 			l_count, l_pos: INTEGER
+			l_failure_explanation: like failure_explanation
+			l_value: like value
 		do
 			l_args := string_util.broken_into_words (a_line)
 			l_count := l_args.count
@@ -50,12 +52,14 @@ feature {NONE} -- Intialization
 				failure_explanation := "argument count must be at least 2"
 				init_ok := False
 			elseif l_args.first.has ('%/0/') then
-				create failure_explanation.make (0)
-				failure_explanation.append ("environment variable name contains null character")
+				create l_failure_explanation.make (0)
+				failure_explanation := l_failure_explanation
+				l_failure_explanation.append ("environment variable name contains null character")
 				init_ok := False
 			elseif l_args.i_th (2).has ('%/0/') then
-				create failure_explanation.make (0)
-				failure_explanation.append ("environment variable value contains null character")
+				create l_failure_explanation.make (0)
+				failure_explanation := l_failure_explanation
+				l_failure_explanation.append ("environment variable value contains null character")
 				init_ok := False
 			elseif l_count = 2 then
 				variable := l_args.i_th (1)
@@ -64,21 +68,30 @@ feature {NONE} -- Intialization
 			else
 				l_pos :=  string_util.first_white_position (a_line)
 				variable := a_line.substring (1, l_pos - 1)
-				value := a_line.substring (l_pos, a_line.count)
-				value.left_adjust
-				value.right_adjust
+				l_value := a_line.substring (l_pos, a_line.count)
+				value := l_value
+				l_value.left_adjust
+				l_value.right_adjust
 				init_ok := True
 			end
 			if init_ok then
-				if value.item (1) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char and
-				   value.item (value.count) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char then
-					value.remove (value.count)
-					value.remove (1)
-				elseif value.item (1) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char or
-				   value.item (value.count) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char then
+				l_value := value
+				check attached l_value end -- Implied by previous if clause
+				if l_value.item (1) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char and
+				   l_value.item (l_value.count) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char then
+					l_value.remove (l_value.count)
+					l_value.remove (1)
+				elseif l_value.item (1) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char or
+				   l_value.item (l_value.count) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char then
 					failure_explanation := "value must be quoted on both ends or on neither end"
 					init_ok := False
 				end
+			end
+
+			if not init_ok then
+				l_failure_explanation := failure_explanation
+				check attached l_failure_explanation end -- Implied by previous if clause
+				assert.assert (l_failure_explanation, False)
 			end
 		end
 
@@ -87,8 +100,15 @@ feature -- Command
 	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
 			-- Execute `Current' as one of the
 			-- instructions of `a_test'
+		local
+			l_var, l_val: like variable
 		do
-			a_test.environment.put (value, variable)
+			l_var := variable
+			check attached l_var end -- Implied by `init_ok' is True, otherwise assertion would be violated in `inst_initialize'
+			l_val := value
+			check attached l_val end -- Implied by `init_ok' is True, otherwise assertion would be violated in `inst_initialize'
+
+			a_test.environment.put (l_val, l_var)
 			if a_test.environment.return_code = 0 then
 				execute_ok := True
 			else
@@ -107,10 +127,10 @@ feature -- Query
 
 feature {NONE} -- Implementation
 
-	variable: STRING
+	variable: detachable STRING
 			-- Name of environment variable
 
-	value: STRING
+	value: detachable STRING
 			-- Value to be given to environment variable
 
 ;note
