@@ -128,7 +128,7 @@ feature -- Command
 					failure_explanation := l_failure_explanation
 					l_failure_explanation.append ("actual execution result does not match expected result%N")
 					l_failure_explanation.append ("Actual result:%N")
-					l_failure_explanation.append (a_test.execution_result.summary)
+					l_failure_explanation.append (l_er.summary)
 					l_failure_explanation.append ("%NExpected result:%N")
 					l_failure_explanation.append (l_expected_execution_result.summary)
 				end

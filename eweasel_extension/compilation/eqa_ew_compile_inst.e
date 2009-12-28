@@ -15,6 +15,7 @@ inherit
 	EQA_EW_TEST_INSTRUCTION
 		export
 			{NONE} all
+			{ANY} deep_copy, deep_twin, is_deep_equal, standard_is_equal
 		end
 
 feature {NONE} -- Initialization
@@ -30,7 +31,7 @@ feature {NONE} -- Initialization
 
 feature -- Query
 
-	output_file_name: STRING
+	output_file_name: detachable STRING
 			-- Name of file where output from compile is
 			-- to be placed
 

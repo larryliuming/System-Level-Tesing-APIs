@@ -29,10 +29,13 @@ feature -- Command
 	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
 			-- <Precursor>
 		local
-			l_name, l_compile_cmd, l_exec_error: STRING
-			l_compilation: EQA_EW_EIFFEL_COMPILATION
-			l_curr_dir, l_test_dir: STRING
+			l_name: STRING
+			l_compile_cmd, l_exec_error: detachable STRING
+			l_compilation: detachable EQA_EW_EIFFEL_COMPILATION
+			l_curr_dir: STRING
+			l_test_dir: detachable STRING
 			l_file_system: EQA_FILE_SYSTEM
+			l_failure_explanation: like failure_explanation
 		do
 			-- Work around a bug in Eiffel 4.2 (can't start
 			-- es4 on existing project unless project directory
@@ -44,6 +47,7 @@ feature -- Command
 			l_compilation := a_test.e_compilation
 			if l_compilation = Void or else not l_compilation.suspended then
 				l_compile_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Compile_command_name)
+				check attached l_compile_cmd end -- Implied by environment values have been set before executing test cases
 				l_compile_cmd := a_test.environment.substitute_recursive (l_compile_cmd)
 				create l_file_system.make (a_test.environment)
 				l_exec_error := l_file_system.executable_file_exists (l_compile_cmd)
@@ -66,8 +70,9 @@ feature -- Command
 				end
 			else
 				assert.assert ("suspended compilation in progress", False)
-				failure_explanation := "suspended compilation in progress"
-				assert.assert (failure_explanation, False)
+				l_failure_explanation := "suspended compilation in progress"
+				failure_explanation := l_failure_explanation
+				assert.assert (l_failure_explanation, False)
 			end
 			change_working_directory (l_curr_dir)
 		end
@@ -78,6 +83,7 @@ feature {NONE} -- Query
 			-- The arguments to the compiler for test `test'.
 		local
 			l_file_name: EQA_SYSTEM_PATH
+			l_test_dir, l_ecf_name: detachable STRING
 		do
 			create Result.make
 			from
@@ -92,12 +98,18 @@ feature {NONE} -- Query
 				-- working directory, which does not work
 				-- with multithreaded code
 			Result.extend ("-project_path")
-			Result.extend (a_env.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name))
+			l_test_dir := a_env.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name)
+			check attached l_test_dir end -- Implied by environment values have been set before executing test cases			
+			Result.extend (l_test_dir)
 				-- Ignore user file for testing
 			Result.extend ("-local")
 				-- Path to configuration file
 			Result.extend ("-config")
-			Result.extend (string_util.file_path (<<a_env.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name), a_test.ecf_name>>))
+			l_test_dir := a_env.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name)
+			check attached l_test_dir end -- Implied by environment values have been set before executing test cases
+			l_ecf_name := a_test.ecf_name
+			check attached l_ecf_name end -- Implied by `init_env' is called before each test run
+			Result.extend (string_util.file_path (<<l_test_dir,l_ecf_name>>))
 		end
 
 	compilation_options: LIST [STRING]

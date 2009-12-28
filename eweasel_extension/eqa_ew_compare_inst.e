@@ -23,22 +23,14 @@ create
 
 feature {NONE} -- Initialization
 
-	make (a_line: STRING)
-			-- Initialize instruction from `a_line'.  Set
-			-- `init_ok' to indicate whether
-			-- initialization was successful.
-		local
-			l_args: LIST [STRING]
+	make (a_actual_output_file, a_expected_output_file: STRING)
+			-- Initialize instruction
+		require
+			not_void: attached a_actual_output_file
+			not_void: attached a_expected_output_file
 		do
-			l_args := string_util.broken_into_words (a_line)
-			if l_args.count /= 2 then
-				failure_explanation := "argument count must be 2"
-				init_ok := False
-			else
-				actual_output_file := l_args.i_th (1)
-				expected_output_file := l_args.i_th (2)
-				init_ok := True
-			end
+			actual_output_file := a_actual_output_file
+			expected_output_file := a_expected_output_file
 		end
 
 feature -- Command
@@ -50,9 +42,13 @@ feature -- Command
 		local
 			l_act_name, l_exp_name: STRING
 			l_actual, l_expected: RAW_FILE
+			l_output_dir: detachable STRING
+			l_failure_explanation: like failure_explanation
 		do
 			execute_ok := False
-			l_act_name := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), actual_output_file>>)
+			l_output_dir := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name)
+			check attached l_output_dir end -- Implied by environment values have been set before executing test cases
+			l_act_name := string_util.file_path (<<l_output_dir, actual_output_file>>)
 --			l_exp_name := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name), expected_output_file>>)
 			l_exp_name := a_test.file_system.build_source_path (create {EQA_SYSTEM_PATH}.make (<<expected_output_file>>))
 			create l_actual.make (l_act_name)
@@ -74,7 +70,9 @@ feature -- Command
 			end
 
 			if not execute_ok then
-				assert.assert (failure_explanation, execute_ok)
+				l_failure_explanation := failure_explanation
+				check attached l_failure_explanation end -- Implied by previous if clause
+				assert.assert (l_failure_explanation, execute_ok)
 			end
 		end
 

@@ -22,6 +22,7 @@ inherit
 	EQA_EW_TEST_INSTRUCTION
 		export
 			{NONE} all
+			{ANY} deep_copy, deep_twin, is_deep_equal, standard_is_equal
 		end
 
 feature {NONE} -- Initialization

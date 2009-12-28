@@ -27,7 +27,7 @@ feature -- Command
 			-- instructions of `a_test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			l_compilation: EQA_EW_EIFFEL_COMPILATION
+			l_compilation: detachable EQA_EW_EIFFEL_COMPILATION
 		do
 			l_compilation := a_test.e_compilation
 			if l_compilation = Void then

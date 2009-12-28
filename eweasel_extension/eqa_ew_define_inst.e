@@ -54,6 +54,8 @@ feature {NONE} -- Initialization
 		local
 			args: LIST [STRING]
 			count, pos: INTEGER
+			l_failure_explanation: like failure_explanation
+			l_val, l_var: like value
 		do
 			args := string_util.broken_into_words (a_line)
 			count := args.count
@@ -61,9 +63,10 @@ feature {NONE} -- Initialization
 				failure_explanation := "argument count must be at least 2"
 				init_ok := False
 			elseif args.first.item (1) = {EQA_EW_SUBSTITUTION_CONST}.Substitute_char then
-				create failure_explanation.make (0)
-				failure_explanation.append ("variable being defined cannot start with ")
-				failure_explanation.extend ({EQA_EW_SUBSTITUTION_CONST}.Substitute_char)
+				create l_failure_explanation.make (0)
+				failure_explanation := l_failure_explanation
+				l_failure_explanation.append ("variable being defined cannot start with ")
+				l_failure_explanation.extend ({EQA_EW_SUBSTITUTION_CONST}.Substitute_char)
 				init_ok := False
 			elseif count = 2 then
 				variable := args.i_th (1)
@@ -72,24 +75,33 @@ feature {NONE} -- Initialization
 			else
 				pos :=  string_util.first_white_position (a_line)
 				variable := a_line.substring (1, pos - 1)
-				value := a_line.substring (pos, a_line.count)
-				value.left_adjust
-				value.right_adjust
+				l_val := a_line.substring (pos, a_line.count)
+				value := l_val
+				l_val.left_adjust
+				l_val.right_adjust
 				init_ok := True
 			end
 			if init_ok then
-				if value.item (1) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char and
-				   value.item (value.count) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char then
-					value.remove (value.count)
-					value.remove (1)
-				elseif value.item (1) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char or
-				   value.item (value.count) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char then
+				l_val := value
+				check attached l_val end -- Implied by `init_ok'
+				if l_val.item (1) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char and
+				   l_val.item (l_val.count) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char then
+					l_val.remove (l_val.count)
+					l_val.remove (1)
+				elseif l_val.item (1) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char or
+				   l_val.item (l_val.count) = {EQA_EW_SUBSTITUTION_CONST}.Quote_char then
 					failure_explanation := "value must be quoted on both ends or on neither end"
 					init_ok := False
 				end
 			end
 			if init_ok then
 --				init_environment.define (variable, value)
+			end
+
+			if not init_ok then
+				l_failure_explanation := failure_explanation
+				check attached l_failure_explanation end -- Implied by previous if clause
+				assert.assert (l_failure_explanation, False)
 			end
 		end
 
@@ -98,8 +110,16 @@ feature -- Command
 	execute (a_test: EQA_EW_SYSTEM_TEST_SET)
 			-- Execute `Current' as one of the
 			-- instructions of `a_test'.  Always successful.
+		local
+			l_var, l_val: like value
 		do
-			a_test.environment.put (value, variable)
+			l_var := variable
+			check attached l_var end -- Implied by `init_ok' is True, otherwise assertion would be violated in `inst_initialize'
+
+			l_val := value
+			check attached l_val end -- Implied by `init_ok' is True, otherwise assertion would be violated in `inst_initialize'
+
+			a_test.environment.put (l_val, l_var)
 		end
 
 feature -- Query
@@ -112,10 +132,10 @@ feature -- Query
 
 feature {NONE}
 
-	variable: STRING
+	variable: detachable STRING
 			-- Name of environment value
 
-	value: STRING
+	value: detachable STRING
 			-- Value to be given to environment value
 
 ;note

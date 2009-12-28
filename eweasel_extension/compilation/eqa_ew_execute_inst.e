@@ -72,14 +72,16 @@ feature -- Command
 			-- instructions of `a_test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			l_prog, l_exec_dir, l_infile, l_outfile, l_savefile: STRING
-			l_execute_cmd, l_exec_error: STRING
+			l_prog, l_exec_dir, l_outfile, l_savefile: STRING
+			l_execute_cmd, l_source_dir_name, l_infile: detachable STRING
+			l_exec_error: STRING
 			l_prog_file, l_input_file: RAW_FILE
 			l_execution: EQA_EW_SYSTEM_EXECUTION
 			l_path: EQA_SYSTEM_PATH
 			l_file_system: EQA_FILE_SYSTEM
 		do
 			l_execute_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Execute_command_name)
+			check attached l_execute_cmd end -- Implied by environment values have been set before executing test cases
 			l_execute_cmd := a_test.environment.substitute (l_execute_cmd)
 			create l_file_system.make (a_test.environment)
 			l_exec_error := l_file_system.executable_file_exists (l_execute_cmd)
@@ -89,7 +91,9 @@ feature -- Command
 --				create l_path.make (<<l_exec_dir, a_test.system_name>>)
 				l_prog := string_util.file_path (<<l_exec_dir, "test">>) -- FIXME: who set the name `test'?
 				if input_file_name /= Void then
-					l_infile := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name), input_file_name>>)
+					l_source_dir_name := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name)
+					check attached l_source_dir_name end -- Implied by environment values have been set before executing test cases
+					l_infile := string_util.file_path (<<l_source_dir_name, input_file_name>>)
 				else
 					l_infile := Void
 				end

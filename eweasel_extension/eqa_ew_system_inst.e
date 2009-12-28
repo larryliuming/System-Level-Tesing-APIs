@@ -20,7 +20,7 @@ inherit
 
 create
 	make
-	
+
 feature {NONE} -- Initialization
 
 	make (a_sys_name: STRING)
@@ -33,6 +33,8 @@ feature {NONE} -- Initialization
 			-- Initialize instruction from `sys'.
 			-- Set `init_ok' to indicate whether initialization
 			-- was successful.
+		local
+			l_failure_explanation: like failure_explanation
 		do
 			if sys.count = 0 or string_util.first_white_position (sys) > 0 then
 				init_ok := False
@@ -41,6 +43,12 @@ feature {NONE} -- Initialization
 				init_ok := True
 				system_name := sys
 			end
+
+			if not init_ok then
+				l_failure_explanation := failure_explanation
+				check attached l_failure_explanation end -- Implied by previous if clause
+				assert.assert (l_failure_explanation, False)
+			end
 		end
 
 feature -- Command
@@ -48,8 +56,12 @@ feature -- Command
 	execute (test: EQA_EW_SYSTEM_TEST_SET)
 			-- Execute `Current' as one of the
 			-- instructions of `test'.
+		local
+			l_name: like system_name
 		do
-			test.set_system_name (system_name)
+			l_name := system_name
+			check attached l_name end -- Implied by `init_ok' is True, otherwise assertion would be violated in `inst_initialize'
+			test.set_system_name (l_name)
 		end
 
 feature -- Query
@@ -62,7 +74,7 @@ feature -- Query
 
 feature {NONE} -- Implementation
 
-	system_name: STRING
+	system_name: detachable STRING
 			-- Name of executable file specified in Ace.
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"

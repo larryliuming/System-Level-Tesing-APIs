@@ -163,7 +163,7 @@ feature -- Command
 --			l_inst := test_command_table.item (Delete_keyword)
 --			init_command (l_inst, "delete", a_dest_directory + " " + a_dest_file)
 --			execute_inst (l_inst)
-			create l_inst.make (a_dest_directory + " " + a_dest_file)
+			create l_inst.make (a_dest_directory, a_dest_file)
 			l_inst.execute (test_set)
 		end
 
@@ -441,7 +441,7 @@ feature -- Command
 		local
 			l_inst: EQA_EW_COMPARE_INST
 		do
-			create l_inst.make (a_output_filename + " " + a_correct_output_filename)
+			create l_inst.make (a_output_filename, a_correct_output_filename)
 			l_inst.execute (test_set)
 		end
 
