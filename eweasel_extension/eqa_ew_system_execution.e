@@ -17,7 +17,7 @@ create
 
 feature {NONE} -- Intialization
 
-	make (a_prog: STRING; a_args: ARRAYED_LIST [STRING]; a_execute_cmd, a_dir, a_inf, a_outf, a_savef: STRING; a_test_set: EQA_EW_SYSTEM_TEST_SET)
+	make (a_prog: STRING; a_args: ARRAYED_LIST [STRING]; a_execute_cmd, a_dir: STRING; a_inf, a_outf: detachable STRING; a_savef: STRING; a_test_set: EQA_EW_SYSTEM_TEST_SET)
 			-- Start a new process to execute `prog' with
 			-- arguments `args' using execution command
 			-- `execute_cmd' in directory `dir'.

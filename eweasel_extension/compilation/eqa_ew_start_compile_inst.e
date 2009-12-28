@@ -54,8 +54,8 @@ feature -- Command
 				if l_exec_error = Void then
 					a_test.increment_e_compile_count
 					a_test.set_e_compile_start_time (os.current_time_in_seconds)
-					if output_file_name /= Void and then not output_file_name.is_empty then
-						l_name := output_file_name
+					if attached output_file_name as l_output_file_name and then not l_output_file_name.is_empty then
+						l_name := l_output_file_name
 					else
 						l_name := a_test.e_compile_output_name
 					end
@@ -82,7 +82,6 @@ feature {NONE} -- Query
 	compiler_arguments (a_test: EQA_EW_SYSTEM_TEST_SET; a_env: EQA_SYSTEM_ENVIRONMENT): LINKED_LIST [STRING]
 			-- The arguments to the compiler for test `test'.
 		local
-			l_file_name: EQA_SYSTEM_PATH
 			l_test_dir, l_ecf_name: detachable STRING
 		do
 			create Result.make

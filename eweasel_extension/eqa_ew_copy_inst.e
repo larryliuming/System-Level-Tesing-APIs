@@ -65,19 +65,22 @@ feature -- Commannd
 			-- instructions of `test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			l_src_name, l_dest_name: STRING
+			l_dest_name: STRING
 			l_src, l_dir, l_dest: like new_file
 			l_before_date, l_after_date: INTEGER
 			l_orig_date, l_final_date: INTEGER
 			l_file_system: EQA_FILE_SYSTEM
 			l_error: STRING
+			l_source_dir: detachable STRING
 		do
 			dest_directory := test_set.environment.substitute_recursive (dest_directory)
 			source_file := test_set.environment.substitute_recursive (source_file)
 
 			execute_ok := False
 
-			l_dest_name := string_util.file_path (<<test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name),source_file>>)
+			l_source_dir := test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name)
+			check attached l_source_dir end -- Implied by environment values have been set before executing test cases
+			l_dest_name := string_util.file_path (<<l_source_dir,source_file>>)
 
 			create l_file_system.make (test_set.environment)
 

@@ -47,26 +47,30 @@ feature -- Command
 			-- instructions of `a_test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			l_dir, l_save, l_freeze_cmd, l_exec_error: STRING
+			l_save: STRING
+			l_freeze_cmd, l_exec_error, l_dir, l_output_dir, l_failure_explanation: detachable STRING
 			l_max_c_processes: INTEGER
 			l_compilation: EQA_EW_C_COMPILATION
-			l_system_path: EQA_SYSTEM_PATH
 			l_file_system: EQA_FILE_SYSTEM
 		do
 			l_freeze_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Freeze_command_name)
+			check attached l_freeze_cmd end -- Implied by environment values have been set before executing test cases
 			l_freeze_cmd := a_test.environment.substitute_recursive (l_freeze_cmd)
 			create l_file_system.make (a_test.environment)
 			l_exec_error := l_file_system.executable_file_exists (l_freeze_cmd)
 			if l_exec_error = Void then
 				a_test.increment_c_compile_count
 				l_dir := a_test.environment.value (compilation_dir_name)
+				check attached l_dir end -- Implied by environment values have been set before executing test cases
 --				l_max_c_processes := a_test.environment.max_c_processes
-				if output_file_name /= Void and then not output_file_name.is_empty then
-					l_save := output_file_name
+				if attached output_file_name as l_output_file_name and then not l_output_file_name.is_empty then
+					l_save := l_output_file_name
 				else
 					l_save := a_test.c_compile_output_name
 				end
-				l_save := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), l_save>>)
+				l_output_dir := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name)
+				check attached l_output_dir end -- Implied by environment values have been set before executing test cases
+				l_save := string_util.file_path (<<l_output_dir, l_save>>)
 
 				create l_compilation.make (l_dir, l_save, l_freeze_cmd, l_max_c_processes, a_test)
 				a_test.set_c_compilation (l_compilation)
@@ -77,7 +81,9 @@ feature -- Command
 			end
 
 			if not execute_ok then
-				assert.assert (failure_explanation, execute_ok)
+				l_failure_explanation := failure_explanation
+				check attached l_failure_explanation end -- Implied by previous if clauses
+				assert.assert (l_failure_explanation, execute_ok)
 			end
 		end
 
@@ -91,7 +97,7 @@ feature -- Status
 
 feature {NONE} -- Implementation
 
-	output_file_name: STRING
+	output_file_name: detachable STRING
 			-- Name of file where output from compile is
 			-- to be placed
 

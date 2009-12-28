@@ -55,7 +55,7 @@ feature {NONE} -- Initialization
 			args: LIST [STRING]
 			count, pos: INTEGER
 			l_failure_explanation: like failure_explanation
-			l_val, l_var: like value
+			l_val: like value
 		do
 			args := string_util.broken_into_words (a_line)
 			count := args.count

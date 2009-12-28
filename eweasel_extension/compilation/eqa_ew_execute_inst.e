@@ -28,6 +28,8 @@ feature {NONE} -- Initialization
 			-- initialization was successful.
 		local
 			l_args: LIST [STRING]
+			l_arguments: like arguments
+			l_failure_explanation: like failure_explanation
 		do
 			l_args := string_util.broken_into_words (a_line)
 			if l_args.count < 2 then
@@ -42,7 +44,8 @@ feature {NONE} -- Initialization
 				if equal (output_file_name, No_file_name) then
 					output_file_name := Void
 				end
-				create arguments.make (l_args.count - 2)
+				create l_arguments.make (l_args.count - 2)
+				arguments := l_arguments
 				from
 					l_args.start
 					l_args.forth
@@ -50,10 +53,15 @@ feature {NONE} -- Initialization
 				until
 					l_args.after
 				loop
-					arguments.extend (l_args.item)
+					l_arguments.extend (l_args.item)
 					l_args.forth
 				end
 				init_ok := True
+			end
+			if not init_ok then
+				l_failure_explanation := failure_explanation
+				check attached l_failure_explanation end -- Implied by previous if clause
+				assert.assert (l_failure_explanation, False)
 			end
 		end
 
@@ -72,13 +80,13 @@ feature -- Command
 			-- instructions of `a_test'.
 			-- Set `execute_ok' to indicate whether successful.
 		local
-			l_prog, l_exec_dir, l_outfile, l_savefile: STRING
-			l_execute_cmd, l_source_dir_name, l_infile: detachable STRING
-			l_exec_error: STRING
+			l_prog, l_savefile: STRING
+			l_execute_cmd, l_source_dir_name, l_infile, l_outfile: detachable STRING
+			l_exec_error, l_exec_dir, l_output_dir, l_failure_explanation: detachable STRING
 			l_prog_file, l_input_file: RAW_FILE
 			l_execution: EQA_EW_SYSTEM_EXECUTION
-			l_path: EQA_SYSTEM_PATH
 			l_file_system: EQA_FILE_SYSTEM
+			l_arguments: like arguments
 		do
 			l_execute_cmd := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Execute_command_name)
 			check attached l_execute_cmd end -- Implied by environment values have been set before executing test cases
@@ -88,23 +96,26 @@ feature -- Command
 			if l_exec_error = Void then
 				a_test.increment_execution_count
 				l_exec_dir := a_test.environment.value (execution_dir_name)
+				check attached l_exec_dir end -- Implied by environment values have been set before executing test cases
 --				create l_path.make (<<l_exec_dir, a_test.system_name>>)
 				l_prog := string_util.file_path (<<l_exec_dir, "test">>) -- FIXME: who set the name `test'?
-				if input_file_name /= Void then
+				if attached input_file_name as l_input_file_name then
 					l_source_dir_name := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name)
 					check attached l_source_dir_name end -- Implied by environment values have been set before executing test cases
-					l_infile := string_util.file_path (<<l_source_dir_name, input_file_name>>)
+					l_infile := string_util.file_path (<<l_source_dir_name,l_input_file_name >>)
 				else
 					l_infile := Void
 				end
 				l_outfile := Void	-- Pipe output back to parent
-				if output_file_name /= Void and then not output_file_name.is_empty then
-					l_savefile := output_file_name
+				if attached output_file_name as l_output_file_name and then not l_output_file_name.is_empty then
+					l_savefile := l_output_file_name
 				else
 					l_savefile := a_test.execution_output_name
 				end
 
-				l_savefile := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name), l_savefile>>)
+				l_output_dir := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name)
+				check attached l_output_dir end -- Implied by environment values have been set before executing test cases
+				l_savefile := string_util.file_path (<<l_output_dir, l_savefile>>)
 
 				create l_prog_file.make (l_prog)
 				l_exec_error := l_file_system.executable_file_exists (l_prog)
@@ -121,7 +132,9 @@ feature -- Command
 						end
 					end
 					if execute_ok then
-						create l_execution.make (l_prog, arguments, l_execute_cmd, l_exec_dir, l_infile, l_outfile, l_savefile, a_test)
+						l_arguments := arguments
+						check attached l_arguments end -- Implied by `init_ok' is True, otherwise assertion would be violated in `inst_initialize'
+						create l_execution.make (l_prog, l_arguments, l_execute_cmd, l_exec_dir, l_infile, l_outfile, l_savefile, a_test)
 					end
 				else
 					failure_explanation := l_exec_error
@@ -133,7 +146,11 @@ feature -- Command
 				execute_ok := False
 			end
 
-			assert.assert (failure_explanation, execute_ok)
+			if not execute_ok then
+				l_failure_explanation := failure_explanation
+				check attached l_failure_explanation end -- Implied by previous if clauses
+				assert.assert (l_failure_explanation, execute_ok)
+			end
 		end
 
 feature {NONE} -- Constants
@@ -143,13 +160,13 @@ feature {NONE} -- Constants
 
 feature {NONE} -- Implementation
 
-	input_file_name: STRING
+	input_file_name: detachable STRING
 			-- Name of input file
 
-	output_file_name: STRING
+	output_file_name: detachable STRING
 			-- Name of output file
 
-	arguments: ARRAYED_LIST [STRING]
+	arguments: detachable ARRAYED_LIST [STRING]
 			-- Arguments
 
 	execution_dir_name: STRING

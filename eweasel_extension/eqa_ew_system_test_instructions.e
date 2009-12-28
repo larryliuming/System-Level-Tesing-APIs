@@ -568,7 +568,7 @@ feature {NONE} -- Implementation
 	test_set: EQA_EW_SYSTEM_TEST_SET
 			-- Test set that current managed
 		require
-			valid: generating_type.is_equal ({EQA_EW_SYSTEM_TEST_SET})
+			valid: attached (({EQA_EW_SYSTEM_TEST_SET}).attempt (Current))
 		local
 			l_result: detachable EQA_EW_SYSTEM_TEST_SET
 		do
