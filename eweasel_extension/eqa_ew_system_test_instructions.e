@@ -132,9 +132,7 @@ feature -- Command
 			l_inst: EQA_EW_DEFINE_FILE_INST
 			l_path: STRING
 			l_count, l_max: INTEGER
---			l_factory: EW_EQA_TEST_FACTORY
 		do
---			l_inst := test_command_table.item (Define_file_keyword)
 			from
 				l_count := a_dir_path.lower
 				l_max := a_dir_path.upper
@@ -146,7 +144,6 @@ feature -- Command
 				l_count := l_count + 1
 			end
 			l_path := l_path + " " + a_file_name
---			create l_factory
 			l_path := test_set.environment.substitute (l_path)
 
 			create l_inst.make (a_name + " " + l_path)
@@ -160,9 +157,6 @@ feature -- Command
 		local
 			l_inst: EQA_EW_DELETE_INST
 		do
---			l_inst := test_command_table.item (Delete_keyword)
---			init_command (l_inst, "delete", a_dest_directory + " " + a_dest_file)
---			execute_inst (l_inst)
 			create l_inst.make (a_dest_directory, a_dest_file)
 			l_inst.execute (test_set)
 		end
@@ -239,9 +233,6 @@ feature -- Command
 		do
 			create l_inst.make (a_source_file, a_dest_directory, a_dest_file, test_set)
 			l_inst.execute (test_set)
---			l_inst := test_command_table.item (Copy_file_keyword)
---			init_command (l_inst, "copy_file", a_source_file + " " + a_dest_directory + " " + a_dest_file)
---			execute_inst (l_inst)
 		end
 
 	compile_melted (a_output_filename: detachable STRING)
@@ -551,12 +542,8 @@ feature -- Command
 			not_void: a_system_name /= Void
 		local
 			l_inst: EQA_EW_SYSTEM_INST
---			l_factory: EW_EQA_TEST_FACTORY
 			l_system_name: STRING
 		do
---			l_inst := test_command_table.item (System_keyword)
-
---			create l_factory
 			l_system_name := test_set.environment.substitute (a_system_name)
 
 			create l_inst.make (l_system_name)

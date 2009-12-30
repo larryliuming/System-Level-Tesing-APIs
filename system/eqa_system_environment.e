@@ -56,9 +56,7 @@ feature {NONE} -- Initialization
 			l_gen := test_set.generator
 			create l_info
 			l_name := l_info.test_name
-			create l_suffix.make (l_gen.count + l_name.count + 1)
-			l_suffix.append (l_gen)
-			l_suffix.append_character ('_')
+			create l_suffix.make (l_name.count)
 			l_suffix.append (l_name)
 			test_suffix := l_suffix
 		end

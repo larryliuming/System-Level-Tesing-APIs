@@ -38,6 +38,7 @@ feature -- Properties
 feature -- Update
 
 	set_compilations_completed (a_b: BOOLEAN)
+			-- Set `compilations_completed' with `a_b'
 		do
 			compilations_completed := a_b
 		end

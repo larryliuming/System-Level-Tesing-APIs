@@ -31,7 +31,7 @@ feature {NONE} -- Implementation
 			-- Name of directory where compilation is to be done
 		once
 			Result := {EQA_EW_PREDEFINED_VARIABLES}.Work_execution_dir_name
-		end;
+		end
 
 ;note
 	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"

@@ -14,8 +14,6 @@ class EQA_EW_DELETE_INST
 
 inherit
 	EQA_EW_TEST_INSTRUCTION
---	EW_STRING_UTILITIES
---	EW_OS_ACCESS
 
 create
 	make
