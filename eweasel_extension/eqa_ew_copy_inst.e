@@ -78,7 +78,7 @@ feature -- Commannd
 
 			execute_ok := False
 
-			l_source_dir := test_set.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name)
+			l_source_dir := test_set.environment.source_directory
 			check attached l_source_dir end -- Implied by environment values have been set before executing test cases
 			l_dest_name := string_util.file_path (<<l_source_dir,source_file>>)
 
@@ -216,7 +216,7 @@ feature {NONE} -- Implementation
 			-- Name of source file (always in source directory)
 
 ;note
-	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
+	copyright: "Copyright (c) 1984-2010, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	licensing_options: "http://www.eiffel.com/licensing"
 	copying: "[

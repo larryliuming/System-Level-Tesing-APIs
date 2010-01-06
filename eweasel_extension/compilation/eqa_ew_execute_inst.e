@@ -100,7 +100,7 @@ feature -- Command
 --				create l_path.make (<<l_exec_dir, a_test.system_name>>)
 				l_prog := string_util.file_path (<<l_exec_dir, "test">>) -- FIXME: who set the name `test'?
 				if attached input_file_name as l_input_file_name then
-					l_source_dir_name := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name)
+					l_source_dir_name := a_test.environment.source_directory
 					check attached l_source_dir_name end -- Implied by environment values have been set before executing test cases
 					l_infile := string_util.file_path (<<l_source_dir_name,l_input_file_name >>)
 				else
@@ -175,7 +175,7 @@ feature {NONE} -- Implementation
 		end
 
 ;note
-	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
+	copyright: "Copyright (c) 1984-2010, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	copying: "[
 			This file is part of the EiffelWeasel Eiffel Regression Tester.

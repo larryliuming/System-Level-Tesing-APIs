@@ -42,7 +42,7 @@ feature -- Command
 			-- is current directory
 
 			l_curr_dir := current_working_directory
-			l_test_dir := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name)
+			l_test_dir := a_test.environment.target_directory
 
 			l_compilation := a_test.e_compilation
 			if l_compilation = Void or else not l_compilation.suspended then
@@ -97,7 +97,7 @@ feature {NONE} -- Query
 				-- working directory, which does not work
 				-- with multithreaded code
 			Result.extend ("-project_path")
-			l_test_dir := a_env.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name)
+			l_test_dir := a_test.environment.target_directory
 			check attached l_test_dir end -- Implied by environment values have been set before executing test cases			
 			Result.extend (l_test_dir)
 				-- Ignore user file for testing
@@ -120,7 +120,7 @@ feature {NONE} -- Query
 		end
 
 ;note
-	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
+	copyright: "Copyright (c) 1984-2010, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	copying: "[
 			This file is part of the EiffelWeasel Eiffel Regression Tester.

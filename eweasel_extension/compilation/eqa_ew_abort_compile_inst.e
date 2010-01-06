@@ -63,7 +63,7 @@ feature -- Command
 				failure_explanation := "compilation not suspended"
 			else
 --				l_compilation.abort -- FIXME: not implemented, add `abort' to {EQA_EW_SYSTEM_TEST_SET}?
-				l_dir := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Test_dir_name)
+				l_dir := a_test.environment.target_directory
 				check attached l_dir end -- Implied by environment values have been set before executing tests
 				l_dir := string_util.file_path (<<l_dir, {EQA_EW_EIFFEL_TEST_CONSTANTS}.Eiffel_gen_directory>>)
 				a_test.file_system.delete_directory_tree (l_dir)
@@ -80,7 +80,7 @@ feature -- Query
 			-- Was last call to `execute' successful?
 
 ;note
-	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
+	copyright: "Copyright (c) 1984-2010, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	copying: "[
 			This file is part of the EiffelWeasel Eiffel Regression Tester.
