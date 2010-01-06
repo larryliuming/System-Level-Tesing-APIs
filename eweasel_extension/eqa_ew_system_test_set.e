@@ -321,7 +321,7 @@ feature {EQA_EW_EIFFEL_COMPILATION, EQA_EW_SYSTEM_EXECUTION, EQA_EW_C_COMPILATIO
 		local
 			l_execution: like current_execution
 		do
-			prepare_system_if_needed
+			prepare_system (create {EQA_SYSTEM_PATH}.make (<<e_compile_output_name>>))
 
 			l_execution := current_execution
 			check attached l_execution end -- Implied by postcondition of `prepare_system_if_needed'
@@ -361,7 +361,7 @@ feature {NONE} -- Implementation
 			-- File name prefix for execution output
 
 ;note
-	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
+	copyright: "Copyright (c) 1984-2010, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	source: "[
 			Eiffel Software
