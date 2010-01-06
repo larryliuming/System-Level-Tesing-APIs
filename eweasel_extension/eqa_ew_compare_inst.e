@@ -49,8 +49,7 @@ feature -- Command
 			l_output_dir := a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Output_dir_name)
 			check attached l_output_dir end -- Implied by environment values have been set before executing test cases
 			l_act_name := string_util.file_path (<<l_output_dir, actual_output_file>>)
---			l_exp_name := string_util.file_path (<<a_test.environment.value ({EQA_EW_PREDEFINED_VARIABLES}.Source_dir_name), expected_output_file>>)
-			l_exp_name := a_test.file_system.build_source_path (create {EQA_SYSTEM_PATH}.make (<<expected_output_file>>))
+			l_exp_name := string_util.file_path (<<a_test.file_system.environment.source_directory, expected_output_file>>)
 			create l_actual.make (l_act_name)
 			create l_expected.make (l_exp_name)
 			if (l_actual.exists and then l_actual.is_plain) and
@@ -149,7 +148,7 @@ feature {NONE} -- Implementation
 			-- Name of file with expected output
 
 ;note
-	copyright: "Copyright (c) 1984-2009, Eiffel Software and others"
+	copyright: "Copyright (c) 1984-2010, Eiffel Software and others"
 	license:   "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	copying: "[
 			This file is part of the EiffelWeasel Eiffel Regression Tester.
